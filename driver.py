@@ -54,7 +54,6 @@ class WebDriver:
     def run(self):
         self.setup_account()
         self.initiate_battle()
-        # Run battle bot
 
 
 if __name__ == '__main__':
