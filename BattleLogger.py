@@ -1,5 +1,7 @@
 from os.path import exists
 
+from selenium.webdriver.common.by import By
+
 MOVES_FILE, ABILITIES_FILE = './data/moves.data', './data/abilities.data'
 
 
@@ -10,6 +12,7 @@ class BattleLogger:
         self.known_move_map, self.abilities_map = {}, {}
         self.updated_moves, self.updated_abilities = False, False
         self.load_data(MOVES_FILE), self.load_data(ABILITIES_FILE)
+        self.turn = 0
 
     def load_data(self, file_type):
         if exists(file_type):
@@ -22,18 +25,20 @@ class BattleLogger:
                         self.abilities_map[data[0]] = data[1:]
 
     def update_data(self, info_type, poke, data):
-        known_list = self.known_move_map.get(poke, []) if info_type == self.MOVE_INFO else self.abilities_map.get(poke, [])
+        known = self.known_move_map.get(poke, []) if info_type == self.MOVE_INFO else self.abilities_map.get(poke, [])
+        updated = False
         for d in data:
-            if d not in known_list:
-                known_list.append(d)
+            if d not in known:
+                known.append(d)
                 if info_type == self.MOVE_INFO:
                     self.updated_moves = True
                 else:
                     self.updated_abilities = True
-        if info_type == self.MOVE_INFO and self.updated_moves:
-            self.known_move_map[poke] = known_list
-        elif self.updated_abilities:
-            self.abilities_map[poke] = known_list
+                updated = True
+        if info_type == self.MOVE_INFO and updated:
+            self.known_move_map[poke] = known
+        elif info_type == self.ABILITY_INFO and updated:
+            self.abilities_map[poke] = known
 
     def save_data(self):
         if self.updated_moves:
@@ -49,5 +54,9 @@ class BattleLogger:
                     lines += '{},{}\n'.format(poke, ','.join(self.abilities_map[poke]))
                 f.write(lines)
 
-    def log_battle(self):
-        pass
+    def log_turn(self, Driver):
+        elem_path = "//h2[@class='battle-history'][text()='Turn {}']/following-sibling::div[@class='battle-history']"
+        turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
+        for e in turn_elems:
+            # TODO
+            pass

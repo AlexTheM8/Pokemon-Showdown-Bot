@@ -16,9 +16,7 @@ class WebDriver:
 
     def wait_for_element(self, val, by=By.NAME, time=30):
         try:
-            WebDriverWait(self.driver, time).until(
-                EC.presence_of_element_located((by, val))
-            )
+            WebDriverWait(self.driver, time).until(EC.presence_of_element_located((by, val)))
         except NoSuchElementException:
             print("ERROR: Timed out waiting for webpage")
 
