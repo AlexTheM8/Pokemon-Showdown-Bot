@@ -15,7 +15,6 @@ class BattleBot:
         self.battle_logger = BattleLogger()
         self.Driver = WebDriver()
         self.Driver.run()
-        self.slots = [1, 2, 3, 4, 5]
 
     def read_team(self, side):
         # Read available Pokemon & Moves of self & opponent
@@ -56,8 +55,8 @@ class BattleBot:
                 self.battle_logger.update_data(BattleLogger.ABILITY_INFO, team_pokemon, [ability])
                 self.battle_logger.update_data(BattleLogger.MOVE_INFO, team_pokemon, team_moves)
         else:
-            pokemon_name = self.Driver.driver.find_element(
-                value="//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH).text.strip().split(' ')[0]
+            pokemon_name = self.Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
+                                                           by=By.XPATH).text.strip().split('L')[0].strip()
             ac.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
             # Get abilities

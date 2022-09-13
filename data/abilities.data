@@ -19,14 +19,14 @@ Glaceon,Ice Body,Snow Cloak
 Claydol,Levitate
 Weezing,Levitate
 Walrein,Thick Fat
-Thundurus,Prankster
+Thundurus,Prankster,Defiant
 Arbok,Shed Skin
 Nihilego,Shed Skin,Beast Boost
 Grumpig,Thick Fat
 Glalie,Inner Focus
 Groudon,Drought
 Zangoose,Toxic Boost
-Ninetales,Snow Warning
+Ninetales,Snow Warning,Drought
 Bellossom,Chlorophyll
 Musharna,Synchronize
 Rotom,Levitate
@@ -47,7 +47,7 @@ Purugly,Thick Fat
 Feraligatr,Sheer Force
 Dragonite,Multiscale
 Plusle,Lightning Rod
-Charizard,Blaze
+Charizard,Blaze,Solar Power,Tough Claws
 Donphan,Sturdy,Sand Veil
 Magcargo,Flame Body
 Gourgeist,Frisk
@@ -78,7 +78,7 @@ Dodrio,Early Bird
 Landorus,Sheer Force,Intimidate
 Cresselia,Levitate
 Wormadam,Overcoat
-Tapu,Psychic Surge
+Tapu Lele,Psychic Surge
 Manaphy,Hydration
 Mudsdale,Stamina,Inner Focus,Thick Fat,Own Tempo,Gluttony
 Volcarona,Flame Body,Swarm
@@ -102,3 +102,29 @@ Corsola,Regenerator
 Lunala,Shadow Shield
 Accelgor,Sticky Hold
 Cofagrigus,Mummy
+Blacephalon,Beast Boost
+Mantine,Water Absorb
+Xerneas,Fairy Aura
+Infernape,Blaze
+Leavanny,Overcoat
+Alomomola,Regenerator
+Gligar,Hyper Cutter,Sand Veil,Immunity
+Blastoise,Torrent,Rain Dish
+Sigilyph,Magic Guard
+Sawk,Sturdy,Inner Focus,Mold Breaker
+Dewgong,Thick Fat
+Absol,Pressure,Super Luck,Justified
+Noivern,Infiltrator
+Spiritomb,Pressure
+Rapidash,Flash Fire
+Floette,Flower Veil
+Gumshoos,Stakeout
+Hitmonlee,Reckless
+Dialga,Pressure
+Terrakion,Justified
+Talonflame,Gale Wings
+Dusknoir,Frisk
+Sceptile,Overgrow
+Incineroar,Intimidate
+Zapdos,Pressure
+Torterra,Overgrow,Shell Armor
