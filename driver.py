@@ -26,8 +26,9 @@ class WebDriver:
 
     def setup_account(self):
         # Hide
-        self.wait_and_click("closeHide")
+        self.wait_for_element("closeHide")
         self.driver.maximize_window()
+        self.wait_and_click("closeHide")
         # Mute audio
         self.wait_and_click("openSounds")
         self.wait_and_click("muted")
@@ -49,6 +50,9 @@ class WebDriver:
         self.wait_and_click("search")
         # Wait for battle to start
         self.wait_for_element("movemenu", by=By.CLASS_NAME)
+
+    def next_battle(self):
+        self.wait_and_click("closeAndMainMenu")
 
     def run(self):
         self.setup_account()

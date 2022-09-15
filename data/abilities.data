@@ -3,13 +3,13 @@ Jirachi,Serene Grace
 Togekiss,Serene Grace
 Pangoro,Iron Fist
 Kyogre,Primordial Sea,Drizzle
-Salazzle,Corrosion
+Salazzle,Corrosion,Oblivious
 Gogoat,Sap Sipper,Grass Pelt
 Haxorus,Mold Breaker
-Golurk,No Guard
+Golurk,No Guard,Iron Fist
 Ho-Oh,Regenerator
 Aromatisse,Aroma Veil
-Espeon,Magic Bounce
+Espeon,Magic Bounce,Synchronize
 Breloom,Technician
 Carracosta,Solid Rock
 Exeggutor,Frisk
@@ -19,7 +19,7 @@ Glaceon,Ice Body,Snow Cloak
 Claydol,Levitate
 Weezing,Levitate
 Walrein,Thick Fat
-Thundurus,Prankster,Defiant
+Thundurus,Prankster,Defiant,Volt Absorb
 Arbok,Shed Skin
 Nihilego,Shed Skin,Beast Boost
 Grumpig,Thick Fat
@@ -30,11 +30,11 @@ Ninetales,Snow Warning,Drought
 Bellossom,Chlorophyll
 Musharna,Synchronize
 Rotom,Levitate
-Tornadus,Defiant
+Tornadus,Defiant,Regenerator
 Raichu,Lightning Rod,Surge Surfer
 Zygarde,Aura Break
 Politoed,Drizzle
-Cinccino,Skill Link
+Cinccino,Skill Link,Cute Charm,Technician
 Arceus,Multitype
 Manectric,Lightning Rod
 Solgaleo,Full Metal Body
@@ -50,7 +50,7 @@ Plusle,Lightning Rod
 Charizard,Blaze,Solar Power,Tough Claws
 Donphan,Sturdy,Sand Veil
 Magcargo,Flame Body
-Gourgeist,Frisk
+Gourgeist,Frisk,Insomnia
 Conkeldurr,Iron Fist,Guts,Sheer Force
 Minior,Shields Down
 Darkrai,Bad Dreams
@@ -59,10 +59,10 @@ Latios,Levitate
 Ambipom,Pickup
 Meloetta,Serene Grace
 Registeel,Clear Body
-Emboar,Reckless
+Emboar,Reckless,Blaze
 Kabutops,Weak Armor,Battle Armor
 Lickilicky,Cloud Nine,Own Tempo,Oblivious
-Scolipede,Speed Boost
+Scolipede,Speed Boost,Poison Point,Swarm
 Whimsicott,Prankster
 Kangaskhan,Scrappy
 Excadrill,Mold Breaker
@@ -74,7 +74,7 @@ Flareon,Guts
 Rhydon,Lightning Rod
 Bisharp,Defiant
 Hoopa,Magician
-Dodrio,Early Bird
+Dodrio,Early Bird,Run Away,Tangled Feet
 Landorus,Sheer Force,Intimidate
 Cresselia,Levitate
 Wormadam,Overcoat
@@ -91,19 +91,19 @@ Tyrantrum,Strong Jaw,Rock Head
 Persian,Fur Coat,Technician,Rattled
 Forretress,Sturdy,Overcoat,Sheer Force
 Unfezant,Big Pecks,Super Luck,Rivalry
-Arcanine,Intimidate
+Arcanine,Intimidate,Flash Fire,Justified
 Aegislash,Stance Change
 Mienshao,Regenerator
 Simisage,Overgrow
 Klefki,Prankster
 Azumarill,Huge Power
-Swellow,Guts
+Swellow,Guts,Scrappy
 Corsola,Regenerator
 Lunala,Shadow Shield
 Accelgor,Sticky Hold
 Cofagrigus,Mummy
 Blacephalon,Beast Boost
-Mantine,Water Absorb
+Mantine,Water Absorb,Swift Swim,Water Veil
 Xerneas,Fairy Aura
 Infernape,Blaze
 Leavanny,Overcoat
@@ -115,16 +115,164 @@ Sawk,Sturdy,Inner Focus,Mold Breaker
 Dewgong,Thick Fat
 Absol,Pressure,Super Luck,Justified
 Noivern,Infiltrator
-Spiritomb,Pressure
+Spiritomb,Pressure,Infiltrator
 Rapidash,Flash Fire
 Floette,Flower Veil
 Gumshoos,Stakeout
 Hitmonlee,Reckless
 Dialga,Pressure
 Terrakion,Justified
-Talonflame,Gale Wings
-Dusknoir,Frisk
+Talonflame,Gale Wings,Mummy (base: Gale Wings)
+Dusknoir,Frisk,Pressure
 Sceptile,Overgrow
 Incineroar,Intimidate
-Zapdos,Pressure
+Zapdos,Pressure,Static
 Torterra,Overgrow,Shell Armor
+Gyarados,Intimidate
+Skuntank,Aftermath
+Volbeat,Prankster
+Swalot,Sticky Hold,Liquid Ooze,Gluttony
+Blaziken,Speed Boost
+Suicune,Pressure
+Braviary,Defiant
+Primarina,Torrent,Liquid Voice
+Marshadow,Technician
+Hitmontop,Intimidate
+Muk,Stench,Sticky Hold,Poison Touch,Gluttony,Power of Alchemy
+Galvantula,Compound Eyes
+Hawlucha,Unburden
+Reuniclus,Magic Guard,Overcoat,Regenerator
+Heliolisk,Dry Skin
+Milotic,Marvel Scale
+Spinda,Own Tempo,Tangled Feet,Contrary
+Mawile,Intimidate,Huge Power
+Dugtrio,Sand Veil,Arena Trap,Sand Force,Tangling Hair
+Pinsir,Moxie,Hyper Cutter,Mold Breaker
+Throh,Guts,Inner Focus,Mold Breaker
+Celesteela,Beast Boost
+Maractus,Water Absorb
+Samurott,Torrent
+Dedenne,Cheek Pouch,Pickup,Plus
+Primeape,Vital Spirit,Anger Point,Defiant
+Slowbro,Oblivious,Own Tempo,Regenerator
+Porygon-Z,Download
+Lunatone,Levitate
+Escavalier,Overcoat
+Comfey,Triage,Flower Veil,Natural Cure
+Hitmonchan,Iron Fist
+Vaporeon,Water Absorb
+Moltres,Pressure,Flame Body
+Farfetch�d,Defiant
+Meganium,Overgrow
+Gastrodon,Storm Drain
+Salamence,Intimidate
+Swoobat,Simple
+Genesect,Download
+Weavile,Pickpocket
+Virizion,Justified
+Pyroar,Unnerve
+Azelf,Levitate
+Sawsbuck,Sap Sipper
+Lucario,Justified
+Cacturne,Water Absorb
+Passimian,Defiant
+Butterfree,Compound Eyes,Tinted Lens
+Archeops,Defeatist
+Swampert,Torrent,Damp,Swift Swim
+Golisopod,Emergency Exit
+Slurpuff,Unburden
+Articuno,Pressure
+Alakazam,Magic Guard
+Dustox,Shield Dust
+Necrozma,Prism Armor,Neuroforce
+Delibird,Insomnia
+Crobat,Infiltrator
+Umbreon,Synchronize,Inner Focus
+Mewtwo,Unnerve,Pressure
+Toxapex,Merciless,Limber,Regenerator
+Gardevoir,Trace
+Armaldo,Battle Armor
+Chimecho,Levitate
+Amoonguss,Regenerator
+Keldeo,Justified
+Delcatty,Wonder Skin
+Kricketune,Swarm
+Druddigon,Sheer Force
+Jellicent,Water Absorb
+Audino,Healer,Regenerator,Klutz
+Greninja,Protean
+Froslass,Cursed Body
+Vivillon,Shield Dust,Compound Eyes,Friend Guard
+Venomoth,Shield Dust,Tinted Lens,Wonder Skin
+Hypno,Insomnia
+Lilligant,Own Tempo
+Kartana,Beast Boost
+Dragalge,Adaptability
+,Levitate,Leaf Guard,Contrary,Poison Point,Rivalry,Sheer Force,Pickup,Gluttony,Quick Feet
+Vanilluxe,Snow Warning
+Miltank,Thick Fat,Scrappy,Sap Sipper
+Cloyster,Skill Link
+Hydreigon,Levitate
+Xurkitree,Beast Boost
+Empoleon,Torrent
+Sudowoodo,Rock Head
+Ribombee,Sweet Veil
+Garbodor,Stench,Weak Armor,Aftermath
+Aggron,Sturdy,Rock Head,Heavy Metal,Filter
+Golem,Magnet Pull,Sturdy,Galvanize
+Chesnaught,Bulletproof,Overgrow
+Shedinja,Wonder Guard
+Drapion,Sniper
+Gliscor,Poison Heal
+Krookodile,Intimidate,Moxie,Anger Point
+Swanna,Hydration
+Heatran,Flash Fire
+Sharpedo,Rough Skin,Speed Boost,Strong Jaw
+Shaymin,Serene Grace
+Octillery,Suction Cups,Sniper,Moody
+Porygon2,Intimidate (base: Trace),Trace
+Metagross,Clear Body,Light Metal
+Stoutland,Intimidate
+Zebstrika,Sap Sipper
+Castform,Forecast
+Stakataka,Beast Boost
+Ledian,Swarm
+Serperior,Contrary
+Chandelure,Flash Fire,Flame Body,Infiltrator
+Aerodactyl,Unnerve
+Camerupt,Solid Rock
+Nidoqueen,Sheer Force
+Pelipper,Drizzle
+Medicham,Pure Power,Telepathy
+Huntail,Water Veil
+Florges,Symbiosis
+Seismitoad,Water Absorb,Swift Swim,Poison Touch
+Oricorio,Dancer
+Furret,Frisk
+Trevenant,Natural Cure
+Beautifly,Swarm
+Tauros,Intimidate
+Skarmory,Sturdy
+Solrock,Levitate
+Tsareena,Queenly Majesty
+Staraptor,Intimidate,Reckless
+Delphox,Blaze
+Snorlax,Thick Fat
+Decidueye,Overgrow
+Diancie,Clear Body,Magic Bounce
+Phione,Hydration
+Omastar,Shell Armor
+Noctowl,Tinted Lens
+Emolga,Static,Motor Drive
+Bronzong,Levitate
+Exploud,Scrappy
+Granbull,Intimidate
+Garchomp,Sand Veil,Rough Skin
+Magnezone,Magnet Pull
+Kyurem,Turboblaze
+Yanmega,Speed Boost,Tinted Lens,Frisk
+Ampharos,Static
+Durant,Hustle
+Steelix,Sturdy
+Turtonator,Shell Armor
+Hippowdon,Sand Stream

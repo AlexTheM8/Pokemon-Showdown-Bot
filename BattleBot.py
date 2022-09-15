@@ -94,6 +94,11 @@ class BattleBot:
             self.Driver.wait_and_click("openTimer")
             self.Driver.wait_and_click("timerOn")
 
+    def reset(self):
+        pass
+        # TODO Reset battle info
+        # self.Driver.next_battle()
+
 
 
 
