@@ -20,6 +20,9 @@ OPPONENT_STAT_RAISE_SHARP = r'^The opposing (.*)\'s (.*) rose sharply!$'
 PLAYER_STAT_RAISE_SHARP = r'^(.*)\'s (.*) rose sharply!$'
 OPPONENT_STAT_RAISE_WEAKNESS = r'^The Weakness Policy sharply raised the opposing (.*)\'s (.*)!$'
 PLAYER_STAT_RAISE_WEAKNESS = r'^The Weakness Policy sharply raised (.*)\'s (.*)!$'
+OPPONENT_Z_BOOST = r'^The opposing (.*) boosted its (.*) using its Z-Power!$'
+PLAYER_Z_BOOST = r'^(.*) boosted its (.*) using its Z-Power!$'
+STATS_RESET = r'^All stat changes were eliminated!$'
 OPPONENT_SWITCH_1 = r'^.*withdrew (.*)!$'
 OPPONENT_SWITCH_2 = r'^The opposing (.*) went back to.*!$'
 PLAYER_SWITCH = r'^(.*), come back!$'
@@ -35,6 +38,8 @@ OPPONENT_DODGE = r'^The opponent (.*) avoided the attack!$'
 PLAYER_DODGE = r'^(.*) avoided the attack!$'
 OPPONENT_LEFTOVERS = r'^The opposing (.*) restored a little HP using its (.*)!$'
 PLAYER_LEFTOVERS = r'^(.*) restored a little HP using its (.*)!$'
+OPPONENT_SET_SUB = r'^The opposing (.*) put in a substitute!$'
+PLAYER_SET_SUB = r'^(.*) put in a substitute!$'
 OPPONENT_SUBSTITUTE = r'^The substitute took damage for the opposing (.*)!$'
 PLAYER_SUBSTITUTE = r'^The substitute took damage for (.*)!$'
 OPPOSING_SUBSTITUTE_FADED = r'^The opposing (.*)\'s substitute faded!$'
@@ -60,8 +65,6 @@ OPPONENT_SLEEP = r'^The opposing (.*) fell asleep!$'
 PLAYER_SLEEP = r'^(.*) fell asleep!$'
 OPPONENT_ASLEEP = r'^The opposing (.*) is fast asleep\.$'
 PLAYER_ASLEEP = r'^(.*) is fast asleep\.$'
-OPPONENT_ALREADY_ASLEEP = r'^The opposing (.*) is already asleep!$'
-PLAYER_ALREADY_ASLEEP = r'^(.*) is already asleep!$'
 OPPONENT_WAKE = r'^The opposing (.*) woke up!$'
 PLAYER_WAKE = r'^(.*) woke up!$'
 OPPONENT_FROZE = r'^The opposing (.*) was frozen solid!$'
@@ -70,32 +73,38 @@ OPPONENT_FROZEN = r'^The opposing (.*) is frozen solid!$'
 PLAYER_FROZEN = r'^(.*) is frozen solid!$'
 OPPONENT_THAW = r'^The opposing (.*) thawed out!$'
 PLAYER_THAW = r'^(.*) thawed out!$'
-OPPONENT_PARALYZE = r'^(?:\[.*\'s Static\])?The opposing (.*) is paralyzed! It may be unable to move!$'
-PLAYER_PARALYZE = r'^(?:\[The opposing .*\'s Static\])?(.*) is paralyzed! It may be unable to move!$'
+OPPONENT_PARALYZE = r'^(?:\[.*\])?The opposing (.*) is paralyzed! It may be unable to move!$'
+PLAYER_PARALYZE = r'^(?:\[The opposing .*\])?(.*) is paralyzed! It may be unable to move!$'
 OPPONENT_PARALYZED = r'^The opposing (.*) is paralyzed! It can\'t move!$'
 PLAYER_PARALYZED = r'^(.*) is paralyzed! It can\'t move!$'
 OPPONENT_PARALYZE_HEAL = r'^The opposing (.*) was cured of paralysis!$'
 PLAYER_PARALYZE_HEAL = r'^(.*) was cured of paralysis!$'
-OPPONENT_ALREADY_PARALYZE = r'^The opposing (.*) is already paralyzed!$'
-PLAYER_ALREADY_PARALYZE = r'^(.*) is already paralyzed!$'
 OPPONENT_CONFUSE = r'^The opposing (.*) became confused!$'
 PLAYER_CONFUSE = r'^(.*) became confused!$'
+OPPONENT_CONFUSE_2 = r'^The opposing (.*) became confused due to fatigue!$'
+PLAYER_CONFUSE_2 = r'^(.*) became confused due to fatigue!$'
+OPPONENT_CONFUSE_END = r'^The opposing (.*) snapped out of its confusion!$'
+PLAYER_CONFUSE_END = r'^(.*) snapped out of its confusion!$'
+OPPONENT_STATUS_CURE = r'^\(The opposing (.*) is cured by its Natural Cure!\)'
+PLAYER_STATUS_CURE = r'^\((.*) is cured by its Natural Cure!\)'
 OPPONENT_KNOCKOFF = r'^The opposing (.*) knocked off (.*)\'s (.*)!$'
 PLAYER_KNOCKOFF = r'^(.*) knocked off the opposing (.*)\'s (.*)!$'
 OPPONENT_LIFEORB = r'^The opposing (.*) lost some of its HP!$'
 PLAYER_LIFEORB = r'^(.*) lost some of its HP!$'
-OPPONENT_IMMUNE = r'^It doesn\'t affect the opposing (.*)\.\.\.$'
-PLAYER_IMMUNE = r'^It doesn\'t affect (.*)\.\.\.'
+OPPONENT_IMMUNE = r'^(?:\[The opposing .*\])?It doesn\'t affect the opposing (.*)\.\.\.$'
+PLAYER_IMMUNE = r'^(?:\[.*\])?It doesn\'t affect (.*)\.\.\.'
 OPPONENT_PROTECT = r'^The opposing (.*) protected itself!$'
 PLAYER_PROTECT = r'^(.*) protected itself!$'
+OPPONENT_PROTECT_DMG = r'^The opposing (.*) couldn\'t fully protect itself and got hurt!$'
+PLAYER_PROTECT_DMG = r'^(.*) couldn\'t fully protect itself and got hurt!$'
 OPPONENT_SEEDED = r'^The opposing (.*) was seeded!$'
 PLAYER_SEEDED = r'^(.*) was seeded!$'
 OPPONENT_SEEDED_DMG = r'^The opposing (.*)\'s health is sapped by Leech Seed!$'
 PLAYER_SEEDED_DMG = r'^(.*)\'s health is sapped by Leech Seed!$'
-OPPONENT_HEAL = r'^(?:\[The opposing .*\'s Cheek Pouch\])?The opposing (.*) had its HP restored\.$'
-PLAYER_HEAL = r'^(?:\[.*\'s Cheek Pouch\])?(.*) had its HP restored\.$'
-OPPONENT_FULL_HP = r'The opposing (.*)\'s HP is full!$'
-PLAYER_FULL_HP = r'(.*)\'s HP is full!$'
+OPPONENT_HEAL = r'^(?:\[The opposing .*)?The opposing (.*) had its HP restored\.$'
+PLAYER_HEAL = r'^(?:\[.*\])?(.*) had its HP restored\.$'
+OPPONENT_FULL_HP = r'^The opposing (.*)\'s HP is full!$'
+PLAYER_FULL_HP = r'^(.*)\'s HP is full!$'
 OPPONENT_REST = r'^The opposing (.*) slept and became healthy!$'
 PLAYER_REST = r'^(.*) slept and became healthy!$'
 OPPONENT_BERRY = r'^The opposing (.*) restored HP using its .*!$'
@@ -104,6 +113,8 @@ OPPONENT_LOSE_TYPE = r'^\(The opposing (.*) loses (.*) type this turn\.\)$'
 PLAYER_LOSE_TYPE = r'^\((.*) loses (.*) type this turn\.\)$'
 OPPONENT_SET_WEB = r'^A sticky web has been laid out on the ground around your team!$'
 PLAYER_SET_WEB = r'^A sticky web has been laid out on the ground around the opposing team!$'
+OPPONENT_WEB_CLEAR = r'^The sticky web has disappeared from the ground around the opposing team!$'
+PLAYER_WEB_CLEAR = r'^The sticky web has disappeared from the ground around your team!$'
 OPPONENT_SET_STONE = r'^Pointed stones float in the air around your team!$'
 PLAYER_SET_STONE = r'^Pointed stones float in the air around the opposing team!$'
 OPPONENT_SET_SPIKE = r'^Spikes were scattered on the ground all around your team!$'
@@ -111,10 +122,15 @@ PLAYER_SET_SPIKE = r'^Spikes were scattered on the ground all around the opposin
 OPPONENT_SET_POISON = r'^Poison spikes were scattered on the ground all around your team!$'
 PLAYER_SET_POISON = r'^Poison spikes were scattered on the ground all around the opposing team!$'
 OPPONENT_POISON_CLEAR = r'^The poison spikes disappeared from the ground around the opposing team!$'
+PLAYER_POISON_CLEAR = r'^The poison spikes disappeared from the ground around your team!$'
 OPPONENT_STONE_DMG = r'^Pointed stones dug into the opposing (.*)!$'
 PLAYER_STONE_DMG = r'^Pointed stones dug into (.*)!$'
+OPPONENT_STONE_CLEAR = r'^The pointed stones disappeared from around the opposing team!$'
+PLAYER_STONE_CLEAR = r'^The pointed stones disappeared from around your team!$'
 OPPONENT_SPIKE_DMG = r'^The opposing (.*) was hurt by the spikes!$'
 PLAYER_SPIKE_DMG = r'^(.*) was hurt by the spikes!$'
+OPPONENT_SPIKE_CLEAR = r'^The spikes disappeared from the ground around the opposing team!$'
+PLAYER_SPIKE_CLEAR = r'^The spikes disappeared from the ground around your team!$'
 OPPONENT_DRAGGED = r'^The opposing (.*) was dragged out!$'
 PLAYER_DRAGGED = r'^(.*) was dragged out!$'
 OPPONENT_NIMBLE = r'^The opposing (.*) became nimble!$'
@@ -123,10 +139,8 @@ OPPONENT_WEAKNESS_POLICY = r'^\(The opposing (.*) used its Weakness Policy!\)'
 PLAYER_WEAKNESS_POLICY = r'^\((.*) used its Weakness Policy!\)'
 OPPONENT_FOCUS_SASH = r'^The opposing (.*) hung on using its Focus Sash!$'
 PLAYER_FOCUS_SASH = r'^(.*) hung on using its Focus Sash!$'
-OPPONENT_TRACE = r'^\[The opposing .*\'s .*\]\[The opposing .*\'s .*\]The opposing (.*) traced (.*)\'s (.*)!$'
-PLAYER_TRACE = r'^\[.*\'s .*\]\[.*\'s .*\](.*) traced the opposing (.*)\'s (.*)!$'
-OPPONENT_LEVITATE = r'^\[The opposing .*\'s Levitate\]It doesn\'t affect the opposing (.*)\.\.\.$'
-PLAYER_LEVITATE = r'^\[.*\'s Levitate\]It doesn\'t affect (.*)\.\.\.$'
+OPPONENT_TRACE = r'^.*The opposing (.*) traced (.*)\'s (.*)!$'
+PLAYER_TRACE = r'^\[.*\](.*) traced the opposing (.*)\'s (.*)!$'
 OPPONENT_TAUNT = r'^The opposing (.*) fell for the taunt!$'
 PLAYER_TAUNT = r'^(.*) fell for the taunt!$'
 OPPONENT_TAUNT_END = r'^The opposing (.*) shook off the taunt!$'
@@ -137,24 +151,40 @@ OPPONENT_ENCORE_END = r'^The opposing (.*)\'s encore ended!$'
 PLAYER_ENCORE_END = r'^(.*)\'s encore ended!$'
 OPPONENT_FORM = r'^\[(.*)\'s Stance Change\]Changed to (.*)!$'
 PLAYER_FORM = r'^\[(.*)\'s Stance Change\]Changed to (.*)!$'
-OPPONENT_WATER_ABSORB = r'^\[.*\'s Water Absorb\]The opposing (.*) had its HP restored\.$'
-PLAYER_WATER_ABSORB = r'^\[.*\'s Water Absorb\](.*) had its HP restored\.$'
-OPPONENT_MOLD = r'^\[The opposing .*\'s Mold Breaker\]The opposing (.*) breaks the mold!$'
-PLAYER_MOLD = r'^\[.*\'s Mold Breaker\](.*) breaks the mold!$'
-OPPONENT_STURDY = r'^\[The opposing.*\'s Sturdy\]The opposing (.*) endured the hit!$'
-PLAYER_STURDY = r'^\[.*\'s Sturdy\](.*) endured the hit!$'
+OPPONENT_TRANSFORM = r'^The opposing (.*) transformed into its Complete Forme!$'
+PLAYER_TRANSFORM = r'^(.*) transformed into its Complete Forme!$'
+OPPONENT_TRANSFORM_2 = r'^The opposing (.*) transformed!$'
+PLAYER_TRANSFORM_2 = r'^(.*) transformed!$'
+OPPONENT_MAGIC_BOUNCE = r'^\[The opposing .*\'s Magic Bounce\]The opposing (.*) bounced the (.*) back!$'
+PLAYER_MAGIC_BOUNCE = r'^\[.*\'s Magic Bounce\](.*) bounced the (.*) back!$'
+OPPONENT_DITTO = r'^.*The opposing (.*) transformed into (.*)!$'
+PLAYER_DITTO = r'^.*(.*) transformed into (.*)!$'
+OPPONENT_STURDY = r'^(?:\[The opposing.*\])?The opposing (.*) endured the hit!$'
+PLAYER_STURDY = r'^(?:\[.*\])?(.*) endured the hit!$'
 OPPONENT_WISH = r'^The opposing .*\'s wish came true!$'
 PLAYER_WISH = r'^.*\'s wish came true!$'
-OPPONENT_PROTEAN = r'^\[The opposing .*\'s Protean\]The opposing (.*)\'s type changed to (.*)!$'
-PLAYER_PROTEAN = r'^\[.*\'s Protean\](.*)\'s type changed to (.*)!$'
-OPPONENT_CURSE_BODY = r'\[The opposing .*\'s Cursed Body\](.*)\'s (.*) was disabled!$'
-PLAYER_CURSE_BODY = r'\[.*\'s Cursed Body\]The opposing (.*)\'s (.*) was disabled!$'
+OPPONENT_PROTEAN = r'^\[The opposing .*\]The opposing (.*)\'s type changed to (.*)!$'
+PLAYER_PROTEAN = r'^\[.*\](.*)\'s type changed to (.*)!$'
+OPPONENT_CURSE_BODY = r'^(?:\[The opposing .*\])?(.*)\'s (.*) was disabled!$'
+PLAYER_CURSE_BODY = r'^(?:\[.*\])?The opposing (.*)\'s (.*) was disabled!$'
+OPPONENT_ULTRA_BURST = r'^The opposing (.*) regained its true power through Ultra Burst!$'
+PLAYER_ULTRA_BURST = r'^(.*) regained its true power through Ultra Burst!$'
+OPPONENT_PRIMAL = r'^The opposing (.*)\'s Primal Reversion! It reverted to its primal state!$'
+PLAYER_PRIMAL = r'^(.*)\'s Primal Reversion! It reverted to its primal state!$'
+OPPONENT_DISGUISE = r'^The opponent (.*)\'s disguise was busted!$'
+PLAYER_DISGUISE = r'^(.*)\'s disguise was busted!$'
+OPPONENT_AFTERMATH = r'^\[The opposing .*\'s Aftermath\](.*) was hurt!$'
+PLAYER_AFTERMATH = r'^\[.*\'s Aftermath\]The opposing (.*) was hurt!$'
+OPPONENT_CONTACT = r'^\[The opposing .*\'s .*\](.*) was hurt!$'
+PLAYER_CONTACT = r'^\[.*\'s .*\]The opposing (.*) was hurt!$'
 OPPONENT_TAUNT_FAIL = r'^The opposing (.*) can\'t use .* after the taunt!$'
 PLAYER_TAUNT_FAIL = r'^(.*) can\'t use .* after the taunt!$'
 OPPONENT_HAIL_DMG = r'^The opposing (.*) is buffeted by the hail!$'
 PLAYER_HAIL_DMG = r'^(.*) is buffeted by the hail!$'
-OPPONENT_ABSORB_POWER = r'^The opposing (.*) is absorbing power!$'
-PLAYER_ABSORB_POWER = r'^(.*) is absorbing power!$'
+OPPONENT_ABSORB = r'^The opposing (.*)(?: is)? absorb(?:ing|ed) (.*)!$'
+PLAYER_ABSORB = r'^(.*)(?: is)? absorb(?:ing|ed) (.*)!$'
+OPPONENT_HEAT_BEAK = r'^The opposing (.*) started heating up its beak!$'
+PLAYER_HEAT_BEAK = r'^(.*) started heating up its beak!$'
 OPPONENT_POWER_HERB = r'^The opposing (.*) became fully charged due to its Power Herb!$'
 PLAYER_POWER_HERB = r'^(.*) became fully charged due to its Power Herb!$'
 OPPONENT_WHITE_HERB = r'^The opposing (.*) returned its stats to normal using its White Herb!$'
@@ -163,29 +193,67 @@ OPPONENT_FLINCH = r'^The opposing (.*) flinched and couldn\'t move!$'
 PLAYER_FLINCH = r'^(.*) flinched and couldn\'t move!$'
 OPPONENT_BELLY_DRUM = r'^The opposing (.*) cut its own HP and maximized its Attack!$'
 PLAYER_BELLY_DRUM = r'^(.*) cut its own HP and maximized its Attack!$'
+OPPONENT_LIGHT_SCREEN = r'^Light Screen made the opposing team stronger against special moves!$'
 PLAYER_LIGHT_SCREEN = r'^Light Screen made your team stronger against special moves!$'
+OPPONENT_LIGHT_SCREEN_END = r'^The opposing team\'s Light Screen wore off!$'
+PLAYER_LIGHT_SCREEN_END = r'^Your team\'s Light Screen wore off!$'
+OPPONENT_REFLECT = r'^Reflect made the opposing team stronger against physical moves!$'
 PLAYER_REFLECT = r'^Reflect made your team stronger against physical moves!$'
+OPPONENT_REFLECT_END = r'^The opposing team\'s Reflect wore off!$'
+PLAYER_REFLECT_END = r'^Your team\'s Reflect wore off!$'
+OPPONENT_TAILWIND = r'^The Tailwind blew from behind the opposing team!$'
+PLAYER_TAILWIND = r'^The Tailwind blew from behind your team!$'
+OPPONENT_TAILWIND_END = r'^The opposing team\'s Tailwind petered out!$'
+PLAYER_TAILWIND_END = r'^Your team\'s Tailwind petered out!$'
+OPPONENT_SLOW_END = r'^The opposing (.*) finally got its act together!$'
+PLAYER_SLOW_END = r'^(.*) finally got its act together!$'
+OPPONENT_GROUNDED = r'^The opposing (.*) fell straight down!$'
+PLAYER_GROUNDED = r'^(.*) fell straight down!$'
+OPPONENT_FLY = r'^The opposing (.*) flew up high!$'
+PLAYER_FLY = r'^(.*) flew up high!$'
 RAIN = r'^.*It started to rain!$'
+RAIN_END = r'^The rain stopped\.$'
+RAIN_HEAVY = r'^(?:.*)?A heavy rain began to fall!$'
+RAIN_HEAVY_END = r'^The heavy rain has lifted!$'
 HAIL = r'^.*It started to hail!$'
 HAIL_STOP = r'^The hail stopped\.$'
+SUN = r'^.*The sunlight turned harsh!$'
+SUN_END = r'^The harsh sunlight faded\.'
+SANDSTORM = r'^.*A sandstorm kicked up!$'
+SANDSTORM_END = r'^The sandstorm subsided\.$'
+OPPONENT_SANDSTORM_DMG = r'^The opposing (.*) is buffeted by the sandstorm!$'
+PLAYER_SANDSTORM_DMG = r'^(.*) is buffeted by the sandstorm!$'
+WEATHER_CLEARED = r'.*The effects of the weather disappeared\.$'
 PAIN_SPLIT = r'^The battlers shared their pain!$'
 FAILED = r'^But it failed!$'
-SUBSTITUTE_FAILED = r'^But it does not have enough HP left to make a substitute!$'
-SUBSTITUTE_FAILED_2 = r'^.* already has a substitute!'
 CONFUSE_HIT = r'^It hurt itself in its confusion!$'
-ELECTRIC_TERRAIN = r'^An electric current ran across the battlefield!$'
+ELECTRIC_TERRAIN = r'^.*An electric current ran across the battlefield!$'
 ELECTRIC_TERRAIN_END = r'^The electricity disappeared from the battlefield.$'
+PSYCHIC_TERRAIN = r'^.*The battlefield got weird!$'
+PSYCHIC_TERRAIN_END = r'^The weirdness disappeared from the battlefield!$'
+MISTY_TERRAIN = r'^.*Mist swirled around the battlefield!$'
+MISTY_TERRAIN_END = r'^The mist disappeared from the battlefield\.$'
+GRASSY_TERRAIN = r'^.*Grass grew to cover the battlefield!$'
+GRASSY_TERRAIN_END = r'^The grass disappeared from the battlefield\.$'
+OPPONENT_GRASSY_HEAL = r'^The opposing (.*)\'s HP was restored\.$'
+PLAYER_GRASSY_HEAL = r'^(.*)\'s HP was restored\.$'
 TRICK_ROOM = r'^.*twisted the dimensions!$'
 TRICK_ROOM_END = r'^The twisted dimensions returned to normal!$'
 ITEM_SWITCH = r'^.* switched items with its target!$'
+OPPONENT_NO_SWITCH = r'^The opposing (.*) can no longer escape!$'
+PLAYER_NO_SWITCH = r'^(.*) can no longer escape!$'
+OPPONENT_ROCKY = r'^The opposing (.*) was hurt by the Rocky Helmet!$'
+PLAYER_ROCKY = r'^(.*) was hurt by the Rocky Helmet!$'
+OPPONENT_CRASH = r'^The opposing (.*) kept going and crashed!$'
+PLAYER_CRASH = r'^(.*) kept going and crashed!$'
 
 # Ignore messages
-IGNORE_1 = r'^.*put in a substitute!$'
+IGNORE_1 = r'^But it does not have enough HP left to make a substitute!$'
 IGNORE_2 = r'^\(Since gen 7, Dark is immune to Prankster moves.\)$'
-IGNORE_3 = r'^The Pokémon was hit.*times!$'
+IGNORE_3 = r'^The Pokémon was hit .* time(s)?!$'
 IGNORE_4 = r'\[.*\'s Beast Boost\]$'
 IGNORE_5 = r'^It\'s not very effective\.\.\.$'
-IGNORE_6 = r'^\[.*\'s Pressure\]$'
+IGNORE_6 = r'^\[.*\'s Pressure\].*$'
 IGNORE_7 = r'^The opposing (.*) surrounded itself with its Z-Power!$'
 IGNORE_8 = r'\[.*\'s Speed Boost\]$'
 IGNORE_9 = r'^A critical hit!$'
@@ -193,15 +261,15 @@ IGNORE_10 = r'^It\'s super effective!$'
 IGNORE_11 = r'^\[.*\'s Stamina\]$'
 IGNORE_12 = r'^.* had its energy drained!$'
 IGNORE_13 = r'^Battle started between .* and .*!$'
-IGNORE_14 = r'^\[.*\'s Pressure\].* is exerting its pressure!$'
-IGNORE_15 = r'^\[The opposing .*\'s Unnerve\]$'
+IGNORE_14 = r'^.* is already asleep!$'
+IGNORE_15 = r'^.* is already paralyzed!$'
 IGNORE_16 = r'^\[.*\'s Download\]$'
-IGNORE_17 = r'^\(.* ate its Sitrus Berry!\)$'
+IGNORE_17 = r'^\(.* ate its .*!\)$'
 IGNORE_18 = r'^\[.*\'s Emergency Exit\]'
 IGNORE_19 = r'^\[The opposing .*\'s Frisk\]The opposing .* frisked .* and found its .*!$'
 IGNORE_20 = r'^\[.*\'s Intimidate\]$'
 IGNORE_21 = r'^A bell chimed!$'
-IGNORE_22 = r'^\[The opposing .*\'s Unnerve\]Your team is too nervous to eat Berries!$'
+IGNORE_22 = r'^\[.*\'s Unnerve\].* team is too nervous to eat Berries!$'
 IGNORE_23 = r'^.* is confused!$'
 IGNORE_24 = r'^.* won the battle!$'
 IGNORE_25 = r'^\(The hail is crashing down\.\)$'
@@ -209,7 +277,7 @@ IGNORE_26 = r'^\(Rain continues to fall\.\)'
 IGNORE_27 = r'^A soothing aroma wafted through the area!$'
 IGNORE_28 = r'^\(Fake Out only works on your first turn out\.\)$'
 IGNORE_29 = r'^.* surrounded itself with its Z-Power!$'
-IGNORE_30 = r'^.*returned its decreased stats to normal using its Z-Power!$'
+IGNORE_30 = r'^.* returned its decreased stats to normal using its Z-Power!$'
 IGNORE_31 = r'^\[.*\'s Moxie\]$'
 IGNORE_32 = r'^\[.*\'s Fairy Aura\].* is radiating a fairy aura!$'
 IGNORE_33 = r'^.* floats in the air with its Air Balloon!$'
@@ -217,9 +285,43 @@ IGNORE_34 = r'.*\'s Air Balloon popped!$'
 IGNORE_35 = r'^.* lost due to inactivity\.$'
 IGNORE_36 = r'^.* obtained one .*\.$'
 IGNORE_37 = r'^.* forfeited\.$'
-IGNORE_38 = r'^\(.* ate its .*!\)$'
+IGNORE_38 = r'^.* already has a substitute!'
 IGNORE_39 = r'^.* is hoping to take its attacker down with it!$'
 IGNORE_40 = r'^.*\'s .* won\'t go any higher!$'
+IGNORE_41 = r'^\[.*\'s Turboblaze\].* is radiating a blazing aura!$'
+IGNORE_42 = r'^\[.*\'s Clear Body\].*\'s stats were not lowered!$'
+IGNORE_43 = r'^\(The sandstorm is raging\.\)'
+IGNORE_44 = r'^\[.*\'s Mold Breaker\].* breaks the mold!$'
+IGNORE_45 = r'^\(The sunlight is strong\.\)$'
+IGNORE_46 = r'^\[.*\'s Synchronize\]$'
+IGNORE_47 = r'^\[.*\'s Justified\]$'
+IGNORE_48 = r'^.* is already burned!$'
+IGNORE_49 = r'^\[.*\'s Teravolt\].* is radiating a bursting aura!$'
+IGNORE_50 = r'^\[.*\'s Power Construct\]You sense the presence of many!$'
+IGNORE_51 = r'^.*\'s illusion wore off!$'
+IGNORE_52 = r'^\[.*\'s Aura Break\].* reversed all other Pokémon\'s auras!$'
+IGNORE_53 = r'^Bright light is about to burst out of .*!$'
+IGNORE_54 = r'^.* was caught in a sticky web!$'
+IGNORE_55 = r'^\[.*\'s Competitive\]$'
+IGNORE_56 = r'^\[.*\'s Defiant\]'
+IGNORE_57 = r'^\[.*\'s Truant\].* is loafing around!$'
+IGNORE_58 = r'^\[.*\'s Soul-Heart\]'
+IGNORE_59 = r'^\[.*\'s Slow Start\].* can\'t get it going!$'
+IGNORE_60 = r'^The Fire-type attack fizzled out in the heavy rain!$'
+IGNORE_61 = r'^\[.*\'s Schooling\].* formed a school!$'
+IGNORE_62 = r'^\[.*\'s Dark Aura\].* is radiating a dark aura!$'
+IGNORE_63 = r'^\[.*\'s Storm Drain\]$'
+IGNORE_64 = r'^.* surrounds itself with a protective mist!$'
+IGNORE_65 = r'^.* shrouded itself with Magic Coat!$'
+IGNORE_66 = r'^.* took its attacker down with it!$'
+IGNORE_67 = r'^Sleep Clause Mod activated\.$'
+IGNORE_68 = r'^\[.*\'s Battle Bond\].*became fully charged due to its bond with its Trainer!$'
+IGNORE_69 = r'^.* became Ash-Greninja!$'
+IGNORE_70 = r'\[.*\'s Disguise\]Its disguise served it as a decoy!$'
+IGNORE_71 = r'^.* must recharge!$'
+IGNORE_72 = r'^\[.*\'s Shed Skin\]$'
+IGNORE_73 = r'^[.*\'s Shed Skin\]$'
+IGNORE_74 = r'^\(.* is being withdrawn\.\.\.\)$'
 
 REGEX_LIST = [
     OPPONENT_Z_MOVE,
@@ -240,6 +342,9 @@ REGEX_LIST = [
     PLAYER_STAT_RAISE_SHARP,
     OPPONENT_STAT_RAISE_WEAKNESS,
     PLAYER_STAT_RAISE_WEAKNESS,
+    OPPONENT_Z_BOOST,
+    PLAYER_Z_BOOST,
+    STATS_RESET,
     OPPONENT_SWITCH_1,
     OPPONENT_SWITCH_2,
     PLAYER_SWITCH,
@@ -255,6 +360,8 @@ REGEX_LIST = [
     PLAYER_DODGE,
     OPPONENT_LEFTOVERS,
     PLAYER_LEFTOVERS,
+    OPPONENT_SET_SUB,
+    PLAYER_SET_SUB,
     OPPONENT_SUBSTITUTE,
     PLAYER_SUBSTITUTE,
     OPPOSING_SUBSTITUTE_FADED,
@@ -280,8 +387,6 @@ REGEX_LIST = [
     PLAYER_SLEEP,
     OPPONENT_ASLEEP,
     PLAYER_ASLEEP,
-    OPPONENT_ALREADY_ASLEEP,
-    PLAYER_ALREADY_ASLEEP,
     OPPONENT_WAKE,
     PLAYER_WAKE,
     OPPONENT_FROZE,
@@ -296,10 +401,14 @@ REGEX_LIST = [
     PLAYER_PARALYZED,
     OPPONENT_PARALYZE_HEAL,
     PLAYER_PARALYZE_HEAL,
-    OPPONENT_ALREADY_PARALYZE,
-    PLAYER_ALREADY_PARALYZE,
     OPPONENT_CONFUSE,
     PLAYER_CONFUSE,
+    OPPONENT_CONFUSE_2,
+    PLAYER_CONFUSE_2,
+    OPPONENT_CONFUSE_END,
+    PLAYER_CONFUSE_END,
+    OPPONENT_STATUS_CURE,
+    PLAYER_STATUS_CURE,
     OPPONENT_KNOCKOFF,
     PLAYER_KNOCKOFF,
     OPPONENT_LIFEORB,
@@ -308,6 +417,8 @@ REGEX_LIST = [
     PLAYER_IMMUNE,
     OPPONENT_PROTECT,
     PLAYER_PROTECT,
+    OPPONENT_PROTECT_DMG,
+    PLAYER_PROTECT_DMG,
     OPPONENT_SEEDED,
     PLAYER_SEEDED,
     OPPONENT_SEEDED_DMG,
@@ -324,15 +435,24 @@ REGEX_LIST = [
     PLAYER_LOSE_TYPE,
     OPPONENT_SET_WEB,
     PLAYER_SET_WEB,
+    OPPONENT_WEB_CLEAR,
+    PLAYER_WEB_CLEAR,
     OPPONENT_SET_STONE,
     PLAYER_SET_STONE,
+    OPPONENT_STONE_CLEAR,
+    PLAYER_STONE_CLEAR,
     OPPONENT_SET_SPIKE,
     PLAYER_SET_SPIKE,
+    OPPONENT_SPIKE_CLEAR,
+    PLAYER_SPIKE_CLEAR,
     OPPONENT_SET_POISON,
     PLAYER_SET_POISON,
     OPPONENT_POISON_CLEAR,
+    PLAYER_POISON_CLEAR,
     OPPONENT_STONE_DMG,
     PLAYER_STONE_DMG,
+    OPPONENT_STONE_CLEAR,
+    PLAYER_STONE_CLEAR,
     OPPONENT_SPIKE_DMG,
     PLAYER_SPIKE_DMG,
     OPPONENT_DRAGGED,
@@ -345,8 +465,6 @@ REGEX_LIST = [
     PLAYER_FOCUS_SASH,
     OPPONENT_TRACE,
     PLAYER_TRACE,
-    OPPONENT_LEVITATE,
-    PLAYER_LEVITATE,
     OPPONENT_TAUNT,
     PLAYER_TAUNT,
     OPPONENT_TAUNT_END,
@@ -355,10 +473,6 @@ REGEX_LIST = [
     PLAYER_ENCORE,
     OPPONENT_ENCORE_END,
     PLAYER_ENCORE_END,
-    OPPONENT_WATER_ABSORB,
-    PLAYER_WATER_ABSORB,
-    OPPONENT_MOLD,
-    PLAYER_MOLD,
     OPPONENT_STURDY,
     PLAYER_STURDY,
     OPPONENT_WISH,
@@ -366,36 +480,94 @@ REGEX_LIST = [
     PAIN_SPLIT,
     OPPONENT_FORM,
     PLAYER_FORM,
+    OPPONENT_TRANSFORM,
+    PLAYER_TRANSFORM,
+    OPPONENT_TRANSFORM_2,
+    PLAYER_TRANSFORM_2,
+    OPPONENT_MAGIC_BOUNCE,
+    PLAYER_MAGIC_BOUNCE,
+    OPPONENT_DITTO,
+    PLAYER_DITTO,
     OPPONENT_PROTEAN,
     PLAYER_PROTEAN,
     OPPONENT_CURSE_BODY,
     PLAYER_CURSE_BODY,
+    OPPONENT_ULTRA_BURST,
+    PLAYER_ULTRA_BURST,
+    OPPONENT_PRIMAL,
+    PLAYER_PRIMAL,
+    OPPONENT_DISGUISE,
+    PLAYER_DISGUISE,
+    OPPONENT_AFTERMATH,
+    PLAYER_AFTERMATH,
+    OPPONENT_CONTACT,
+    PLAYER_CONTACT,
     OPPONENT_TAUNT_FAIL,
     PLAYER_TAUNT_FAIL,
     OPPONENT_HAIL_DMG,
     PLAYER_HAIL_DMG,
-    OPPONENT_ABSORB_POWER,
-    PLAYER_ABSORB_POWER,
+    OPPONENT_ABSORB,
+    PLAYER_ABSORB,
+    OPPONENT_HEAT_BEAK,
+    PLAYER_HEAT_BEAK,
     OPPONENT_POWER_HERB,
     PLAYER_POWER_HERB,
+    OPPONENT_WHITE_HERB,
+    PLAYER_WHITE_HERB,
     OPPONENT_FLINCH,
     PLAYER_FLINCH,
     OPPONENT_BELLY_DRUM,
     PLAYER_BELLY_DRUM,
+    OPPONENT_LIGHT_SCREEN,
     PLAYER_LIGHT_SCREEN,
+    OPPONENT_LIGHT_SCREEN_END,
+    PLAYER_LIGHT_SCREEN_END,
+    OPPONENT_REFLECT,
     PLAYER_REFLECT,
+    OPPONENT_REFLECT_END,
+    PLAYER_REFLECT_END,
+    OPPONENT_TAILWIND,
+    PLAYER_TAILWIND,
+    OPPONENT_TAILWIND_END,
+    PLAYER_TAILWIND_END,
+    OPPONENT_SLOW_END,
+    PLAYER_SLOW_END,
+    OPPONENT_GROUNDED,
+    PLAYER_GROUNDED,
+    OPPONENT_FLY,
+    PLAYER_FLY,
     RAIN,
+    RAIN_END,
+    RAIN_HEAVY,
+    RAIN_HEAVY_END,
     HAIL,
     HAIL_STOP,
+    SUN,
+    SUN_END,
+    SANDSTORM,
+    SANDSTORM_END,
+    OPPONENT_SANDSTORM_DMG,
+    PLAYER_SANDSTORM_DMG,
+    WEATHER_CLEARED,
     FAILED,
-    SUBSTITUTE_FAILED,
-    SUBSTITUTE_FAILED_2,
     CONFUSE_HIT,
     ELECTRIC_TERRAIN,
     ELECTRIC_TERRAIN_END,
+    PSYCHIC_TERRAIN,
+    PSYCHIC_TERRAIN_END,
+    MISTY_TERRAIN,
+    MISTY_TERRAIN_END,
+    GRASSY_TERRAIN,
+    GRASSY_TERRAIN_END,
+    OPPONENT_GRASSY_HEAL,
+    PLAYER_GRASSY_HEAL,
     TRICK_ROOM,
     TRICK_ROOM_END,
-    ITEM_SWITCH
+    ITEM_SWITCH,
+    OPPONENT_NO_SWITCH,
+    PLAYER_NO_SWITCH,
+    OPPONENT_ROCKY,
+    PLAYER_ROCKY,
 ]
 
 IGNORE_LIST = [
@@ -438,7 +610,41 @@ IGNORE_LIST = [
     IGNORE_37,
     IGNORE_38,
     IGNORE_39,
-    IGNORE_40
+    IGNORE_40,
+    IGNORE_41,
+    IGNORE_42,
+    IGNORE_43,
+    IGNORE_44,
+    IGNORE_45,
+    IGNORE_46,
+    IGNORE_47,
+    IGNORE_48,
+    IGNORE_49,
+    IGNORE_50,
+    IGNORE_51,
+    IGNORE_52,
+    IGNORE_53,
+    IGNORE_54,
+    IGNORE_55,
+    IGNORE_56,
+    IGNORE_57,
+    IGNORE_58,
+    IGNORE_59,
+    IGNORE_60,
+    IGNORE_61,
+    IGNORE_62,
+    IGNORE_63,
+    IGNORE_64,
+    IGNORE_65,
+    IGNORE_66,
+    IGNORE_67,
+    IGNORE_68,
+    IGNORE_69,
+    IGNORE_70,
+    IGNORE_71,
+    IGNORE_72,
+    IGNORE_73,
+    IGNORE_74
 ]
 
 MSG_DICT = {
@@ -459,6 +665,9 @@ MSG_DICT = {
     OPPONENT_STAT_RAISE_SHARP: 'Opponent {} {} +2',
     PLAYER_STAT_RAISE_SHARP: 'Player {} {} +2',
     PLAYER_STAT_RAISE_WEAKNESS: 'Player {} {} +2',
+    OPPONENT_Z_BOOST: 'Opponent {} {} +1',
+    PLAYER_Z_BOOST: 'Player {} {} +1',
+    STATS_RESET: 'Stats reset',
     PLAYER_SWITCH: 'Player withdrew {}',
     OPPONENT_SWITCH_1: 'Opponent withdrew {}',
     OPPONENT_SWITCH_2: 'Opponent withdrew {}',
@@ -474,6 +683,8 @@ MSG_DICT = {
     PLAYER_DODGE: 'Player {} lost 0% health',
     OPPONENT_LEFTOVERS: 'Opponent {} 6.25% health with {}',
     PLAYER_LEFTOVERS: 'Player {} restored 6.25% health with {}',
+    OPPONENT_SET_SUB: 'Opponent {} set substitute',
+    PLAYER_SET_SUB: 'Player {} set substitute',
     OPPONENT_SUBSTITUTE: 'Substitute protected Opponent {}',
     PLAYER_SUBSTITUTE: 'Substitute protected Player {}',
     OPPOSING_SUBSTITUTE_FADED: 'Opponent {} substitute faded',
@@ -497,8 +708,6 @@ MSG_DICT = {
     PLAYER_DROWSY: 'Player {} drowsy',
     OPPONENT_SLEEP: 'Opponent {} sleep',
     OPPONENT_ASLEEP: 'Opponent {} sleeping',
-    OPPONENT_ALREADY_ASLEEP: 'Opponent {} already asleep',
-    PLAYER_ALREADY_ASLEEP: 'Player {} already alseep',
     OPPONENT_FOCUS_SASH: 'Opponent {} focus sash',
     PLAYER_FOCUS_SASH: 'Player {} focus sash',
     OPPONENT_WAKE: 'Opponent {} woke',
@@ -517,10 +726,14 @@ MSG_DICT = {
     PLAYER_PARALYZED: 'Player {} paralyzed',
     OPPONENT_PARALYZE_HEAL: 'Opponent {} paralyze heal',
     PLAYER_PARALYZE_HEAL: 'Player {} paralyze heal',
-    OPPONENT_ALREADY_PARALYZE: 'Opponent {} already paralyzed',
-    PLAYER_ALREADY_PARALYZE: 'Player {} already paralyzed',
     OPPONENT_CONFUSE: 'Opponent {} confused',
+    OPPONENT_CONFUSE_2: 'Opponent {} confused',
+    PLAYER_CONFUSE_2: 'Player {} confused',
     PLAYER_CONFUSE: 'Player {} confused',
+    OPPONENT_CONFUSE_END: 'Opponent {} confuse end',
+    PLAYER_CONFUSE_END: 'Player {} confuse end',
+    OPPONENT_STATUS_CURE: 'Opponent {} status cured',
+    PLAYER_STATUS_CURE: 'Player {} status cured',
     OPPONENT_KNOCKOFF: 'Opponent {} knocked off Player {} {}',
     PLAYER_KNOCKOFF: 'Player {} knocked off Opponent {} {}',
     OPPONENT_LIFEORB: 'Opponent {} lost 10% health',
@@ -529,6 +742,8 @@ MSG_DICT = {
     PLAYER_IMMUNE: 'Player {} lost 0% health',
     OPPONENT_PROTECT: 'Opponent {} lost 0% health',
     PLAYER_PROTECT: 'Player {} lost 0% health',
+    OPPONENT_PROTECT_DMG: 'Opponent {} took dmg',
+    PLAYER_PROTECT_DMG: 'Player {} took dmg',
     OPPONENT_SEEDED: 'Opponent {} seeded',
     PLAYER_SEEDED: 'Player {} seeded',
     OPPONENT_SEEDED_DMG: 'Opponent {} lost 12.5% health',
@@ -545,6 +760,8 @@ MSG_DICT = {
     PLAYER_LOSE_TYPE: 'Player {} lost {}',
     OPPONENT_SET_WEB: 'Opponent set web',
     PLAYER_SET_WEB: 'Player set web',
+    OPPONENT_WEB_CLEAR: 'Opponent clear web',
+    PLAYER_WEB_CLEAR: 'Player clear web',
     OPPONENT_SET_STONE: 'Opponent set stone',
     PLAYER_SET_STONE: 'Player set stone',
     OPPONENT_SET_SPIKE: 'Opponent set spike',
@@ -552,10 +769,15 @@ MSG_DICT = {
     OPPONENT_SET_POISON: 'Opponent set poison',
     PLAYER_SET_POISON: 'Player set poison',
     OPPONENT_POISON_CLEAR: 'Opponent cleared poison',
+    PLAYER_POISON_CLEAR: 'Player cleared poison',
     OPPONENT_STONE_DMG: 'Opponent {} stone dmg',
     PLAYER_STONE_DMG: 'Player {} stone dmg',
+    OPPONENT_STONE_CLEAR: 'Opponent cleared stone',
+    PLAYER_STONE_CLEAR: 'Player cleared stone',
     OPPONENT_SPIKE_DMG: 'Opponent {} spike dmg',
     PLAYER_SPIKE_DMG: 'Player {} spike dmg',
+    OPPONENT_SPIKE_CLEAR: 'Opponent cleared spike',
+    PLAYER_SPIKE_CLEAR: 'Player cleared spike',
     OPPONENT_DRAGGED: 'Opponent {} dragged in',
     PLAYER_DRAGGED: 'Player {} dragged in',
     OPPONENT_NIMBLE: 'Opponent {} nimble',
@@ -564,8 +786,6 @@ MSG_DICT = {
     PLAYER_WEAKNESS_POLICY: 'Player {} Weakness Policy',
     OPPONENT_TRACE: 'Opponent {} took Player {} {}',
     PLAYER_TRACE: 'Player {} took Opponent {} {}',
-    OPPONENT_LEVITATE: 'Opponent {} lost 0% health',
-    PLAYER_LEVITATE: 'Player {} lost 0% health',
     OPPONENT_TAUNT: 'Opponent {} taunted',
     PLAYER_TAUNT: 'Player {} taunted',
     OPPONENT_TAUNT_END: 'Opponent {} taunt end',
@@ -576,61 +796,103 @@ MSG_DICT = {
     PLAYER_ENCORE_END: 'Player {} encore end',
     OPPONENT_FORM: 'Opponent {} changed to {}',
     PLAYER_FORM: 'Player {} changed to {}',
-    OPPONENT_WATER_ABSORB: 'Opponent {} healed',
-    PLAYER_WATER_ABSORB: 'Player {} healed',
-    OPPONENT_MOLD: 'Opponent {} breaks mold',
-    PLAYER_MOLD: 'Player {} breaks mold',
+    OPPONENT_TRANSFORM: 'Opponent {} changed to Complete Forme',
+    PLAYER_TRANSFORM: 'Player {} changed to Complete Forme',
+    OPPONENT_TRANSFORM_2: 'Opponent {} tranformed',
+    PLAYER_TRANSFORM_2: 'Player {} transformed',
+    OPPONENT_DITTO: 'Opponent {} transformed into {}',
+    PLAYER_DITTO: 'Player {} transformed into {}',
+    OPPONENT_MAGIC_BOUNCE: 'Opponent {} bounced {} back',
+    PLAYER_MAGIC_BOUNCE: 'Player {} bounced {} back',
     OPPONENT_STURDY: 'Opponent {} sturdy',
     PLAYER_STURDY: 'Player {} sturdy',
-    OPPONENT_WISH: 'Opponent active healed',  # TODO get percent
-    PLAYER_WISH: 'Player active healed',
+    OPPONENT_WISH: 'Opponent active healed by Wish',
+    PLAYER_WISH: 'Player active healed by Wish',
     OPPONENT_PROTEAN: 'Opponent {} changed to {}',
     PLAYER_PROTEAN: 'Player {} changed to {}',
     OPPONENT_CURSE_BODY: 'Player {} {} disabled',
     PLAYER_CURSE_BODY: 'Opponent {} {} disabled',
+    OPPONENT_ULTRA_BURST: 'Opponent {} ultra burst',
+    PLAYER_ULTRA_BURST: 'Player {} ultra burst',
+    OPPONENT_PRIMAL: 'Opponent {} primal',
+    PLAYER_PRIMAL: 'Player {} primal',
+    OPPONENT_AFTERMATH: 'Player {} hurt by aftermath',
+    PLAYER_AFTERMATH: 'Opponent {} hurt by aftermath',
+    OPPONENT_DISGUISE: 'Opponent {} disguise broke',
+    PLAYER_DISGUISE: 'Player {} disguise broke',
+    OPPONENT_CONTACT: 'Player {} contact dmg',
+    PLAYER_CONTACT: 'Opponent {} contact dmg',
     OPPONENT_TAUNT_FAIL: 'Opponent {} move failed to taunt',
     PLAYER_TAUNT_FAIL: 'Player {} move failed to taunt',
-    OPPONENT_HAIL_DMG: 'Opponent {} lost % health',  # TODO get percent
-    PLAYER_HAIL_DMG: 'PLAYER {} lost % health',
-    OPPONENT_ABSORB_POWER: 'Opponent {} absorb power',
-    PLAYER_ABSORB_POWER: 'Player {} absorb power',
+    OPPONENT_HAIL_DMG: 'Opponent {} lost 6.25% health',
+    PLAYER_HAIL_DMG: 'PLAYER {} lost 6.25% health',
+    OPPONENT_ABSORB: 'Opponent {} absorb {}',
+    PLAYER_ABSORB: 'Player {} absorb {}',
+    OPPONENT_HEAT_BEAK: 'Opponent {} heat beak',
+    PLAYER_HEAT_BEAK: 'Player {} heat beak',
     OPPONENT_POWER_HERB: 'Opponent {} Power Herb',
     PLAYER_POWER_HERB: 'Player {} Power Herb',
+    OPPONENT_WHITE_HERB: 'Opponent {} stats reset',
+    PLAYER_WHITE_HERB: 'Player {} stats reset',
     OPPONENT_FLINCH: 'Opponent {} flinch',
     PLAYER_FLINCH: 'Player {} flinch',
     OPPONENT_BELLY_DRUM: 'Opponent {} lost 50% health, attack +6',
     PLAYER_BELLY_DRUM: 'Player {} lost 50% health, attack +6',
+    OPPONENT_LIGHT_SCREEN: 'Opponent Light Screen',
     PLAYER_LIGHT_SCREEN: 'Player Light Screen',
+    OPPONENT_LIGHT_SCREEN_END: 'Opponent Light Screen end',
+    PLAYER_LIGHT_SCREEN_END: 'Player Light Screen end',
+    OPPONENT_REFLECT: 'Opponent Reflect',
+    OPPONENT_REFLECT_END: 'Opponent Reflect end',
     PLAYER_REFLECT: 'Player Reflect',
+    PLAYER_REFLECT_END: 'Player Reflect end',
+    OPPONENT_TAILWIND: 'Opponent Tailwind',
+    PLAYER_TAILWIND: 'Player Tailwind',
+    OPPONENT_TAILWIND_END: 'Opponent Tailwind end',
+    PLAYER_TAILWIND_END: 'Player Tailwind end',
+    OPPONENT_SLOW_END: 'Opponent {} slow end',
+    PLAYER_SLOW_END: 'Player {} slow end',
+    OPPONENT_GROUNDED: 'Opponent {} grounded',
+    PLAYER_GROUNDED: 'Player {} grounded',
+    OPPONENT_FLY: 'Opponent {} fly',
+    PLAYER_FLY: 'Player {} fly',
     PAIN_SPLIT: 'Pain split',
     RAIN: 'Rain',
+    RAIN_END: 'Rain end',
+    RAIN_HEAVY: 'Heavy Rain',
+    RAIN_HEAVY_END: 'Heavy Rain end',
     HAIL: 'Hail',
     HAIL_STOP: 'Hail stop',
+    SUN: 'Harsh sun',
+    SUN_END: 'Sun end',
+    SANDSTORM: 'Sandstorm',
+    SANDSTORM_END: 'Sandstorm end',
+    OPPONENT_SANDSTORM_DMG: 'Opponent {} lost 6.25% health',
+    PLAYER_SANDSTORM_DMG: 'Player {} lost 6.25% health',
+    WEATHER_CLEARED: 'Weather cleared',
     FAILED: 'Move failed',
-    SUBSTITUTE_FAILED: 'Unable to substitute',
-    SUBSTITUTE_FAILED_2: 'Unable to substitute',
     CONFUSE_HIT: 'Confuse hit',
     ELECTRIC_TERRAIN: 'Electric terrain',
     ELECTRIC_TERRAIN_END: 'Electric terrain end',
+    PSYCHIC_TERRAIN: 'Psychic terrain',
+    PSYCHIC_TERRAIN_END: 'Psychic terrain end',
+    MISTY_TERRAIN: 'Misty terrain',
+    MISTY_TERRAIN_END: 'Misty terrain end',
+    GRASSY_TERRAIN: 'Grassy terrain',
+    GRASSY_TERRAIN_END: 'Grassy terrain end',
+    OPPONENT_GRASSY_HEAL: 'Opponent {} heal 6.25%',
+    PLAYER_GRASSY_HEAL: 'Player {} heal 6.25%',
     TRICK_ROOM: 'Trick room',
     TRICK_ROOM_END: 'Trick room end',
-    ITEM_SWITCH: 'Item swap'
+    ITEM_SWITCH: 'Item swap',
+    OPPONENT_NO_SWITCH: 'Opponent {} cannot switch',
+    PLAYER_NO_SWITCH: 'Player {} cannot switch',
+    OPPONENT_ROCKY: 'Opponent {} hurt by Rocky Helm',
+    PLAYER_ROCKY: 'Player {} hurt by Rocky Helm',
+    OPPONENT_CRASH: 'Opponent {} crashed',
+    PLAYER_CRASH: 'Player {} crashed'
 }
-# TODO NOTES
 '''
-Bright light is about to burst out of the opposing Necrozma!
-The opposing Necrozma regained its true power through Ultra Burst!
-All stat changes were eliminated!
-Your team's Light Screen wore off!
-[Tapu Lele's Psychic Surge]The battlefield got weird!
-Your team's Reflect wore off!
-[The opposing Kyurem's Turboblaze]The opposing Kyurem is radiating a blazing aura!
-[Registeel's Clear Body]Registeel's stats were not lowered!
-[The opposing Ninetales's Drought]The sunlight turned harsh!
-[Hippowdon's Sand Stream]A sandstorm kicked up!
-(The sandstorm is raging.)
-The opposing Ninetales is buffeted by the sandstorm!
-The sandstorm subsided.
-(The sunlight is strong.)
-The harsh sunlight faded.
+The opposing Kyogre's Scald melted the ice!
+[Tentacruel's Liquid Ooze]The opposing Yveltal sucked up the liquid ooze!
 '''

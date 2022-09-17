@@ -13,9 +13,7 @@ class RandomBot(BattleBot):
     # TODO Check for forfeit if exception caught
     def battle(self):
         self.read_team(BattleBot.SELF_SIDE)
-        self.read_team(BattleBot.OPPONENT_SIDE)
         self.battle_timer()
-        self.battle_logger.save_data()
         while self.in_battle():
             # TODO Skip to End
             # Wait for next turn
@@ -29,6 +27,7 @@ class RandomBot(BattleBot):
             if not self.Driver.driver.find_elements(value="//div[@class='movemenu']", by=By.XPATH):
                 # Switch pokemon
                 party = []
+                self.Driver.wait_for_element("//button[@name='chooseSwitch']", by=By.XPATH)
                 pokes = self.Driver.driver.find_elements(value="//button[@name='chooseSwitch']", by=By.XPATH)
                 for p in pokes:
                     party.append(p.get_attribute('value'))
@@ -44,6 +43,7 @@ class RandomBot(BattleBot):
             self.battle_logger.turn += 1
             self.battle_logger.save_data()
         self.battle_logger.log_turn(self.Driver)
+        self.battle_logger.save_data()
 
     def choose_action(self):
         status = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH).get_attribute(

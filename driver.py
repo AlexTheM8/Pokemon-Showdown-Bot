@@ -3,6 +3,7 @@ import string
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -41,19 +42,19 @@ class WebDriver:
         self.driver.find_element(value="username", by=By.NAME).submit()
         self.wait_for_element("username", by=By.CLASS_NAME)
 
-    def initiate_battle(self):
+    def set_format(self):
         # Select Gen 7
         self.wait_and_click("format")
         self.wait_for_element("selectFormat")
-        self.driver.find_element(value="//button[text()='[Gen 7] Random Battle']", by=By.XPATH).click()
-        # Find battle
-        self.wait_and_click("search")
-        # Wait for battle to start
-        self.wait_for_element("movemenu", by=By.CLASS_NAME)
+        ac = ActionChains(self.driver)
+        format_elem = self.driver.find_element(value="//button[text()='[Gen 7] Random Battle']", by=By.XPATH)
+        ac.move_to_element(format_elem).perform()
+        self.wait_and_click("//button[text()='[Gen 7] Random Battle']", by=By.XPATH)
 
     def next_battle(self):
         self.wait_and_click("closeAndMainMenu")
 
     def run(self):
         self.setup_account()
-        self.initiate_battle()
+        self.set_format()
+        self.wait_and_click("search")

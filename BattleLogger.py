@@ -24,6 +24,10 @@ class BattleLogger:
         self.load_data(util.MOVES_FILE), self.load_data(util.ABILITIES_FILE)
         self.turn = 0
 
+    def reset(self):
+        self.turn = 0
+        self.updated_moves, self.updated_abilities = False, False
+
     def load_data(self, file_type):
         if exists(file_type):
             with open(file_type) as f:
@@ -38,7 +42,7 @@ class BattleLogger:
         known = self.known_move_map.get(poke, []) if info_type == self.MOVE_INFO else self.abilities_map.get(poke, [])
         updated = False
         for d in data:
-            if d not in known:
+            if d not in known and d != '':
                 known.append(d)
                 if info_type == self.MOVE_INFO:
                     self.updated_moves = True
@@ -77,7 +81,7 @@ class BattleLogger:
             found_match = False
             for r in util.REGEX_LIST:
                 if match(r, msg):
-                    log_msg(msg, r)
+                    # log_msg(msg, r)
                     found_match = True
                     break
             if not found_match:
