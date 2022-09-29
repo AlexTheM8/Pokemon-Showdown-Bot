@@ -1,53 +1,46 @@
 from random import randrange
 
-from selenium.common import NoSuchElementException, TimeoutException
-from selenium.webdriver import ActionChains
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.wait import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-
 from BattleBot import BattleBot
+from BattleLogger import Move
 
 
 class LittleTimmyBot(BattleBot):
 
-    def battle(self):
-        super().battle()
-        while self.in_battle():
-            # Wait for next turn
-            try:
-                WebDriverWait(self.Driver.driver, 2).until(
-                    EC.presence_of_element_located((By.XPATH, self.ACTIVE_POKE_PATH))
-                )
-            except (TimeoutException, NoSuchElementException):
-                continue
-            try:
-                # Check if used switching move
-                if not self.Driver.driver.find_elements(value="//div[@class='movemenu']", by=By.XPATH):
-                    party = self.party_options()
-                    self.choose_switch(party, randrange(len(party)))  # TODO Choose best type-effectiveness
-                    continue
-                self.battle_logger.log_turn(self.Driver)
-                self.read_team(BattleBot.OPPONENT_SIDE)
-                self.choose_action()
-                self.battle_logger.turn += 1
-            except (NoSuchElementException, TimeoutException):
-                continue
-
     def choose_action(self):
         if self.active_fainted():
-            party = self.party_options()
-            self.choose_switch(party, randrange(len(party)))  # TODO Choose best type-effectiveness
+            self.choose_switch()
         else:
-            # TODO Get Player and Opponent Type
             options, has_z, mega_elem = self.move_options(modded=True)
-            strongest, pick = 0.0, ''
+            player_type, opponent_type = self.get_type(self.SELF_SIDE, num=1), self.get_type(self.OPPONENT_SIDE)
+            ability = self.get_ability(self.OPPONENT_SIDE)
+            stats = self.get_stats()
+            strongest, pick = 0.0, options[randrange(len(options))][0]
             for v, m in options:
-                calc = self.damage_calc('', m.type, '', m.base_power)
+                if len(ability) > 1:
+                    calc = self.damage_calc(player_type, m, opponent_type, '', stats)
+                else:
+                    calc = self.damage_calc(player_type, m, opponent_type, ability[0], stats)
                 if calc > strongest:
-                    strongest = calc
-                    pick = v
-            if pick == '':
-                self.choose_move(options[randrange(len(options))][0], has_z, mega_elem)
-            else:
-                self.choose_move(pick, has_z, mega_elem)
+                    strongest, pick = calc, v
+            self.choose_move(pick, has_z, mega_elem)
+
+    def best_pick(self):
+        party = self.party_options()
+        opponent_type = self.get_type(self.OPPONENT_SIDE)
+        ability = self.get_ability(self.OPPONENT_SIDE)
+        potential, pick = -10, party[randrange(len(party))]
+        for i, p in enumerate(party):
+            poke_type = self.get_type(self.SELF_SIDE, int(p))
+            poke_ability = self.get_ability(self.SELF_SIDE, num=p)
+            calc = 0.0
+            for t in poke_type:
+                move = Move(t=t, base_power=1.0)
+                if len(ability) > 1:
+                    calc += self.damage_calc(poke_type, move, opponent_type, '', {})
+                else:
+                    calc += self.damage_calc(poke_type, move, opponent_type, ability[0], {})
+            for t in opponent_type:
+                calc -= self.damage_calc(opponent_type, Move(t=t, base_power=1.0), poke_type, poke_ability, {})
+            if calc > potential:
+                potential, pick = calc, p
+        return pick

@@ -26,6 +26,27 @@ STATUS = 'Status'
 PHYSICAL = 'Physical'
 SPECIAL = 'Special'
 
+# Immune abilities
+# TODO Soundproof
+IMMUNE_ABILITIES = {
+    'Dry Skin': WATER,
+    'Flash Fire': FIRE,
+    'Levitate': GROUND,
+    'Lightning Rod': ELECTR,
+    'Motor Drive': ELECTR,
+    'Sap Sipper': GRASS,
+    'Storm Drain': WATER,
+    'Volt Absorb': ELECTR,
+    'Water Absorb': WATER
+}
+
+# Stats
+ATK = 'Atk'
+DEF = 'Def'
+SPA = 'SpA'
+SPD = 'SpD'
+SPE = 'Spe'
+
 
 def type_effectiveness(move_type, opponent_type):
     return {
@@ -52,9 +73,10 @@ def type_effectiveness(move_type, opponent_type):
         (POISON, POISON): 0.5,
         (POISON, GROUND): 0.5,
         (POISON, GHOST): 0.5,
+        (POISON, STEEL): 0.0,
         (POISON, GRASS): 2.0,
         (POISON, FAIRY): 2.0,
-        (GROUND, FLYING): 0.5,
+        (GROUND, FLYING): 0.0,
         (GROUND, POISON): 2.0,
         (GROUND, BUG): 0.5,
         (GROUND, STEEL): 2.0,
@@ -146,7 +168,6 @@ def type_effectiveness(move_type, opponent_type):
     }.get((move_type, opponent_type), 1.0)
 
 
-# TODO Optimize opponent/player
 # Regex Log Messages
 OPPONENT_MOVE = r'^The opposing (.*) used (.*)!$'
 PLAYER_MOVE = r'^(.*) used (.*)!$'
@@ -428,10 +449,37 @@ OPPONENT_HARVEST = r'^\[The opposing .*\'s Harvest\]The opposing (.*) harvested 
 PLAYER_HARVEST = r'^\[.*\'s Harvest\](.*) harvested one (.*)!$'
 OPPONENT_MAGNET_RISE = r'^The opposing (.*) levitated with electromagnetism!$'
 PLAYER_MAGNET_RISE = r'^(.*) levitated with electromagnetism!$'
+OPPONENT_MAGNET_RISE_END = r'^The opposing (.*)\'s electromagnetism wore off!$'
+PLAYER_MAGNET_RISE_END = r'^(.*)\'s electromagnetism wore off!$'
 OPPONENT_HARSH_LIGHT = r'^The opposing (.*) became cloaked in a harsh light!$'
 PLAYER_HARSH_LIGHT = r'^(.*) became cloaked in a harsh light!$'
 OPPONENT_FOCUS = r'^The opposing (.*) is tightening its focus!$'
 PLAYER_FOCUS = r'^(.*) is tightening its focus!$'
+OPPONENT_HURT = r'^The opposing (.*) was hurt!$'
+PLAYER_HURT = r'^(.*) was hurt!$'
+OPPONENT_ITEM_STEAL = r'^.*The opposing (.*) stole (.*)\'s (.*)!$'
+PLAYER_ITEM_STEAL = r'^.*(.*) stole the opposing (.*)\'s (.*)!$'
+PERISH_SONG = r'^All Pokémon that heard the song will faint in three turns!$'
+OPPONENT_PERISH_COUNT = r'^The opposing (.*)\'s perish count fell to (.*)\.$'
+PLAYER_PERISH_COUNT = r'^(.*)\'s perish count fell to (.*)\.$'
+OPPONENT_HEALING_WISH = r'^The healing wish came true for the opposing (.*)!$'
+PLAYER_HEALING_WISH = r'^The healing wish came true for (.*)!$'
+OPPONENT_MAGMA_STORM = r'^The opposing (.*) became trapped by swirling magma!$'
+PLAYER_MAGMA_STORM = r'^(.*) became trapped by swirling magma!$'
+OPPONENT_MAGMA_STORM_DMG = r'^The opposing (.*) is hurt by Magma Storm!$'
+PLAYER_MAGMA_STORM_DMG = r'^(.*) is hurt by Magma Storm!$'
+OPPONENT_DIG = r'^The opposing (.*) burrowed its way under the ground!$'
+PLAYER_DIG = r'^(.*) burrowed its way under the ground!$'
+OPPONENT_BOUNCE = r'^The opposing (.*) sprang up!$'
+PLAYER_BOUNCE = r'^(.*) sprang up!$'
+OPPONENT_BLACK_SLUDGE = r'^The opposing (.*) was hurt by its Black Sludge!$'
+PLAYER_BLACK_SLUDGE = r'^(.*) was hurt by its Black Sludge!$'
+OPPONENT_SOLAR_POWER = r'^\[The opposing .*\'s Solar Power\]\(The opposing (.*) was hurt!\)$'
+PLAYER_SOLAR_POWER = r'^\[.*\'s Solar Power\]\((.*) was hurt!\)$'
+OPPONENT_SHADOW_FORCE = r'^The opposing (.*) vanished instantly!$'
+PLAYER_SHADOW_FORCE = r'^(.*) vanished instantly!$'
+OPPONENT_DRY_SKIN_DMG = r'^\[The opposing .*\'s Dry Skin\]\(The opposing (.*) was hurt by its Dry Skin\.\)$'
+PLAYER_DRY_SKIN_DMG = r'^\[.*\'s Dry Skin\]\((.*) was hurt by its Dry Skin\.\)$'
 
 # Ignore messages
 IGNORE_1 = r'^But it does not have enough HP left to make a substitute!$'
@@ -461,7 +509,7 @@ IGNORE_24 = r'^.* won the battle!$'
 IGNORE_25 = r'^\(The hail is crashing down\.\)$'
 IGNORE_26 = r'^\(Rain continues to fall\.\)'
 IGNORE_27 = r'^A soothing aroma wafted through the area!$'
-IGNORE_28 = r'^\(Fake Out only works on your first turn out\.\)$'
+IGNORE_28 = r'^\(.* only works on your first turn out\.\)$'
 IGNORE_29 = r'^.* surrounded itself with its Z-Power!$'
 IGNORE_30 = r'^.* returned its decreased stats to normal using its Z-Power!$'
 IGNORE_31 = r'^\[.*\'s Moxie\]$'
@@ -475,7 +523,7 @@ IGNORE_38 = r'^.* already has a substitute!'
 IGNORE_39 = r'^.* is hoping to take its attacker down with it!$'
 IGNORE_40 = r'^.*\'s .* won\'t go any higher!$'
 IGNORE_41 = r'^\[.*\'s Turboblaze\].* is radiating a blazing aura!$'
-IGNORE_42 = r'^\[.*\'s Clear Body\].*\'s stats were not lowered!$'
+IGNORE_42 = r'^.*\'s stats were not lowered!$'
 IGNORE_43 = r'^\(The sandstorm is raging\.\)'
 IGNORE_44 = r'^\[.*\'s Mold Breaker\].* breaks the mold!$'
 IGNORE_45 = r'^\(The sunlight is strong\.\)$'
@@ -528,6 +576,12 @@ IGNORE_91 = r'^.* is protected by an aromatic veil!$'
 IGNORE_92 = r'^\[.*\'s Shields Down\]Shields Down activated!\(.* stopped shielding itself\.\)$'
 IGNORE_93 = r'^.*\'s .* won\'t go any lower!$'
 IGNORE_94 = r'^.* lost its focus and couldn\'t move!$'
+IGNORE_95 = r'^\[.*\'s Hydration\]$'
+IGNORE_96 = r'^\(Psychic Terrain doesn\'t affect Pokémon immune to Ground\.\)$'
+IGNORE_97 = r'^.* is protected by the Electric Terrain!$'
+IGNORE_98 = r'^.*\'s item cannot be removed!$'
+IGNORE_99 = r'^\[.*\'s Water Compaction\]$'
+IGNORE_100 = r'^.* can\'t use .*!$'
 
 REGEX_LIST = [
     OPPONENT_Z_MOVE,
@@ -811,10 +865,37 @@ REGEX_LIST = [
     PLAYER_HARVEST,
     OPPONENT_MAGNET_RISE,
     PLAYER_MAGNET_RISE,
+    OPPONENT_MAGNET_RISE_END,
+    PLAYER_MAGNET_RISE_END,
     OPPONENT_HARSH_LIGHT,
     PLAYER_HARSH_LIGHT,
     OPPONENT_FOCUS,
     PLAYER_FOCUS,
+    OPPONENT_HURT,
+    PLAYER_HURT,
+    OPPONENT_ITEM_STEAL,
+    PLAYER_ITEM_STEAL,
+    PERISH_SONG,
+    OPPONENT_PERISH_COUNT,
+    PLAYER_PERISH_COUNT,
+    OPPONENT_HEALING_WISH,
+    PLAYER_HEALING_WISH,
+    OPPONENT_MAGMA_STORM,
+    PLAYER_MAGMA_STORM,
+    OPPONENT_MAGMA_STORM_DMG,
+    PLAYER_MAGMA_STORM_DMG,
+    OPPONENT_DIG,
+    PLAYER_DIG,
+    OPPONENT_BOUNCE,
+    PLAYER_BOUNCE,
+    OPPONENT_BLACK_SLUDGE,
+    PLAYER_BLACK_SLUDGE,
+    OPPONENT_SOLAR_POWER,
+    PLAYER_SOLAR_POWER,
+    OPPONENT_SHADOW_FORCE,
+    PLAYER_SHADOW_FORCE,
+    OPPONENT_DRY_SKIN_DMG,
+    PLAYER_DRY_SKIN_DMG
 ]
 
 IGNORE_LIST = [
@@ -910,7 +991,14 @@ IGNORE_LIST = [
     IGNORE_90,
     IGNORE_91,
     IGNORE_92,
-    IGNORE_93
+    IGNORE_93,
+    IGNORE_94,
+    IGNORE_95,
+    IGNORE_96,
+    IGNORE_97,
+    IGNORE_98,
+    IGNORE_99,
+    IGNORE_100
 ]
 
 # TODO Get health info for base-line dmg (Stones, spikes, poison, etc.)
@@ -1193,11 +1281,35 @@ MSG_DICT = {
     PLAYER_HARVEST: 'Player {} harvest {}',
     OPPONENT_MAGNET_RISE: 'Opponent {} magnet rise',
     PLAYER_MAGNET_RISE: 'Player {} magnet rise',
+    OPPONENT_MAGNET_RISE_END: 'Opponent {} magnet rise end',
+    PLAYER_MAGNET_RISE_END: 'Player {} magnet rise end',
     OPPONENT_HARSH_LIGHT: 'Opponent {} harsh light',
     PLAYER_HARSH_LIGHT: 'Player {} harsh light',
     OPPONENT_FOCUS: 'Opponent {} tighten focus',
-    PLAYER_FOCUS: 'Player {} tighten focus'
+    PLAYER_FOCUS: 'Player {} tighten focus',
+    OPPONENT_HURT: 'Opponent {} hurt',
+    PLAYER_HURT: 'Player {} hurt',
+    OPPONENT_ITEM_STEAL: 'Opponent {} stole Player {} {}',
+    PLAYER_ITEM_STEAL: 'Player {} stole Opponent {} {}',
+    PERISH_SONG: 'Perish song began',
+    OPPONENT_PERISH_COUNT: 'Opponent {} perish count {}',
+    PLAYER_PERISH_COUNT: 'Player {} perish count {}',
+    OPPONENT_HEALING_WISH: 'Opponent {} fully healed',
+    PLAYER_HEALING_WISH: 'Player {} fully healed',
+    OPPONENT_MAGMA_STORM: 'Opponent {} Magma Storm',
+    PLAYER_MAGMA_STORM: 'Player {} Magma Storm',
+    OPPONENT_MAGMA_STORM_DMG: 'Opponent {} lost 6.25% health',
+    PLAYER_MAGMA_STORM_DMG: 'Player {} lost 6.25% health',
+    OPPONENT_DIG: 'Opponent {} dig',
+    PLAYER_DIG: 'Player {} dig',
+    OPPONENT_BOUNCE: 'Opponent {} bounce',
+    PLAYER_BOUNCE: 'Player {} bounce',
+    OPPONENT_BLACK_SLUDGE: 'Opponent {} lost 12.5% health',
+    PLAYER_BLACK_SLUDGE: 'Player {} lost 12.5% health',
+    OPPONENT_SOLAR_POWER: 'Opponent {} lost 12.5% health',
+    PLAYER_SOLAR_POWER: 'Player {} lost 12.5% health',
+    OPPONENT_SHADOW_FORCE: 'Opponent {} shadow force',
+    PLAYER_SHADOW_FORCE: 'Player {} shadow force',
+    OPPONENT_DRY_SKIN_DMG: 'Opponent {} lost 12.5% health',
+    PLAYER_DRY_SKIN_DMG: 'Player {} lost 12.5% health'
 }
-'''
-The opposing Groudon was hurt!
-'''

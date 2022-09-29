@@ -23,6 +23,8 @@ class BattleLogger:
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
         self.load_data(util.KNOWN_MOVES_FILE), self.load_data(util.ABILITIES_FILE), self.load_data(util.MOVES_FILE)
         self.turn = 0
+        self.self_team, self.opp_team = [], []
+        self.battle_info = []
 
     def reset(self):
         self.turn = 0
@@ -89,7 +91,6 @@ class BattleLogger:
         turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
         for e in turn_elems:
             msg = e.text.replace('\n', '')
-            # TODO Translate to logs
             found_match = False
             for r in util.REGEX_LIST:
                 if match(r, msg):
@@ -104,6 +105,9 @@ class BattleLogger:
             if not found_match:
                 print('NEW MESSAGE:', msg)
 
+    def save_battle_info(self):
+        pass
+
 
 class Move:
 
@@ -116,3 +120,12 @@ class Move:
 
     def __repr__(self):
         return ','.join([self.name, self.type, self.move_type, str(self.base_power)])
+
+
+class Pokemon:
+
+    def __init__(self, name="", ability="", item="", moves=None, stats=None):
+        if moves is None:
+            moves = []
+            for _ in range(4):
+                moves.append(Move())
