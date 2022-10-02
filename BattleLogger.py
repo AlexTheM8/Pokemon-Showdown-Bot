@@ -125,7 +125,22 @@ class Move:
 class Pokemon:
 
     def __init__(self, name="", ability="", item="", moves=None, stats=None):
-        if moves is None:
-            moves = []
-            for _ in range(4):
-                moves.append(Move())
+        self.moves = None
+        if moves is not None:
+            self.set_moves(moves)
+        self.name = name
+        self.ability = ability
+        self.item = item
+        self.stats = stats
+
+    def set_moves(self, moves):
+        self.moves = {}
+        for v, m in moves:
+            self.moves[v] = m
+
+    def __repr__(self):
+        repr_list = [self.name, self.ability, self.item]
+        for m in self.moves:
+            if 'z' not in m:
+                repr_list.append(self.moves[m].name)
+        return ','.join(repr_list)

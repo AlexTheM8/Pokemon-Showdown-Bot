@@ -40,6 +40,8 @@ IMMUNE_ABILITIES = {
     'Water Absorb': WATER
 }
 
+# TODO Immune items
+
 # Stats
 ATK = 'Atk'
 DEF = 'Def'
@@ -167,6 +169,10 @@ def type_effectiveness(move_type, opponent_type):
         (FAIRY, DARK): 2.0
     }.get((move_type, opponent_type), 1.0)
 
+
+# Item messages
+ITEM_KNOCKED_OFF = r'^None \((.*) was knocked off\)$'
+ITEM_EATEN = r'^None \((.*) was eaten\)$'
 
 # Regex Log Messages
 OPPONENT_MOVE = r'^The opposing (.*) used (.*)!$'
@@ -582,6 +588,11 @@ IGNORE_97 = r'^.* is protected by the Electric Terrain!$'
 IGNORE_98 = r'^.*\'s item cannot be removed!$'
 IGNORE_99 = r'^\[.*\'s Water Compaction\]$'
 IGNORE_100 = r'^.* can\'t use .*!$'
+
+ITEM_REGEX = [
+    ITEM_EATEN,
+    ITEM_KNOCKED_OFF
+]
 
 REGEX_LIST = [
     OPPONENT_Z_MOVE,
