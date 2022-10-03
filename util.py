@@ -40,8 +40,6 @@ IMMUNE_ABILITIES = {
     'Water Absorb': WATER
 }
 
-# TODO Immune items
-
 # Stats
 ATK = 'Atk'
 DEF = 'Def'

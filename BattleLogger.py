@@ -28,7 +28,18 @@ class BattleLogger:
 
     def reset(self):
         self.turn = 0
+        self.self_team, self.opp_team = [], []
+        self.battle_info = []
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
+
+    def update_opp_team(self, poke):
+        if not any(poke.name == p.name for p in self.opp_team):
+            self.opp_team.append(poke)
+        else:
+            for i, p in enumerate(self.opp_team):
+                if p.name == poke.name:
+                    self.opp_team[i] = poke
+                    break
 
     def load_data(self, file_type):
         if exists(file_type):
@@ -125,22 +136,18 @@ class Move:
 class Pokemon:
 
     def __init__(self, name="", ability="", item="", moves=None, stats=None):
-        self.moves = None
-        if moves is not None:
-            self.set_moves(moves)
+        self.moves = moves
         self.name = name
         self.ability = ability
         self.item = item
         self.stats = stats
 
-    def set_moves(self, moves):
-        self.moves = {}
-        for v, m in moves:
-            self.moves[v] = m
-
     def __repr__(self):
         repr_list = [self.name, self.ability, self.item]
-        for m in self.moves:
-            if 'z' not in m:
-                repr_list.append(self.moves[m].name)
+        if self.moves is not None:
+            repr_list.extend(self.moves)
+            if len(self.moves) < 4:
+                repr_list.extend(["" for _ in range(4 - len(self.moves))])
+        else:
+            repr_list.extend(["" for _ in range(4)])
         return ','.join(repr_list)

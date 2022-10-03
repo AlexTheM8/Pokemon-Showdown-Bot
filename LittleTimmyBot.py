@@ -13,26 +13,17 @@ class LittleTimmyBot(BattleBot):
             self.choose_switch()
         else:
             options, has_z, mega_elem = self.move_options(modded=True)
-            poke_name = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH).text.split(',')[0]
             player_type, opponent_type = self.get_type(self.SELF_SIDE, num=1), self.get_type(self.OPPONENT_SIDE)
             ability, item = self.get_ability_item(self.OPPONENT_SIDE)
+            if 'None' in item:
+                item = ''
             stats = self.get_stats()
-            for i, p in enumerate(self.battle_logger.self_team):
-                if p.name == poke_name:
-                    updated_poke = p
-                    if p.moves is None:
-                        updated_poke.set_moves(options)
-                    # TODO Remove after updating get_stats
-                    if p.stats is None:
-                        updated_poke.stats = stats
-                    self.battle_logger.self_team[i] = updated_poke
-                    break
             strongest, pick = 0.0, options[randrange(len(options))][0]
             for v, m in options:
                 if len(ability) > 1:
-                    calc = self.damage_calc(player_type, m, opponent_type, '', '', stats)
+                    calc = self.damage_calc(player_type, m, opponent_type, '', item, stats)
                 else:
-                    calc = self.damage_calc(player_type, m, opponent_type, ability[0], '', stats)
+                    calc = self.damage_calc(player_type, m, opponent_type, ability[0], item, stats)
                 if calc > strongest:
                     strongest, pick = calc, v
             self.choose_move(pick, has_z, mega_elem)
@@ -47,18 +38,22 @@ class LittleTimmyBot(BattleBot):
             return pick
         opponent_type = self.get_type(self.OPPONENT_SIDE)
         ability, item = self.get_ability_item(self.OPPONENT_SIDE)
+        if 'None' in item:
+            item = ''
         for p in party:
             poke_type = self.get_type(self.SELF_SIDE, int(p))
-            poke_ability, poke_item = self.get_ability_item(self.SELF_SIDE, num=p)
+            poke_ability, p_item = self.get_ability_item(self.SELF_SIDE, num=p)
+            if 'None' in p_item:
+                p_item = ''
             calc = 0.0
             for t in poke_type:
                 move = Move(t=t, base_power=1.0)
                 if len(ability) > 1:
-                    calc += self.damage_calc(poke_type, move, opponent_type, '', '', {})
+                    calc += self.damage_calc(poke_type, move, opponent_type, '', item, {})
                 else:
-                    calc += self.damage_calc(poke_type, move, opponent_type, ability[0], '', {})
+                    calc += self.damage_calc(poke_type, move, opponent_type, ability[0], item, {})
             for t in opponent_type:
-                calc -= self.damage_calc(opponent_type, Move(t=t, base_power=1.0), poke_type, poke_ability, '', {})
+                calc -= self.damage_calc(opponent_type, Move(t=t, base_power=1.0), poke_type, poke_ability, p_item, {})
             if calc > potential:
                 potential, pick = calc, p
         return pick

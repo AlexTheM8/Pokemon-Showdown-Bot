@@ -56,39 +56,29 @@ class BattleBot:
         if side == self.SELF_SIDE:
             if self.battle_logger.turn == 0:
                 self.Driver.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
-                active_poke_name = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH,
-                                                                   by=By.XPATH).text.split(',')[0]
-                # Get Pokemon ability
+                poke_name = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH).text.split(',')[0]
+                # Get Pokemon ability & item
                 ability, item = self.get_ability_item(self.SELF_SIDE)
                 # Read active Pokemon moves
-                move_options, _, _ = self.move_options()
-                active_poke_moves = [m[1].name for m in move_options]
-                if active_poke_name != 'Ditto':
-                    self.battle_logger.update_data(BattleLogger.MOVE_INFO, active_poke_name, active_poke_moves)
+                move_options = self.move_options(just_names=True)
+                if poke_name != 'Ditto':
+                    self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
                     if '(base: ' not in ability and 'TOX' not in ability:
-                        self.battle_logger.update_data(BattleLogger.ABILITY_INFO, active_poke_name, [ability])
-                self.battle_logger.self_team.append(Pokemon(active_poke_name, ability, item, move_options,
-                                                            self.get_stats()))
+                        self.battle_logger.update_data(BattleLogger.ABILITY_INFO, poke_name, [ability])
+                self.battle_logger.self_team.append(Pokemon(poke_name, ability, item, move_options, self.get_stats()))
                 # Read team Pokemon & Moves
                 for i in range(1, 6):
                     # Get Pokemon name
-                    poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(i), by=By.XPATH)
-                    team_pokemon = poke_elem.text
-                    self.AC.move_to_element(poke_elem).perform()
-                    self.Driver.wait_for_element("div[class='tooltip tooltip-switchpokemon']", by=By.CSS_SELECTOR)
-                    # Get Pokemon moves
-                    team_move_names = self.Driver.driver.find_element(
-                        value="section", by=By.CLASS_NAME).text.replace('• ', '').split('\n')
-                    for idx, m in enumerate(team_move_names):
-                        if m == 'Return 102':
-                            team_move_names[idx] = 'Return'
+                    name = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(i), by=By.XPATH).text
+                    team_move_names = self.move_options(num=i)
                     # Get Pokemon ability
                     ability, item = self.get_ability_item(self.SELF_SIDE, num=i)
-                    if team_pokemon != 'Ditto':
+                    if name != 'Ditto':
                         if '(base: ' not in ability and 'TOX' not in ability:
-                            self.battle_logger.update_data(BattleLogger.ABILITY_INFO, team_pokemon, [ability])
-                        self.battle_logger.update_data(BattleLogger.MOVE_INFO, team_pokemon, team_move_names)
-                    self.battle_logger.self_team.append(Pokemon(team_pokemon, ability, item))
+                            self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
+                        self.battle_logger.update_data(BattleLogger.MOVE_INFO, name, team_move_names)
+                    self.battle_logger.self_team.append(Pokemon(name, ability, item, team_move_names,
+                                                                self.get_stats(i)))
         else:
             self.Driver.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
             elem_txt = self.Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
@@ -97,19 +87,21 @@ class BattleBot:
             abilities, item = self.get_ability_item(self.OPPONENT_SIDE)
             if '(base: ' in abilities[0] or 'TOX' in abilities:
                 abilities[0] = ''
+            if 'None' in item:
+                for m in util.ITEM_REGEX:
+                    if match(m, item):
+                        item = sub(m, '\1', item)
+                        break
             if pokemon_name != '' and pokemon_name != 'Ditto':
                 self.battle_logger.update_data(BattleLogger.ABILITY_INFO, pokemon_name, abilities)
             # Get Pokemon moves
-            self.AC.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
-            self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
-            if self.Driver.driver.find_elements(value="section", by=By.CLASS_NAME):
-                opp_moves = self.Driver.driver.find_element(value="section",
-                                                            by=By.CLASS_NAME).text.replace('• ', '').split('\n')
-                trimmed_moves = []
-                for m in opp_moves:
-                    trimmed_moves.append(m.split(' (')[0])
-                if pokemon_name != '' and pokemon_name != 'Ditto':
-                    self.battle_logger.update_data(BattleLogger.MOVE_INFO, pokemon_name, trimmed_moves)
+            opp_moves = self.move_options(num=-1)
+            if pokemon_name != '' and pokemon_name != 'Ditto':
+                self.battle_logger.update_data(BattleLogger.MOVE_INFO, pokemon_name, opp_moves)
+            if len(abilities) == 1 and abilities[0] != '':
+                self.battle_logger.update_opp_team(Pokemon(pokemon_name, abilities[0], item, opp_moves))
+            else:
+                self.battle_logger.update_opp_team(Pokemon(pokemon_name, '', item, opp_moves))
 
     def in_battle(self):
         end_battle = self.Driver.driver.find_elements(value="//button[@class='button'][@name='closeAndMainMenu']",
@@ -124,7 +116,6 @@ class BattleBot:
             self.Driver.wait_and_click("timerOn")
 
     def reset(self):
-        # TODO Reset battle info
         retry_count = 3
         success = False
         while not success:
@@ -139,35 +130,63 @@ class BattleBot:
                 retry_count -= 1
             success = True
 
-    def move_options(self, modded=False):
+    def move_options(self, num=0, modded=False, just_names=False):
         options = []
-        has_z = False
-        # Check if there is a Z Move or Mega Evolution
-        has_z_mega = self.Driver.driver.find_elements(value="//label[@class='megaevo']", by=By.XPATH)
-        if has_z_mega:
-            elem = has_z_mega[0]
-            if 'Z-Power' in elem.text:
-                elem.click()
-                # Check number of Z-moves
-                z_moves = self.Driver.driver.find_elements(
-                    value="//div[@class='movebuttons-z']/button[@name='chooseMove']", by=By.XPATH)
-                for m in z_moves:
-                    move_data = self.get_move_data(m) if not modded else self.get_modded_move_data(m)
-                    options.append(('z' + m.get_attribute('value'), move_data))
-                has_z = True
-                elem.click()
+        if num == 0:
+            has_z = False
+            # Check if there is a Z Move or Mega Evolution
+            has_z_mega = self.Driver.driver.find_elements(value="//label[@class='megaevo']", by=By.XPATH)
+            if has_z_mega:
+                elem = has_z_mega[0]
+                has_z = 'Z-Power' in elem.text
+                if not just_names:
+                    if has_z:
+                        elem.click()
+                        # Check number of Z-moves
+                        z_moves = self.Driver.driver.find_elements(
+                            value="//div[@class='movebuttons-z']/button[@name='chooseMove']", by=By.XPATH)
+                        for m in z_moves:
+                            move_data = self.get_move_data(m) if not modded else self.get_modded_move_data(m)
+                            options.append(('z' + m.get_attribute('value'), move_data))
+                        elem.click()
+                    else:
+                        # Do Mega Evo
+                        elem.click()
+            if has_z:
+                moves = self.Driver.driver.find_elements(
+                    value="//div[@class='movebuttons-noz']/button[@name='chooseMove']", by=By.XPATH)
             else:
-                # Do Mega Evo
-                elem.click()
-        if has_z:
-            moves = self.Driver.driver.find_elements(
-                value="//div[@class='movebuttons-noz']/button[@name='chooseMove']", by=By.XPATH)
+                moves = self.Driver.driver.find_elements(value="//button[@name='chooseMove']", by=By.XPATH)
+            for m in moves:
+                move_data = self.get_move_data(m) if not modded else self.get_modded_move_data(m)
+                if just_names:
+                    options.append(move_data.name)
+                else:
+                    options.append((m.get_attribute('value'), move_data))
+            if just_names:
+                return options
+            return options, has_z, has_z_mega
+        elif num == -1:
+            self.AC.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
+            self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
+            trimmed_moves = []
+            if self.Driver.driver.find_elements(value="section", by=By.CLASS_NAME):
+                opp_moves = self.Driver.driver.find_element(value="section",
+                                                            by=By.CLASS_NAME).text.replace('• ', '').split('\n')
+                for m in opp_moves:
+                    trimmed_moves.append(m.split(' (')[0])
+            return trimmed_moves
         else:
-            moves = self.Driver.driver.find_elements(value="//button[@name='chooseMove']", by=By.XPATH)
-        for m in moves:
-            move_data = self.get_move_data(m) if not modded else self.get_modded_move_data(m)
-            options.append((m.get_attribute('value'), move_data))
-        return options, has_z, has_z_mega
+            poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
+            self.AC.move_to_element(poke_elem).perform()
+            self.Driver.wait_for_element("div[class='tooltip tooltip-switchpokemon']", by=By.CSS_SELECTOR)
+            # Get Pokemon moves
+            team_move_names = self.Driver.driver.find_element(
+                value="section", by=By.CLASS_NAME).text.replace('• ', '').split('\n')
+            for idx, m in enumerate(team_move_names):
+                if m == 'Return 102':
+                    team_move_names[idx] = 'Return'
+            return team_move_names
 
     def choose_move(self, move, has_z, mega_elem):
         if has_z:
@@ -289,11 +308,6 @@ class BattleBot:
             ability_item = temp_elm.find_element(value='./..', by=By.XPATH).text.replace('Ability: ', '').split('/')
             ability = ability_item[0].strip()
             item = ability_item[1].strip().replace('Item: ', '')
-            if 'None' in item:
-                for m in util.ITEM_REGEX:
-                    if match(m, item):
-                        item = sub(m, '\1', item)
-                        break
             return ability, item
         else:
             self.AC.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
@@ -319,11 +333,14 @@ class BattleBot:
                 item = ''
             return abilities, item
 
-    # TODO Update for team
     def get_stats(self, num=0):
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
         self.Driver.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
-        poke_elem = self.Driver.driver.find_element(value="//div[@class='has-tooltip'][@data-id='p1a']", by=By.XPATH)
+        if num == 0:
+            poke_elem = self.Driver.driver.find_element(value="//div[@class='has-tooltip'][@data-id='p1a']",
+                                                        by=By.XPATH)
+        else:
+            poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
         self.AC.move_to_element(poke_elem).perform()
         self.Driver.wait_for_element(tooltip_div, by=By.XPATH)
         temp_elm = self.Driver.driver.find_elements(value=tooltip_div + "/p/*[contains(text(), 'Atk')]", by=By.XPATH)
