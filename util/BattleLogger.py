@@ -3,9 +3,10 @@ from re import match, sub
 
 from selenium.webdriver.common.by import By
 
-import util
+import util.util as util
 
 
+# TODO Update data (& logs) to parquet files
 # TODO Translate to logs
 def log_msg(msg, regex):
     replace = r''
@@ -19,9 +20,10 @@ class BattleLogger:
     MOVE_INFO, ABILITY_INFO = 0, 1
 
     def __init__(self):
-        self.known_move_map, self.abilities_map, self.move_map = {}, {}, {}
+        self.known_move_map, self.abilities_map, self.move_map, self.stats_map = {}, {}, {}, {}
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
         self.load_data(util.KNOWN_MOVES_FILE), self.load_data(util.ABILITIES_FILE), self.load_data(util.MOVES_FILE)
+        self.load_data(util.STATS_FILE)
         self.turn = 0
         self.self_team, self.opp_team = [], []
         self.battle_info = []
@@ -50,8 +52,10 @@ class BattleLogger:
                         self.known_move_map[data[0]] = data[1:]
                     elif file_type == util.ABILITIES_FILE:
                         self.abilities_map[data[0]] = data[1:]
-                    else:
+                    elif file_type == util.MOVES_FILE:
                         self.move_map[data[0]] = Move(*data)
+                    else:
+                        self.stats_map[data[0]] = data[1:]
 
     def update_data(self, info_type, poke, data):
         known = self.known_move_map.get(poke, []) if info_type == self.MOVE_INFO else self.abilities_map.get(poke, [])
@@ -93,6 +97,27 @@ class BattleLogger:
                 for move in self.move_map:
                     lines += repr(self.move_map[move]) + '\n'
                 f.write(lines)
+        with open(util.STATS_FILE, 'w', encoding='cp1252') as f:
+            lines = ''
+            for poke in self.stats_map:
+                lines += '{},{}\n'.format(poke, ','.join(self.stats_map[poke]))
+            f.write(lines)
+
+    def update_stats(self):
+        for p in self.self_team:
+            stats = []
+            if p.name in self.stats_map:
+                for i, s in enumerate(util.STATS_LIST):
+                    if float(p.stats[s]) > float(self.stats_map[p.name][i]):
+                        stats.append(str(round((float(p.stats[s]) + float(self.stats_map[p.name][i])) / 2.1, 1)))
+                    elif float(p.stats[s]) < float(self.stats_map[p.name][i]):
+                        stats.append(str(round((float(p.stats[s]) + float(self.stats_map[p.name][i])) / 1.9, 1)))
+                    else:
+                        stats.append(str(p.stats[s]))
+            else:
+                for s in util.STATS_LIST:
+                    stats.append(str(p.stats[s]))
+            self.stats_map[p.name] = stats
 
     def log_turn(self, Driver):
         if self.turn == 0:
@@ -102,19 +127,12 @@ class BattleLogger:
         turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
         for e in turn_elems:
             msg = e.text.replace('\n', '')
-            found_match = False
-            for r in util.REGEX_LIST:
-                if match(r, msg):
-                    # log_msg(msg, r)
-                    found_match = True
-                    break
-            if not found_match:
-                for r in util.IGNORE_LIST:
-                    if match(r, msg):
-                        found_match = True
-                        break
-            if not found_match:
-                print('NEW MESSAGE:', msg)
+            if any(match((reg := r), msg) for r in util.REGEX_LIST):
+                # log_msg(msg, reg)
+                break
+            if any(match(r, msg) for r in util.IGNORE_LIST):
+                break
+            print('NEW MESSAGE:', msg)
 
     def save_battle_info(self):
         pass
@@ -147,7 +165,7 @@ class Pokemon:
         if self.moves is not None:
             repr_list.extend(self.moves)
             if len(self.moves) < 4:
-                repr_list.extend(["" for _ in range(4 - len(self.moves))])
+                repr_list.extend([""] * (4 - len(self.moves)))
         else:
-            repr_list.extend(["" for _ in range(4)])
+            repr_list.extend([""] * 4)
         return ','.join(repr_list)

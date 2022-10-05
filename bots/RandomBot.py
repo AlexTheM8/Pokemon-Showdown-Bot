@@ -1,6 +1,6 @@
 from random import randrange
 
-from BattleBot import BattleBot
+from bots.BattleBot import BattleBot
 
 
 class RandomBot(BattleBot):

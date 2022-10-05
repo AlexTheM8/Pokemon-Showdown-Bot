@@ -1,4 +1,5 @@
 KNOWN_MOVES_FILE, ABILITIES_FILE, MOVES_FILE = './data/known_moves.data', './data/abilities.data', './data/moves.data'
+STATS_FILE = './data/stats.data'
 
 # Types
 NORMAL = 'Normal'
@@ -47,6 +48,8 @@ SPA = 'SpA'
 SPD = 'SpD'
 SPE = 'Spe'
 
+STATS_LIST = [ATK, DEF, SPA, SPD, SPE]
+
 
 def type_effectiveness(move_type, opponent_type):
     return {
@@ -58,7 +61,7 @@ def type_effectiveness(move_type, opponent_type):
         (FIGHT, POISON): 0.5,
         (FIGHT, ROCK): 2.0,
         (FIGHT, BUG): 0.5,
-        (FIGHT, GHOST): 0.5,
+        (FIGHT, GHOST): 0.0,
         (FIGHT, STEEL): 2.0,
         (FIGHT, PSYCHIC): 0.5,
         (FIGHT, ICE): 2.0,
@@ -72,12 +75,14 @@ def type_effectiveness(move_type, opponent_type):
         (FLYING, ELECTR): 0.5,
         (POISON, POISON): 0.5,
         (POISON, GROUND): 0.5,
+        (POISON, ROCK): 0.5,
         (POISON, GHOST): 0.5,
         (POISON, STEEL): 0.0,
         (POISON, GRASS): 2.0,
         (POISON, FAIRY): 2.0,
         (GROUND, FLYING): 0.0,
         (GROUND, POISON): 2.0,
+        (GROUND, ROCK): 2.0,
         (GROUND, BUG): 0.5,
         (GROUND, STEEL): 2.0,
         (GROUND, FIRE): 2.0,
@@ -113,6 +118,8 @@ def type_effectiveness(move_type, opponent_type):
         (STEEL, FAIRY): 2.0,
         (FIRE, ROCK): 0.5,
         (FIRE, BUG): 2.0,
+        (FIRE, STEEL): 2.0,
+        (FIRE, FIRE): 0.5,
         (FIRE, WATER): 0.5,
         (FIRE, GRASS): 2.0,
         (FIRE, ICE): 2.0,
@@ -161,6 +168,7 @@ def type_effectiveness(move_type, opponent_type):
         (DARK, DARK): 0.5,
         (DARK, FAIRY): 0.5,
         (FAIRY, FIGHT): 2.0,
+        (FAIRY, POISON): 0.5,
         (FAIRY, STEEL): 0.5,
         (FAIRY, FIRE): 0.5,
         (FAIRY, DRAGON): 2.0,

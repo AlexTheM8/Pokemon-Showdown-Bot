@@ -1,5 +1,5 @@
-from RandomBot import RandomBot
-from LittleTimmyBot import LittleTimmyBot
+from bots.RandomBot import RandomBot
+from bots.LittleTimmyBot import LittleTimmyBot
 
 if __name__ == '__main__':
     # TODO Runtime args
