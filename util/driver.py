@@ -3,16 +3,24 @@ import string
 
 from selenium import webdriver
 from selenium.common.exceptions import NoSuchElementException
+from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 
 
 class WebDriver:
+    SELF_SIDE, OPP_SIDE = 1, 2
+    ACTIVE_POKE_PATH = "//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|0']"
+    ACTIVE_STAGE_PATH = "//div[@class='has-tooltip'][@data-id='p1a']"
+    CHOOSE_SWITCH_PATH = "//button[@name='chooseSwitch'][@value='{}']"
+    OPP_POKE_PATH = "//div[@class='has-tooltip'][@data-id='p2a']"
 
     def __init__(self):
         self.driver = webdriver.Edge()
         self.driver.get('https://play.pokemonshowdown.com')
+        self.AC = ActionChains(self.driver)
+        self.botName = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(18))
 
     def wait_for_element(self, val, by=By.NAME, time=30):
         try:
@@ -35,9 +43,7 @@ class WebDriver:
         # Login
         self.wait_and_click("login")
         self.wait_for_element("username")
-        # Random bot name
-        botName = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(18))
-        self.driver.find_element(value="username", by=By.NAME).send_keys(botName)
+        self.driver.find_element(value="username", by=By.NAME).send_keys(self.botName)
         self.driver.find_element(value="username", by=By.NAME).submit()
         self.wait_for_element("username", by=By.CLASS_NAME)
 
@@ -45,13 +51,36 @@ class WebDriver:
         # Select Gen 7
         self.wait_and_click("format")
         self.wait_for_element("selectFormat")
-        # ac = ActionChains(self.driver)
-        # format_elem = self.driver.find_element(value="//button[text()='[Gen 7] Random Battle']", by=By.XPATH)
-        # ac.move_to_element(format_elem).perform()
         self.wait_and_click("//button[text()='[Gen 7] Random Battle']", by=By.XPATH)
+
+    def in_battle(self):
+        end_battle = self.driver.find_elements(value="//button[@class='button'][@name='closeAndMainMenu']",
+                                               by=By.XPATH)
+        return not end_battle
 
     def next_battle(self):
         self.wait_and_click("closeAndMainMenu")
+
+    def get_type(self, side, num=0):
+        tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
+        img_ext = "/h2/img[@class='pixelated'][@height='14']"
+        types = []
+        if side == self.SELF_SIDE:
+            self.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
+            if num == 0:
+                poke_elem = self.driver.find_element(value=self.ACTIVE_STAGE_PATH, by=By.XPATH)
+            else:
+                poke_elem = self.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
+        else:
+            self.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
+            poke_elem = self.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)
+        self.AC.move_to_element(poke_elem).perform()
+        self.wait_for_element(tooltip_div, by=By.XPATH)
+        self.wait_for_element(tooltip_div + img_ext, by=By.XPATH)
+        poke_types = self.driver.find_elements(value=tooltip_div + img_ext, by=By.XPATH)
+        for t in poke_types:
+            types.append(t.get_attribute('alt'))
+        return types
 
     def run(self):
         self.setup_account()

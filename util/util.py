@@ -1,9 +1,10 @@
 KNOWN_MOVES_FILE, ABILITIES_FILE, MOVES_FILE = './data/known_moves.data', './data/abilities.data', './data/moves.data'
-STATS_FILE = './data/stats.data'
+LOG_ROOT = './logs'
+STATS_FILE, BASE_LOG_FILE = './data/stats.data', './logs/battle_{}.log'
 
 # Types
 NORMAL = 'Normal'
-FIGHT = 'Fight'
+FIGHT = 'Fighting'
 FLYING = 'Flying'
 POISON = 'Poison'
 GROUND = 'Ground'
@@ -49,6 +50,33 @@ SPD = 'SpD'
 SPE = 'Spe'
 
 STATS_LIST = [ATK, DEF, SPA, SPD, SPE]
+
+# Weather
+W_RAIN = 'raindance'
+W_HEAVY_RAIN = 'primordialsea'
+W_SUN = 'sunnyday'
+W_HARSH_SUN = 'desolateland'
+W_HAIL = 'hail'
+W_SANDSTORM = 'sandstorm'
+W_PSYCHIC_TERRAIN = 'psychicterrain'
+W_MISTY_TERRAIN = 'mistyterrain'
+W_ELECTRIC_TERRAIN = 'electricterrain'
+W_GRASSY_TERRRAIN = 'grassyterrain'
+W_TRICK_ROOM = 'trickroom'
+
+WEATHER_LIST = [
+    W_RAIN,
+    W_HEAVY_RAIN,
+    W_SUN,
+    W_HARSH_SUN,
+    W_HAIL,
+    W_SANDSTORM,
+    W_PSYCHIC_TERRAIN,
+    W_MISTY_TERRAIN,
+    W_ELECTRIC_TERRAIN,
+    W_TRICK_ROOM,
+    W_GRASSY_TERRRAIN
+]
 
 
 def type_effectiveness(move_type, opponent_type):
@@ -217,7 +245,7 @@ OPPONENT_FAINT = r'^The opposing (.*) fainted!$'
 PLAYER_FAINT = r'^(.*) fainted!$'
 OPPONENT_DODGE = r'^The opponent (.*) avoided the attack!$'
 PLAYER_DODGE = r'^(.*) avoided the attack!$'
-OPPONENT_LEFTOVERS = r'^The opposing (.*) restored a little HP using its (.*)!$'
+OPPONENT_LEFTOVERS = r'^The opposing (.*) restored a little HP using its .*!$'
 PLAYER_LEFTOVERS = r'^(.*) restored a little HP using its (.*)!$'
 OPPONENT_SET_SUB = r'^The opposing (.*) put in a substitute!$'
 PLAYER_SET_SUB = r'^(.*) put in a substitute!$'
@@ -493,6 +521,8 @@ PLAYER_SHADOW_FORCE = r'^(.*) vanished instantly!$'
 OPPONENT_DRY_SKIN_DMG = r'^\[The opposing .*\'s Dry Skin\]\(The opposing (.*) was hurt by its Dry Skin\.\)$'
 PLAYER_DRY_SKIN_DMG = r'^\[.*\'s Dry Skin\]\((.*) was hurt by its Dry Skin\.\)$'
 
+WIN_MSG = r'^(.*) won the battle!$'
+
 # Ignore messages
 IGNORE_1 = r'^But it does not have enough HP left to make a substitute!$'
 IGNORE_2 = r'^\(Since gen 7, Dark is immune to Prankster moves\.\)$'
@@ -517,7 +547,6 @@ IGNORE_20 = r'^\[.*\'s Intimidate\]$'
 IGNORE_21 = r'^A bell chimed!$'
 IGNORE_22 = r'^\[.*\'s Unnerve\].* team is too nervous to eat Berries!$'
 IGNORE_23 = r'^.* is confused!$'
-IGNORE_24 = r'^.* won the battle!$'
 IGNORE_25 = r'^\(The hail is crashing down\.\)$'
 IGNORE_26 = r'^\(Rain continues to fall\.\)'
 IGNORE_27 = r'^A soothing aroma wafted through the area!$'
@@ -600,6 +629,17 @@ ITEM_REGEX = [
     ITEM_KNOCKED_OFF
 ]
 
+VARIED_RESULT_LIST = [
+    OPPONENT_POISON,
+    PLAYER_POISON,
+    OPPONENT_STONE_DMG,
+    PLAYER_STONE_DMG,
+    OPPONENT_SPIKE_DMG,
+    PLAYER_SPIKE_DMG,
+    OPPONENT_WISH,
+    PLAYER_WISH,
+]
+
 REGEX_LIST = [
     OPPONENT_Z_MOVE,
     PLAYER_Z_MOVE,
@@ -656,8 +696,6 @@ REGEX_LIST = [
     PLAYER_POISONED,
     OPPONENT_TOXIC,
     PLAYER_TOXIC,
-    OPPONENT_POISON,
-    PLAYER_POISON,
     OPPONENT_POISON_HEAL,
     PLAYER_POISON_HEAL,
     OPPONENT_DROWSY,
@@ -740,12 +778,8 @@ REGEX_LIST = [
     PLAYER_SET_POISON,
     OPPONENT_POISON_CLEAR,
     PLAYER_POISON_CLEAR,
-    OPPONENT_STONE_DMG,
-    PLAYER_STONE_DMG,
     OPPONENT_STONE_CLEAR,
     PLAYER_STONE_CLEAR,
-    OPPONENT_SPIKE_DMG,
-    PLAYER_SPIKE_DMG,
     OPPONENT_DRAGGED,
     PLAYER_DRAGGED,
     OPPONENT_NIMBLE,
@@ -766,8 +800,6 @@ REGEX_LIST = [
     PLAYER_ENCORE_END,
     OPPONENT_STURDY,
     PLAYER_STURDY,
-    OPPONENT_WISH,
-    PLAYER_WISH,
     PAIN_SPLIT,
     OPPONENT_FORM,
     PLAYER_FORM,
@@ -939,7 +971,6 @@ IGNORE_LIST = [
     IGNORE_21,
     IGNORE_22,
     IGNORE_23,
-    IGNORE_24,
     IGNORE_25,
     IGNORE_26,
     IGNORE_27,
@@ -1018,14 +1049,13 @@ IGNORE_LIST = [
     IGNORE_100
 ]
 
-# TODO Get health info for base-line dmg (Stones, spikes, poison, etc.)
 MSG_DICT = {
     OPPONENT_MOVE: 'Opponent {} used {}',
     OPPONENT_Z_MOVE: 'Opponent {} used {} Z-move',
     PLAYER_Z_MOVE: 'Player {} used {} Z-move',
     PLAYER_MOVE: 'Player {} used {}',
-    OPPONENT_DAMAGE: 'Opponent {} lost {} health',
-    PLAYER_DAMAGE: 'Player {} lost {} health',
+    OPPONENT_DAMAGE: 'Opponent {} -{} health',
+    PLAYER_DAMAGE: 'Player {} -{} health',
     OPPONENT_STAT_DROP: 'Opponent {} {} -1',
     PLAYER_STAT_DROP: 'Player {} {} -1',
     OPPONENT_STAT_DROP_HARSH: 'Opponent {} {} -2',
@@ -1053,10 +1083,10 @@ MSG_DICT = {
     PLAYER_RECOIL: 'Player {} recoiled',
     OPPONENT_FAINT: 'Opponent {} fainted',
     PLAYER_FAINT: 'Player {} fainted',
-    OPPONENT_DODGE: 'Opponent {} lost 0% health',
-    PLAYER_DODGE: 'Player {} lost 0% health',
-    OPPONENT_LEFTOVERS: 'Opponent {} 6.25% health with {}',
-    PLAYER_LEFTOVERS: 'Player {} restored 6.25% health with {}',
+    OPPONENT_DODGE: 'Opponent {} -0% health',
+    PLAYER_DODGE: 'Player {} -0% health',
+    OPPONENT_LEFTOVERS: 'Opponent {} +6.25% health',
+    PLAYER_LEFTOVERS: 'Player {} +6.25% health',
     OPPONENT_SET_SUB: 'Opponent {} set substitute',
     PLAYER_SET_SUB: 'Player {} set substitute',
     OPPONENT_SUBSTITUTE: 'Substitute protected Opponent {}',
@@ -1066,8 +1096,8 @@ MSG_DICT = {
     PLAYER_FRISK: 'Player {} found {} {}',
     OPPONENT_BURNED: 'Opponent {} burned',
     PLAYER_BURNED: 'Player {} burned',
-    OPPONENT_BURN: 'Opponent {} lost 6.25% health',
-    PLAYER_BURN: 'Player {} lost 6.25% health',
+    OPPONENT_BURN: 'Opponent {} -6.25% health',
+    PLAYER_BURN: 'Player {} -6.25% health',
     OPPONENT_BURN_HEAL: 'Opponent {} burn heal',
     PLAYER_BURN_HEAL: 'Player {} burn heal',
     OPPONENT_POISONED: 'Opponent {} poisoned',
@@ -1110,32 +1140,32 @@ MSG_DICT = {
     PLAYER_CONFUSE_END: 'Player {} confuse end',
     OPPONENT_INFESTATION: 'Opponent {} infestation',
     PLAYER_INFESTATION: 'Player {} infestation',
-    OPPONENT_INFESTATION_DMG: 'Opponent {} lost 12.5% health',
-    PLAYER_INFESTATION_DMG: 'Player {} lost 12.5% health',
+    OPPONENT_INFESTATION_DMG: 'Opponent {} -12.5% health',
+    PLAYER_INFESTATION_DMG: 'Player {} -12.5% health',
     OPPONENT_INFESTATION_END: 'Opponent {} infestation end',
     PLAYER_INFESTATION_END: 'Player {} infestation end',
     OPPONENT_STATUS_CURE: 'Opponent {} status cured',
     PLAYER_STATUS_CURE: 'Player {} status cured',
     OPPONENT_KNOCKOFF: 'Opponent {} knocked off Player {} {}',
     PLAYER_KNOCKOFF: 'Player {} knocked off Opponent {} {}',
-    OPPONENT_LIFEORB: 'Opponent {} lost 10% health',
-    PLAYER_LIFEORB: 'Player {} lost 10% health',
-    OPPONENT_IMMUNE: 'Opponent {} lost 0% health',
-    PLAYER_IMMUNE: 'Player {} lost 0% health',
-    OPPONENT_PROTECT: 'Opponent {} lost 0% health',
-    PLAYER_PROTECT: 'Player {} lost 0% health',
-    OPPONENT_PROTECT_DMG: 'Opponent {} took dmg',
-    PLAYER_PROTECT_DMG: 'Player {} took dmg',
+    OPPONENT_LIFEORB: 'Opponent {} -10% health',
+    PLAYER_LIFEORB: 'Player {} -10% health',
+    OPPONENT_IMMUNE: 'Opponent {} -0% health',
+    PLAYER_IMMUNE: 'Player {} -0% health',
+    OPPONENT_PROTECT: 'Opponent {} -0% health',
+    PLAYER_PROTECT: 'Player {} -0% health',
+    OPPONENT_PROTECT_DMG: 'Opponent {} protect dmg',
+    PLAYER_PROTECT_DMG: 'Player {} protect dmg',
     OPPONENT_SEEDED: 'Opponent {} seeded',
     PLAYER_SEEDED: 'Player {} seeded',
-    OPPONENT_SEEDED_DMG: 'Opponent {} lost 12.5% health',
-    PLAYER_SEEDED_DMG: 'Player {} lost 12.5% health',
+    OPPONENT_SEEDED_DMG: 'Opponent {} -12.5% health',
+    PLAYER_SEEDED_DMG: 'Player {}-12.5% health',
     OPPONENT_HEAL: 'Opponent {} healed',
     PLAYER_HEAL: 'Player {} healed',
     OPPONENT_FULL_HP: 'Opponent {} full HP',
     PLAYER_FULL_HP: 'Player {} full HP',
-    OPPONENT_BERRY: 'Opponent {} 25% healed',
-    PLAYER_BERRY: 'Player {} 25% healed',
+    OPPONENT_BERRY: 'Opponent {} +25% health',
+    PLAYER_BERRY: 'Player {} +25% health',
     OPPONENT_FASTER: 'Opponent {} moved faster due to {}',
     PLAYER_FASTER: 'Player {} moved faster due to {}',
     OPPONENT_REST: 'Opponent {} rested',
@@ -1192,8 +1222,8 @@ MSG_DICT = {
     PLAYER_MAGIC_BOUNCE: 'Player {} bounced {} back',
     OPPONENT_STURDY: 'Opponent {} sturdy',
     PLAYER_STURDY: 'Player {} sturdy',
-    OPPONENT_WISH: 'Opponent active healed by Wish',
-    PLAYER_WISH: 'Player active healed by Wish',
+    OPPONENT_WISH: 'Opponent active +50% health',
+    PLAYER_WISH: 'Player active +50% health',
     OPPONENT_PROTEAN: 'Opponent {} changed to {}',
     PLAYER_PROTEAN: 'Player {} changed to {}',
     OPPONENT_DISABLE: 'Player {} {} disabled',
@@ -1208,22 +1238,22 @@ MSG_DICT = {
     PLAYER_AFTERMATH: 'Opponent {} hurt by aftermath',
     OPPONENT_DISGUISE: 'Opponent {} disguise broke',
     PLAYER_DISGUISE: 'Player {} disguise broke',
-    OPPONENT_BAD_DREAMS: 'Player {} lost 12.5% health',
-    PLAYER_BAD_DREAMS: 'Opponent {} lost 12.5% health',
+    OPPONENT_BAD_DREAMS: 'Player {} -12.5% health',
+    PLAYER_BAD_DREAMS: 'Opponent {} -12.5% health',
     OPPONENT_FLASH_FIRE: 'Opponent {} Flash Fire',
     PLAYER_FLASH_FIRE: 'Player {} Flash Fire',
     OPPONENT_SCHOOL_END: 'Opponent {} school end',
     PLAYER_SCHOOL_END: 'Player {} school end',
     OPPONENT_CANNOT_USE: 'Opponent {} cannot use {}',
     PLAYER_CANNOT_USE: 'Player {} cannot use {}',
-    OPPONENT_CONTACT: 'Player {} contact dmg',
-    PLAYER_CONTACT: 'Opponent {} contact dmg',
+    OPPONENT_CONTACT: 'Player {} -12.5% health',
+    PLAYER_CONTACT: 'Opponent {} -12.5% health',
     OPPONENT_OOZE_DMG: 'Opponent {} ooze dmg',
     PLAYER_OOZE_DMG: 'Player {} ooze dmg',
     OPPONENT_TAUNT_FAIL: 'Opponent {} move failed to taunt',
     PLAYER_TAUNT_FAIL: 'Player {} move failed to taunt',
-    OPPONENT_HAIL_DMG: 'Opponent {} lost 6.25% health',
-    PLAYER_HAIL_DMG: 'PLAYER {} lost 6.25% health',
+    OPPONENT_HAIL_DMG: 'Opponent {} -6.25% health',
+    PLAYER_HAIL_DMG: 'PLAYER {} -6.25% health',
     OPPONENT_ABSORB: 'Opponent {} absorb {}',
     PLAYER_ABSORB: 'Player {} absorb {}',
     OPPONENT_HEAT_BEAK: 'Opponent {} heat beak',
@@ -1234,8 +1264,8 @@ MSG_DICT = {
     PLAYER_WHITE_HERB: 'Player {} stats reset',
     OPPONENT_FLINCH: 'Opponent {} flinch',
     PLAYER_FLINCH: 'Player {} flinch',
-    OPPONENT_BELLY_DRUM: 'Opponent {} lost 50% health, attack +6',
-    PLAYER_BELLY_DRUM: 'Player {} lost 50% health, attack +6',
+    OPPONENT_BELLY_DRUM: 'Opponent {} -50% health, Attack +6',
+    PLAYER_BELLY_DRUM: 'Player {} -50% health, attack +6',
     OPPONENT_LIGHT_SCREEN: 'Opponent Light Screen',
     PLAYER_LIGHT_SCREEN: 'Player Light Screen',
     OPPONENT_WORE_OFF: 'Opponent {} end',
@@ -1267,8 +1297,8 @@ MSG_DICT = {
     SUN_END: 'Sun end',
     SANDSTORM: 'Sandstorm',
     SANDSTORM_END: 'Sandstorm end',
-    OPPONENT_WEATHER_DMG: 'Opponent {} lost 6.25% health',
-    PLAYER_WEATHER_DMG: 'Player {} lost 6.25% health',
+    OPPONENT_WEATHER_DMG: 'Opponent {} -6.25% health',
+    PLAYER_WEATHER_DMG: 'Player {} -6.25% health',
     WEATHER_CLEARED: 'Weather cleared',
     FAILED: 'Move failed',
     CONFUSE_HIT: 'Confuse hit',
@@ -1280,17 +1310,17 @@ MSG_DICT = {
     MISTY_TERRAIN_END: 'Misty terrain end',
     GRASSY_TERRAIN: 'Grassy terrain',
     GRASSY_TERRAIN_END: 'Grassy terrain end',
-    OPPONENT_GRASSY_HEAL: 'Opponent {} heal 6.25%',
-    PLAYER_GRASSY_HEAL: 'Player {} heal 6.25%',
+    OPPONENT_GRASSY_HEAL: 'Opponent {} +6.25% health',
+    PLAYER_GRASSY_HEAL: 'Player {} +6.25% health',
     TRICK_ROOM: 'Trick room',
     TRICK_ROOM_END: 'Trick room end',
     ITEM_SWITCH: 'Item swap',
     OPPONENT_NO_SWITCH: 'Opponent {} cannot switch',
     PLAYER_NO_SWITCH: 'Player {} cannot switch',
-    OPPONENT_ROCKY: 'Opponent {} hurt by Rocky Helm',
-    PLAYER_ROCKY: 'Player {} hurt by Rocky Helm',
-    OPPONENT_CRASH: 'Opponent {} crashed',
-    PLAYER_CRASH: 'Player {} crashed',
+    OPPONENT_ROCKY: 'Opponent {} -16.7% health',
+    PLAYER_ROCKY: 'Player {} -16.7% health',
+    OPPONENT_CRASH: 'Opponent {} -50% health',
+    PLAYER_CRASH: 'Player {} -50% health',
     NORMAL_TO_ELECTRIC: 'Normal moves became Electric',
     OPPONENT_SHIELDS_DOWN: 'Opponent {} Shields Down deactivate',
     PLAYER_SHIELDS_DOWN: 'Player {} Shields Down deactivate',
@@ -1311,22 +1341,22 @@ MSG_DICT = {
     PERISH_SONG: 'Perish song began',
     OPPONENT_PERISH_COUNT: 'Opponent {} perish count {}',
     PLAYER_PERISH_COUNT: 'Player {} perish count {}',
-    OPPONENT_HEALING_WISH: 'Opponent {} fully healed',
-    PLAYER_HEALING_WISH: 'Player {} fully healed',
+    OPPONENT_HEALING_WISH: 'Opponent {} +100% health, status cured',
+    PLAYER_HEALING_WISH: 'Player {} +100% health, status cured',
     OPPONENT_MAGMA_STORM: 'Opponent {} Magma Storm',
     PLAYER_MAGMA_STORM: 'Player {} Magma Storm',
-    OPPONENT_MAGMA_STORM_DMG: 'Opponent {} lost 6.25% health',
-    PLAYER_MAGMA_STORM_DMG: 'Player {} lost 6.25% health',
+    OPPONENT_MAGMA_STORM_DMG: 'Opponent {} -6.25% health',
+    PLAYER_MAGMA_STORM_DMG: 'Player {} -6.25% health',
     OPPONENT_DIG: 'Opponent {} dig',
     PLAYER_DIG: 'Player {} dig',
     OPPONENT_BOUNCE: 'Opponent {} bounce',
     PLAYER_BOUNCE: 'Player {} bounce',
-    OPPONENT_BLACK_SLUDGE: 'Opponent {} lost 12.5% health',
-    PLAYER_BLACK_SLUDGE: 'Player {} lost 12.5% health',
-    OPPONENT_SOLAR_POWER: 'Opponent {} lost 12.5% health',
-    PLAYER_SOLAR_POWER: 'Player {} lost 12.5% health',
+    OPPONENT_BLACK_SLUDGE: 'Opponent {} -12.5% health',
+    PLAYER_BLACK_SLUDGE: 'Player {} -12.5% health',
+    OPPONENT_SOLAR_POWER: 'Opponent {} -12.5% health',
+    PLAYER_SOLAR_POWER: 'Player {} -12.5% health',
     OPPONENT_SHADOW_FORCE: 'Opponent {} shadow force',
     PLAYER_SHADOW_FORCE: 'Player {} shadow force',
-    OPPONENT_DRY_SKIN_DMG: 'Opponent {} lost 12.5% health',
-    PLAYER_DRY_SKIN_DMG: 'Player {} lost 12.5% health'
+    OPPONENT_DRY_SKIN_DMG: 'Opponent {} -12.5% health',
+    PLAYER_DRY_SKIN_DMG: 'Player {} -12.5% health'
 }

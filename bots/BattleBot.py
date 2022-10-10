@@ -12,29 +12,24 @@ from util.driver import WebDriver
 
 
 class BattleBot:
-    SELF_SIDE, OPPONENT_SIDE = 1, 2
-    ACTIVE_POKE_PATH = "//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|0']"
-    ACTIVE_STAGE_PATH = "//div[@class='has-tooltip'][@data-id='p1a']"
-    CHOOSE_SWITCH_PATH = "//button[@name='chooseSwitch'][@value='{}']"
-    OPP_POKE_PATH = "//div[@class='has-tooltip'][@data-id='p2a']"
 
     def __init__(self):
-        self.battle_logger = BattleLogger()
+        self.battle_logger = BattleLogger(repr(self))
         self.Driver = WebDriver()
         self.Driver.run()
         self.AC = ActionChains(self.Driver.driver)
 
     def battle(self):
         try:
-            self.read_team(BattleBot.SELF_SIDE)
+            self.read_team(self.Driver.SELF_SIDE)
             self.battle_timer()
         except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
             pass
-        while self.in_battle():
+        while self.Driver.in_battle():
             # Wait for next turn
             try:
                 WebDriverWait(self.Driver.driver, 2).until(
-                    EC.presence_of_element_located((By.XPATH, self.ACTIVE_POKE_PATH))
+                    EC.presence_of_element_located((By.XPATH, self.Driver.ACTIVE_POKE_PATH))
                 )
             except (TimeoutException, NoSuchElementException):
                 continue
@@ -44,7 +39,7 @@ class BattleBot:
                     self.choose_switch()
                     continue
                 self.battle_logger.log_turn(self.Driver)
-                self.read_team(BattleBot.OPPONENT_SIDE)
+                self.read_team(self.Driver.OPP_SIDE)
                 self.choose_action()
                 self.battle_logger.turn += 1
             except (NoSuchElementException, TimeoutException, StaleElementReferenceException, ValueError):
@@ -55,14 +50,15 @@ class BattleBot:
 
     def read_team(self, side):
         # Read available Pokemon & Moves of self & opponent
-        if side == self.SELF_SIDE:
+        if side == self.Driver.SELF_SIDE:
             if self.battle_logger.turn == 0:
-                self.Driver.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
-                poke_name = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH).text.split(',')[0]
+                self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
+                poke_name = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH,
+                                                            by=By.XPATH).text.split(',')[0]
                 # Read active Pokemon moves
                 move_options = self.move_options(just_names=True)
                 # Get Pokemon ability & item
-                ability, item = self.get_ability_item(self.SELF_SIDE)
+                ability, item = self.get_ability_item(self.Driver.SELF_SIDE)
                 if poke_name != 'Ditto':
                     self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
                     if '(base: ' not in ability and 'TOX' not in ability:
@@ -72,10 +68,11 @@ class BattleBot:
                 # Read team Pokemon & Moves
                 for i in range(1, 6):
                     # Get Pokemon name
-                    name = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(i), by=By.XPATH).text
+                    name = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(i),
+                                                           by=By.XPATH).text
                     team_move_names = self.move_options(num=i)
                     # Get Pokemon ability
-                    ability, item = self.get_ability_item(self.SELF_SIDE, num=i, do_ac=False)
+                    ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
                     if name != 'Ditto':
                         if '(base: ' not in ability and 'TOX' not in ability:
                             self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
@@ -84,7 +81,7 @@ class BattleBot:
                                                                 self.get_stats(i, do_ac=False)))
         else:
             pokemon_name = self.get_opp_name()
-            abilities, item = self.get_ability_item(self.OPPONENT_SIDE)
+            abilities, item = self.get_ability_item(self.Driver.OPP_SIDE)
             if '(base: ' in abilities[0] or 'TOX' in abilities:
                 abilities[0] = ''
             if 'None' in item:
@@ -102,11 +99,6 @@ class BattleBot:
                 self.battle_logger.update_opp_team(Pokemon(pokemon_name, abilities[0], item, opp_moves))
             else:
                 self.battle_logger.update_opp_team(Pokemon(pokemon_name, '', item, opp_moves))
-
-    def in_battle(self):
-        end_battle = self.Driver.driver.find_elements(value="//button[@class='button'][@name='closeAndMainMenu']",
-                                                      by=By.XPATH)
-        return not end_battle
 
     def battle_timer(self):
         self.Driver.wait_for_element("openTimer")
@@ -168,7 +160,8 @@ class BattleBot:
             return options, has_z, has_z_mega
         elif num == -1:
             if do_ac:
-                self.AC.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
+                self.AC.move_to_element(
+                    self.Driver.driver.find_element(value=self.Driver.OPP_POKE_PATH, by=By.XPATH)).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
             trimmed_moves = []
             if self.Driver.driver.find_elements(value="section", by=By.CLASS_NAME):
@@ -178,7 +171,7 @@ class BattleBot:
                     trimmed_moves.append(m.split(' (')[0])
             return trimmed_moves
         else:
-            poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
+            poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
             self.AC.move_to_element(poke_elem).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-switchpokemon']", by=By.CSS_SELECTOR)
             # Get Pokemon moves
@@ -261,7 +254,7 @@ class BattleBot:
         return Move(move_name, elem_type, move_type, base)
 
     def active_fainted(self):
-        status = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH).get_attribute(
+        status = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH, by=By.XPATH).get_attribute(
             'value').split(',')[1]
         return status == 'fainted'
 
@@ -273,36 +266,16 @@ class BattleBot:
         return party
 
     def choose_switch(self):
-        self.Driver.wait_and_click(self.CHOOSE_SWITCH_PATH.format(self.best_pick()), by=By.XPATH)
-
-    def get_type(self, side, num=0):
-        tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
-        img_ext = "/h2/img[@class='pixelated'][@height='14']"
-        types = []
-        if side == self.SELF_SIDE:
-            self.Driver.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
-            if num == 0:
-                poke_elem = self.Driver.driver.find_element(value=self.ACTIVE_STAGE_PATH, by=By.XPATH)
-            else:
-                poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
-        else:
-            self.Driver.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
-            poke_elem = self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)
-        self.AC.move_to_element(poke_elem).perform()
-        self.Driver.wait_for_element(tooltip_div, by=By.XPATH)
-        self.Driver.wait_for_element(tooltip_div + img_ext, by=By.XPATH)
-        poke_types = self.Driver.driver.find_elements(value=tooltip_div + img_ext, by=By.XPATH)
-        for t in poke_types:
-            types.append(t.get_attribute('alt'))
-        return types
+        self.Driver.wait_and_click(self.Driver.CHOOSE_SWITCH_PATH.format(self.best_pick()), by=By.XPATH)
 
     def get_ability_item(self, side, num=0, do_ac=True):
-        if side == self.SELF_SIDE:
+        if side == self.Driver.SELF_SIDE:
             if do_ac:
                 if num == 0:
-                    poke_elem = self.Driver.driver.find_element(value=self.ACTIVE_POKE_PATH, by=By.XPATH)
+                    poke_elem = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
                 else:
-                    poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
+                    poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num),
+                                                                by=By.XPATH)
                 self.AC.move_to_element(poke_elem).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-switchpokemon']", by=By.CSS_SELECTOR)
             # Get Pokemon ability
@@ -316,7 +289,8 @@ class BattleBot:
             return ability, item
         else:
             if do_ac:
-                self.AC.move_to_element(self.Driver.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)).perform()
+                self.AC.move_to_element(
+                    self.Driver.driver.find_element(value=self.Driver.OPP_POKE_PATH, by=By.XPATH)).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
             # Get abilities
             temp_elm = self.Driver.driver.find_element(
@@ -341,12 +315,13 @@ class BattleBot:
 
     def get_stats(self, num=0, do_ac=True):
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
-        self.Driver.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
+        self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
         if do_ac:
             if num == 0:
-                poke_elem = self.Driver.driver.find_element(value=self.ACTIVE_STAGE_PATH, by=By.XPATH)
+                poke_elem = self.Driver.driver.find_element(value=self.Driver.ACTIVE_STAGE_PATH, by=By.XPATH)
             else:
-                poke_elem = self.Driver.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
+                poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num),
+                                                            by=By.XPATH)
             self.AC.move_to_element(poke_elem).perform()
         self.Driver.wait_for_element(tooltip_div, by=By.XPATH)
         temp_elm = self.Driver.driver.find_elements(value=tooltip_div + "/p/*[contains(text(), 'Atk')]", by=By.XPATH)
@@ -365,6 +340,24 @@ class BattleBot:
             stats_dict[vals[0]] = float(vals[1])
         return stats_dict
 
+    def update_stats(self, stats):
+        status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
+        stat_changes = self.Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
+        for s in stat_changes:
+            text = s.text
+            if '× ' in text:
+                num, stat = text.split('× ')
+                stat_index = util.STATS_LIST.index(stat)
+                base = stats[stat_index]
+                stats[stat_index] = str(float(base) * float(num))
+            elif text == 'BRN':
+                stats[0] = str(float(stats[0]) * 0.5)
+            elif text == 'PAR':
+                stats[4] = str(float(stats[4]) * 0.5)
+            else:
+                print(text)
+        return stats
+
     def get_item(self, side):
         pass
 
@@ -374,11 +367,20 @@ class BattleBot:
                                                    by=By.XPATH).text
         return sub(r'(.*) L[0-9]+', r'\1', elem_txt.strip()).strip().replace('�', "'")
 
-    @staticmethod
-    def damage_calc(player_types, move, opp_types, opp_ability, opp_item, player_stats, opp_stats):
+    def get_weather(self):
+        weathers = self.Driver.driver.find_elements(value="//div[contains(@class, 'weather')]", by=By.XPATH)
+        active = []
+        for w in weathers:
+            c = w.get_attribute('class').replace('weather', '').strip()
+            if c != '':
+                active.append(c)
+                if c not in util.WEATHER_LIST:
+                    print(c)
+        return active
+
+    def damage_calc(self, player_types, move, opp_types, opp_ability, opp_item, player_stats, opp_stats):
         if move.base_power == 0.0:
             return 0.0
-        # TODO Weather damage increase
         # TODO Psychic Terrain
         if move.type == util.IMMUNE_ABILITIES.get(opp_ability, None):
             return 0.0
@@ -388,6 +390,28 @@ class BattleBot:
         if opp_item == 'Air Balloon' and move.type == util.GROUND:
             return 0.0
         dmg = move.base_power
+        for w in self.get_weather():
+            if w == util.W_HEAVY_RAIN:
+                if move.type == util.FIRE:
+                    return 0.0
+                if move.type == util.WATER:
+                    dmg *= 1.5
+            if w == util.W_HARSH_SUN:
+                if move.type == util.WATER:
+                    return 0.0
+                if move.type == util.FIRE:
+                    dmg *= 1.5
+            if w == util.W_RAIN:
+                if move.type == util.WATER:
+                    dmg *= 1.5
+                if move.type == util.FIRE:
+                    dmg *= 0.5
+            if w == util.W_MISTY_TERRAIN and move.type == util.DRAGON:
+                dmg *= 0.5
+            if w == util.W_ELECTRIC_TERRAIN and move.type == util.ELECTR:
+                dmg *= 1.5
+            if w == util.W_GRASSY_TERRRAIN and move.type == util.GRASS:
+                dmg *= 1.5
         if move.type in player_types:
             dmg *= 1.5
         for t in opp_types:
@@ -405,4 +429,7 @@ class BattleBot:
         pass
 
     def best_pick(self):
+        pass
+
+    def __repr__(self):
         pass

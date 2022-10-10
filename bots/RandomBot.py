@@ -21,3 +21,6 @@ class RandomBot(BattleBot):
     def best_pick(self):
         party = self.party_options()
         return party[randrange(len(party))]
+
+    def __repr__(self):
+        return 'RandomBot'

@@ -13,19 +13,18 @@ class LittleTimmyBot(BattleBot):
             self.choose_switch()
         else:
             options, has_z, mega_elem = self.move_options(modded=True)
-            player_type, opponent_type = self.get_type(self.SELF_SIDE), self.get_type(self.OPPONENT_SIDE)
-            ability, item = self.get_ability_item(self.OPPONENT_SIDE, do_ac=False)
+            ply_type, opp_type = self.Driver.get_type(self.Driver.SELF_SIDE), self.Driver.get_type(self.Driver.OPP_SIDE)
+            ability, item = self.get_ability_item(self.Driver.OPP_SIDE, do_ac=False)
             if 'None' in item:
                 item = ''
             stats = self.get_stats(do_ac=False)
             strongest, pick = 0.0, options[randrange(len(options))][0]
-            opp_stats = self.battle_logger.stats_map.get(self.get_opp_name(), ["1.0"] * 5)
-            # TODO Get opp modifiers
+            opp_stats = self.update_stats(self.battle_logger.stats_map.get(self.get_opp_name(), ["1.0"] * 5))
             for v, m in options:
                 if len(ability) > 1:
-                    calc = self.damage_calc(player_type, m, opponent_type, '', item, stats, opp_stats)
+                    calc = self.damage_calc(ply_type, m, opp_type, '', item, stats, opp_stats)
                 else:
-                    calc = self.damage_calc(player_type, m, opponent_type, ability[0], item, stats, opp_stats)
+                    calc = self.damage_calc(ply_type, m, opp_type, ability[0], item, stats, opp_stats)
                 if calc > strongest:
                     strongest, pick = calc, v
             self.choose_move(pick, has_z, mega_elem)
@@ -39,14 +38,14 @@ class LittleTimmyBot(BattleBot):
             by=By.XPATH)
         if not any('active' in e.get_attribute('aria-label') for e in temp_elem):
             return pick
-        opp_type = self.get_type(self.OPPONENT_SIDE)
-        ability, item = self.get_ability_item(self.OPPONENT_SIDE, do_ac=False)
+        opp_type = self.Driver.get_type(self.Driver.OPP_SIDE)
+        ability, item = self.get_ability_item(self.Driver.OPP_SIDE, do_ac=False)
         opp_stats = ["1.0"] * 5
         if 'None' in item:
             item = ''
         for p in party:
-            poke_type = self.get_type(self.SELF_SIDE, int(p))
-            poke_ability, p_item = self.get_ability_item(self.SELF_SIDE, num=p, do_ac=False)
+            poke_type = self.Driver.get_type(self.Driver.SELF_SIDE, int(p))
+            poke_ability, p_item = self.get_ability_item(self.Driver.SELF_SIDE, num=p, do_ac=False)
             if 'None' in p_item:
                 p_item = ''
             calc = 0.0
@@ -62,3 +61,6 @@ class LittleTimmyBot(BattleBot):
             if calc > potential:
                 potential, pick = calc, p
         return pick
+
+    def __repr__(self):
+        return 'LittleTimmyBot'
