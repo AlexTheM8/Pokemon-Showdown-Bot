@@ -26,59 +26,59 @@ class BattleBot:
         except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
             pass
         while self.Driver.in_battle():
-            # Wait for next turn
             try:
                 WebDriverWait(self.Driver.driver, 2).until(
                     EC.presence_of_element_located((By.XPATH, self.Driver.ACTIVE_POKE_PATH))
                 )
             except (TimeoutException, NoSuchElementException):
                 continue
-            try:
-                # Check if used switching move
-                if not self.Driver.driver.find_elements(value="//div[@class='movemenu']", by=By.XPATH):
-                    self.choose_switch()
-                    continue
-                self.battle_logger.log_turn(self.Driver)
-                self.read_team(self.Driver.OPP_SIDE)
-                self.choose_action()
-                self.battle_logger.turn += 1
-            except (NoSuchElementException, TimeoutException, StaleElementReferenceException, ValueError):
-                continue
+            self.battle_actions()
         self.battle_logger.log_turn(self.Driver)
         self.battle_logger.update_stats()
         self.battle_logger.save_data()
 
+    def battle_actions(self):
+        try:
+            # Check if used switching move
+            if not self.Driver.driver.find_elements(value="//div[@class='movemenu']", by=By.XPATH):
+                self.choose_switch()
+                return
+            self.battle_logger.log_turn(self.Driver)
+            self.read_team(self.Driver.OPP_SIDE)
+            self.choose_action()
+            self.battle_logger.turn += 1
+        except (NoSuchElementException, TimeoutException, StaleElementReferenceException, ValueError):
+            return
+
     def read_team(self, side):
         # Read available Pokemon & Moves of self & opponent
         if side == self.Driver.SELF_SIDE:
-            if self.battle_logger.turn == 0:
-                self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
-                poke_name = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH,
-                                                            by=By.XPATH).text.split(',')[0]
-                # Read active Pokemon moves
-                move_options = self.move_options(just_names=True)
-                # Get Pokemon ability & item
-                ability, item = self.get_ability_item(self.Driver.SELF_SIDE)
-                if poke_name != 'Ditto':
-                    self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
+            self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
+            poke_name = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH,
+                                                        by=By.XPATH).text.split(',')[0]
+            # Read active Pokemon moves
+            move_options = self.move_options(just_names=True)
+            # Get Pokemon ability & item
+            ability, item = self.get_ability_item(self.Driver.SELF_SIDE)
+            if poke_name != 'Ditto':
+                self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
+                if '(base: ' not in ability and 'TOX' not in ability:
+                    self.battle_logger.update_data(BattleLogger.ABILITY_INFO, poke_name, [ability])
+            self.battle_logger.self_team.append(Pokemon(poke_name, ability, item, move_options,
+                                                        self.get_stats(do_ac=False)))
+            # Read team Pokemon & Moves
+            for i in range(1, 6):
+                # Get Pokemon name
+                name = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(i), by=By.XPATH).text
+                team_move_names = self.move_options(num=i)
+                # Get Pokemon ability
+                ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
+                if name != 'Ditto':
                     if '(base: ' not in ability and 'TOX' not in ability:
-                        self.battle_logger.update_data(BattleLogger.ABILITY_INFO, poke_name, [ability])
-                self.battle_logger.self_team.append(Pokemon(poke_name, ability, item, move_options,
-                                                            self.get_stats(do_ac=False)))
-                # Read team Pokemon & Moves
-                for i in range(1, 6):
-                    # Get Pokemon name
-                    name = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(i),
-                                                           by=By.XPATH).text
-                    team_move_names = self.move_options(num=i)
-                    # Get Pokemon ability
-                    ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
-                    if name != 'Ditto':
-                        if '(base: ' not in ability and 'TOX' not in ability:
-                            self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
-                        self.battle_logger.update_data(BattleLogger.MOVE_INFO, name, team_move_names)
-                    self.battle_logger.self_team.append(Pokemon(name, ability, item, team_move_names,
-                                                                self.get_stats(i, do_ac=False)))
+                        self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
+                    self.battle_logger.update_data(BattleLogger.MOVE_INFO, name, team_move_names)
+                self.battle_logger.self_team.append(Pokemon(name, ability, item, team_move_names,
+                                                            self.get_stats(i, do_ac=False)))
         else:
             pokemon_name = self.get_opp_name()
             abilities, item = self.get_ability_item(self.Driver.OPP_SIDE)
@@ -265,8 +265,11 @@ class BattleBot:
             party.append(p.get_attribute('value'))
         return party
 
-    def choose_switch(self):
-        self.Driver.wait_and_click(self.Driver.CHOOSE_SWITCH_PATH.format(self.best_pick()), by=By.XPATH)
+    def choose_switch(self, num=None):
+        if num is None:
+            self.Driver.wait_and_click(self.Driver.CHOOSE_SWITCH_PATH.format(self.best_pick()), by=By.XPATH)
+        else:
+            self.Driver.wait_and_click(self.Driver.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
 
     def get_ability_item(self, side, num=0, do_ac=True):
         if side == self.Driver.SELF_SIDE:
@@ -314,6 +317,7 @@ class BattleBot:
             return abilities, item
 
     def get_stats(self, num=0, do_ac=True):
+        # TODO Add HP to stats
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
         self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
         if do_ac:
