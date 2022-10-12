@@ -10,7 +10,7 @@ Aggron,Rock Slide,Earthquake,Heavy Slam,Thunder Wave,Roar,Toxic,Head Smash,Rock 
 Kingdra,Ice Beam,Waterfall,Rain Dance,Draco Meteor,Hydro Pump
 Yanmega,Air Slash,Giga Drain,Bug Buzz,U-turn,Protect
 Bellossom,Strength Sap,Hidden Power Ground,Quiver Dance,Giga Drain,Moonblast,Sleep Powder,Hidden Power,Bloom Doom
-Durant,Rock Slide,Hone Claws,X-Scissor,Iron Head,Superpower
+Durant,Rock Slide,Hone Claws,X-Scissor,Iron Head,Superpower,Shadow Ball
 Delibird,Spikes,Icy Wind,Destiny Bond,Freeze-Dry,Rapid Spin
 Tapu Bulu,Bulk Up,Horn Leech,Megahorn,Superpower,Wood Hammer,Stone Edge
 Florges,Moonblast,Defog,Toxic,Wish,Synthesis,Aromatherapy
@@ -298,7 +298,7 @@ Buzzwole,Superpower,Leech Life,Poison Jab,Earthquake,Stone Edge,Drain Punch
 Pyukumuku,Block,Recover,Soak,Toxic
 Regirock,Rest,Curse,Stone Edge,Drain Punch,Thunder Wave,Toxic,Stealth Rock,Rock Slide
 Zoroark,Focus Blast,Nasty Plot,Dark Pulse,Sludge Bomb,Flamethrower,Trick
-Bouffalant,Head Charge,Superpower,Megahorn,Earthquake,Swords Dance,Stone Edge
+Bouffalant,Head Charge,Superpower,Megahorn,Earthquake,Swords Dance,Stone Edge,Power Whip
 Slowking,Scald,Nasty Plot,Slack Off,Psyshock,Dragon Tail,Fire Blast,Trick Room,Toxic,Ice Beam
 Tangrowth,Giga Drain,Knock Off,Earthquake,Hidden Power Fire,Rock Slide,Synthesis,Leaf Storm,Sleep Powder,Hidden Power
 Blissey,Protect,Toxic,Soft-Boiled,Flamethrower,Seismic Toss,Stealth Rock,Heal Bell

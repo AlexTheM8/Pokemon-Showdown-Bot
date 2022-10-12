@@ -1,4 +1,5 @@
-KNOWN_MOVES_FILE, ABILITIES_FILE, MOVES_FILE = './data/known_moves.data', './data/abilities.data', './data/moves.data'
+KNOWN_MOVES_FILE, KNOWN_ABILITIES_FILE = './data/known_moves.data', './data/known_abilities.data'
+MOVES_FILE, ABILITIES_FILE, ITEMS_FILE = './data/moves.data', './data/abilities.data', './data/items.data'
 LOG_ROOT = './logs'
 STATS_FILE, BASE_LOG_FILE = './data/stats.data', './logs/battle_{}.log'
 
@@ -43,13 +44,14 @@ IMMUNE_ABILITIES = {
 }
 
 # Stats
+HP = 'HP'
 ATK = 'Atk'
 DEF = 'Def'
 SPA = 'SpA'
 SPD = 'SpD'
 SPE = 'Spe'
 
-STATS_LIST = [ATK, DEF, SPA, SPD, SPE]
+STATS_LIST = [ATK, DEF, SPA, SPD, SPE]  # TODO Update to HP
 
 # Weather
 W_RAIN = 'raindance'
@@ -64,6 +66,7 @@ W_ELECTRIC_TERRAIN = 'electricterrain'
 W_GRASSY_TERRRAIN = 'grassyterrain'
 W_TRICK_ROOM = 'trickroom'
 
+# TODO Split into weather & terrain lists
 WEATHER_LIST = [
     W_RAIN,
     W_HEAVY_RAIN,
@@ -207,6 +210,8 @@ def type_effectiveness(move_type, opponent_type):
 # Item messages
 ITEM_KNOCKED_OFF = r'^None \((.*) was knocked off\)$'
 ITEM_EATEN = r'^None \((.*) was eaten\)$'
+ITEM_CONSUMED = r'^None \((.*) was consumed\)$'
+ITEM_FRISKED = r'^(.*) \(frisked\)$'
 
 # Regex Log Messages
 OPPONENT_MOVE = r'^The opposing (.*) used (.*)!$'
@@ -626,7 +631,8 @@ IGNORE_100 = r'^.* can\'t use .*!$'
 
 ITEM_REGEX = [
     ITEM_EATEN,
-    ITEM_KNOCKED_OFF
+    ITEM_KNOCKED_OFF,
+    ITEM_CONSUMED
 ]
 
 VARIED_RESULT_LIST = [

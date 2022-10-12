@@ -22,9 +22,12 @@ class BattleLogger:
     def __init__(self, bot):
         self.bot = bot
         self.known_move_map, self.abilities_map, self.move_map, self.stats_map = {}, {}, {}, {}
+        self.abilities_list, self.item_list = [], []
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
-        self.load_data(util.KNOWN_MOVES_FILE), self.load_data(util.ABILITIES_FILE), self.load_data(util.MOVES_FILE)
-        self.load_data(util.STATS_FILE)
+        self.updated_abilities_list, self.updated_item_list = False, False
+        self.load_data(util.KNOWN_MOVES_FILE), self.load_data(util.KNOWN_ABILITIES_FILE)
+        self.load_data(util.MOVES_FILE), self.load_data(util.STATS_FILE), self.load_data(util.ABILITIES_FILE)
+        self.load_data(util.ITEMS_FILE)
         self.turn = 0
         self.self_team, self.opp_team = [], []
         self.battle_info = []
@@ -36,6 +39,7 @@ class BattleLogger:
         self.self_team, self.opp_team = [], []
         self.battle_info = []
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
+        self.updated_abilities_list, self.updated_item_list = False, False
         self.player_toxic_num, self.opp_toxic_num = 0, 0
         self.player_last_toxic_turn, self.opp_last_toxic_turn = 0, 0
 
@@ -52,14 +56,18 @@ class BattleLogger:
         if exists(file_type):
             with open(file_type, encoding='cp1252') as f:
                 for line in f:
+                    if file_type == util.ABILITIES_FILE:
+                        self.abilities_list.append(line.rstrip())
+                    if file_type == util.ITEMS_FILE:
+                        self.item_list.append(line.rstrip())
                     data = line.rstrip().split(',')
                     if file_type == util.KNOWN_MOVES_FILE:
                         self.known_move_map[data[0]] = data[1:]
-                    elif file_type == util.ABILITIES_FILE:
+                    if file_type == util.KNOWN_ABILITIES_FILE:
                         self.abilities_map[data[0]] = data[1:]
-                    elif file_type == util.MOVES_FILE:
+                    if file_type == util.MOVES_FILE:
                         self.move_map[data[0]] = Move(*data)
-                    else:
+                    if file_type == util.STATS_FILE:
                         self.stats_map[data[0]] = data[1:]
 
     def update_data(self, info_type, poke, data):
@@ -72,11 +80,25 @@ class BattleLogger:
                     self.updated_known_moves = True
                 else:
                     self.updated_abilities = True
+                    if d not in self.abilities_list:
+                        self.abilities_list.append(d)
+                        self.abilities_list.sort()
+                        self.updated_abilities_list = True
                 updated = True
         if info_type == self.MOVE_INFO and updated:
             self.known_move_map[poke] = known
         elif info_type == self.ABILITY_INFO and updated:
             self.abilities_map[poke] = known
+
+    def update_item_list(self, item):
+        for m in util.ITEM_REGEX:
+            if match(m, item):
+                item = sub(m, '\1', item)
+                break
+        if item not in self.item_list and item != '' and item != '':
+            self.item_list.append(item)
+            self.item_list.sort()
+            self.updated_item_list = True
 
     def update_move_info(self, move):
         if move.name not in self.move_map.keys():
@@ -91,7 +113,7 @@ class BattleLogger:
                     lines += '{},{}\n'.format(poke, ','.join(self.known_move_map[poke]))
                 f.write(lines)
         if self.updated_abilities:
-            with open(util.ABILITIES_FILE, 'w', encoding='cp1252') as f:
+            with open(util.KNOWN_ABILITIES_FILE, 'w', encoding='cp1252') as f:
                 lines = ''
                 for poke in self.abilities_map:
                     lines += '{},{}\n'.format(poke, ','.join(self.abilities_map[poke]))
@@ -101,6 +123,18 @@ class BattleLogger:
                 lines = ''
                 for move in self.move_map:
                     lines += repr(self.move_map[move]) + '\n'
+                f.write(lines)
+        if self.updated_abilities_list:
+            with open(util.ABILITIES_FILE, 'w', encoding='cp1252') as f:
+                lines = ''
+                for a in self.abilities_list:
+                    lines += '{}\n'.format(a)
+                f.write(lines)
+        if self.updated_item_list:
+            with open(util.ITEMS_FILE, 'w', encoding='cp1252') as f:
+                lines = ''
+                for i in self.item_list:
+                    lines += '{}\n'.format(i)
                 f.write(lines)
         with open(util.STATS_FILE, 'w', encoding='cp1252') as f:
             lines = ''

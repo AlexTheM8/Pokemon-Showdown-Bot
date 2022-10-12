@@ -8,3 +8,6 @@ class MinMaxBot(BattleBot):
 
     def best_pick(self):
         pass
+
+    def __repr__(self):
+        return 'MinMaxBot'

@@ -10,6 +10,7 @@ from tensorflow import keras
 
 from collections import deque
 from bots.BattleBot import BattleBot
+from util import util
 
 '''
 Sort data into winning & losing
@@ -70,7 +71,7 @@ class NeuralNetBot(BattleBot):
         self.episode = 0
         self.main_ckpt_num, self.tgt_ckpt_num = 0, 0
 
-        state_shape, action_shape = (108,), 13
+        state_shape, action_shape = (191,), 13
         self.model = self.agent(state_shape, action_shape, MAIN_MODEL)
         self.tgt_model = self.agent(state_shape, action_shape, TGT_MODEL)
         if self.main_ckpt_num == 0:
@@ -190,8 +191,88 @@ class NeuralNetBot(BattleBot):
 
     def get_observation(self):
         # TODO Observation
+        """
+        Order:
+         - Active Poke
+            - Name DONE
+            - Ability DONE
+            - Item DONE
+            - Stats (x6)
+            - Moves (x8) DONE
+            - Status
+         - Field Settings
+            - Spikes
+            - Stones
+            - Toxic Spikes
+            - Sticky Web
+            - Light Screen
+            - Reflect
+         - Number of alive Pokemon
+         - Player Team (x5)
+            - Name
+            - Ability
+            - Item
+            - Stats (x6)
+            - Moves (x4)
+            - Status
+         - Opp Active Poke
+            - Name
+            - Ability
+            - Item
+            - Stats (x6)
+            - Moves (x4)
+            - Status
+         - Field Settings
+            - Spikes
+            - Stones
+            - Toxic Spikes
+            - Sticky Web
+            - Light Screen
+            - Reflect
+         - Number of alive Pokemon
+         - Opp Team (x5)
+            - Name
+            - Ability
+            - Item
+            - Stats (x6)
+            - Moves (x4)
+            - Status
+         - Weather
+            - Weather
+            - Terrain
+            - Trick Room
+        """
+        # Base observation
+        observation = [-1]*191
+
+        # Info lists
+        move_list = list(self.battle_logger.move_map.keys())
+        poke_list = list(self.battle_logger.stats_map.keys())
+        move_list.sort(), poke_list.sort()
+
+        # TODO Have catch for not available info
+
+        observation[0] = poke_list.index(self.get_self_name())
+
+        ability, item = self.get_ability_item(self.Driver.SELF_SIDE)
+        # TODO Get new ability if changed 'base:'
+        observation[1] = self.battle_logger.abilities_list.index(ability)
+        if 'None' not in item:
+            observation[2] = self.battle_logger.item_list.index(item)
+        stats = self.get_stats(do_ac=False)
+        for i, s in enumerate(util.STATS_LIST):
+            observation[i + 3] = stats[s]
+
+        # Get self "move value"
+        avail_moves = self.move_options(modded=True)
+        for v, m in avail_moves:
+            if 'z' in v:
+                index = int(v.replace('z', '')) + 11
+            else:
+                index = int(v) + 7
+            observation[index] = move_list.index(m.name)
         # TODO Save reward-calculating info
-        return np.array([])
+        return np.array(observation)
 
     def calculate_reward(self):
         # TODO Calculate Reward

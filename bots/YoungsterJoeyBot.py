@@ -6,7 +6,7 @@ from bots.BattleBot import BattleBot
 from util.BattleLogger import Move
 
 
-class LittleTimmyBot(BattleBot):
+class YoungsterJoeyBot(BattleBot):
 
     def choose_action(self):
         if self.active_fainted():

@@ -53,13 +53,12 @@ class BattleBot:
     def read_team(self, side):
         # Read available Pokemon & Moves of self & opponent
         if side == self.Driver.SELF_SIDE:
-            self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
-            poke_name = self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH,
-                                                        by=By.XPATH).text.split(',')[0]
+            poke_name = self.get_self_name()
             # Read active Pokemon moves
             move_options = self.move_options(just_names=True)
             # Get Pokemon ability & item
             ability, item = self.get_ability_item(self.Driver.SELF_SIDE)
+            self.battle_logger.update_item_list(item)
             if poke_name != 'Ditto':
                 self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
                 if '(base: ' not in ability and 'TOX' not in ability:
@@ -73,6 +72,7 @@ class BattleBot:
                 team_move_names = self.move_options(num=i)
                 # Get Pokemon ability
                 ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
+                self.battle_logger.update_item_list(item)
                 if name != 'Ditto':
                     if '(base: ' not in ability and 'TOX' not in ability:
                         self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
@@ -82,13 +82,13 @@ class BattleBot:
         else:
             pokemon_name = self.get_opp_name()
             abilities, item = self.get_ability_item(self.Driver.OPP_SIDE)
-            if '(base: ' in abilities[0] or 'TOX' in abilities:
+            self.battle_logger.update_item_list(item)
+            if '(base: ' in abilities[0] or 'TOX' in abilities[0]:
                 abilities[0] = ''
-            if 'None' in item:
-                for m in util.ITEM_REGEX:
-                    if match(m, item):
-                        item = sub(m, '\1', item)
-                        break
+            for m in util.ITEM_REGEX:
+                if match(m, item):
+                    item = sub(m, '\1', item)
+                    break
             if pokemon_name != '' and pokemon_name != 'Ditto':
                 self.battle_logger.update_data(BattleLogger.ABILITY_INFO, pokemon_name, abilities)
             # Get Pokemon moves
@@ -358,8 +358,6 @@ class BattleBot:
                 stats[0] = str(float(stats[0]) * 0.5)
             elif text == 'PAR':
                 stats[4] = str(float(stats[4]) * 0.5)
-            else:
-                print(text)
         return stats
 
     def get_item(self, side):
@@ -370,6 +368,10 @@ class BattleBot:
         elem_txt = self.Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
                                                    by=By.XPATH).text
         return sub(r'(.*) L[0-9]+', r'\1', elem_txt.strip()).strip().replace('�', "'")
+
+    def get_self_name(self):
+        self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
+        return self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH, by=By.XPATH).text.split(',')[0]
 
     def get_weather(self):
         weathers = self.Driver.driver.find_elements(value="//div[contains(@class, 'weather')]", by=By.XPATH)
