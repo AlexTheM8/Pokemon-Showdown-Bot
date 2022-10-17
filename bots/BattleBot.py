@@ -1,4 +1,4 @@
-from re import sub, findall, match
+from re import findall, match, search, sub
 
 from selenium.common import NoSuchElementException, TimeoutException, StaleElementReferenceException
 from selenium.webdriver import ActionChains
@@ -34,7 +34,6 @@ class BattleBot:
                 continue
             self.battle_actions()
         self.battle_logger.log_turn(self.Driver)
-        self.battle_logger.update_stats()
         self.battle_logger.save_data()
 
     def battle_actions(self):
@@ -79,15 +78,21 @@ class BattleBot:
                     self.battle_logger.update_data(BattleLogger.MOVE_INFO, name, team_move_names)
                 self.battle_logger.self_team.append(Pokemon(name, ability, item, team_move_names,
                                                             self.get_stats(i, do_ac=False)))
+            self.battle_logger.update_stats()
         else:
             pokemon_name = self.get_opp_name()
             abilities, item = self.get_ability_item(self.Driver.OPP_SIDE)
+            if 'None' in item:
+                for m in util.ITEM_REGEX:
+                    if match(m, item):
+                        item = search(m, item).group(1)
+                        break
             self.battle_logger.update_item_list(item)
             if '(base: ' in abilities[0] or 'TOX' in abilities[0]:
                 abilities[0] = ''
             for m in util.ITEM_REGEX:
                 if match(m, item):
-                    item = sub(m, '\1', item)
+                    item = search(m, item).group(1)
                     break
             if pokemon_name != '' and pokemon_name != 'Ditto':
                 self.battle_logger.update_data(BattleLogger.ABILITY_INFO, pokemon_name, abilities)
@@ -271,7 +276,7 @@ class BattleBot:
         else:
             self.Driver.wait_and_click(self.Driver.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
 
-    def get_ability_item(self, side, num=0, do_ac=True):
+    def get_ability_item(self, side, num=0, do_ac=True, sidebar=False, elem=None):
         if side == self.Driver.SELF_SIDE:
             if do_ac:
                 if num == 0:
@@ -291,10 +296,14 @@ class BattleBot:
                 item = ''
             return ability, item
         else:
-            if do_ac:
-                self.AC.move_to_element(
-                    self.Driver.driver.find_element(value=self.Driver.OPP_POKE_PATH, by=By.XPATH)).perform()
-            self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
+            if sidebar:
+                self.AC.move_to_element(elem).perform()
+                self.Driver.wait_for_element("div[class='tooltip tooltip-pokemon']", by=By.CSS_SELECTOR)
+            else:
+                if do_ac:
+                    self.AC.move_to_element(
+                        self.Driver.driver.find_element(value=self.Driver.OPP_POKE_PATH, by=By.XPATH)).perform()
+                self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
             # Get abilities
             temp_elm = self.Driver.driver.find_element(
                 value="//small[contains(text(), 'bilit')][contains(text(), ':')]", by=By.XPATH)
@@ -305,19 +314,13 @@ class BattleBot:
                 # Possible abilities
                 abilities = temp_elm.find_element(value='./..', by=By.XPATH).text.split(':')[1].strip().split(', ')
             temp_elm = self.Driver.driver.find_elements(value="//small[contains(text(), 'Item:')]", by=By.XPATH)
-            if len(temp_elm) > 0:
+            if temp_elm:
                 item = temp_elm[0].find_element(value='./..', by=By.XPATH).text.replace('Item: ', '').strip()
-                if 'None' in item:
-                    for m in util.ITEM_REGEX:
-                        if match(m, item):
-                            item = sub(m, '\1', item)
-                            break
             else:
                 item = ''
             return abilities, item
 
-    def get_stats(self, num=0, do_ac=True):
-        # TODO Add HP to stats
+    def get_stats(self, num=0, max_hp=True, get_status=False, do_ac=True):
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
         self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
         if do_ac:
@@ -328,37 +331,67 @@ class BattleBot:
                                                             by=By.XPATH)
             self.AC.move_to_element(poke_elem).perform()
         self.Driver.wait_for_element(tooltip_div, by=By.XPATH)
-        temp_elm = self.Driver.driver.find_elements(value=tooltip_div + "/p/*[contains(text(), 'Atk')]", by=By.XPATH)
-        if len(temp_elm) > 1:
+        stats_dict = {}
+        hp_elem = self.Driver.driver.find_element(value=tooltip_div + "/p/*[contains(text(), 'HP')]/..", by=By.XPATH)
+        status = hp_elem.find_elements(value="./span[contains(@class, 'status')]", by=By.XPATH)
+        hp_text = hp_elem.text
+        if 'fainted' in hp_text:
+            stats_dict[util.HP] = 0.0
+        elif max_hp:
+            stats_dict[util.HP] = float(search(r'^.*/(.*)\).*$', hp_text).group(1))
+        else:
+            stats_dict[util.HP] = float(search(r'^.*\((.*)/.*$', hp_text).group(1))
+        stats_elem = self.Driver.driver.find_elements(value=tooltip_div + "/p/*[contains(text(), 'Atk')]", by=By.XPATH)
+        if len(stats_elem) > 1:
             after_elem = self.Driver.driver.find_element(
                 value=tooltip_div + "/p/*[contains(text(), '(After stat modifiers:)')]", by=By.XPATH)
             stats = after_elem.find_element(value='./../following-sibling::p', by=By.XPATH)
-        elif len(temp_elm) == 0:
+        elif not stats_elem:
+            if get_status:
+                if status:
+                    return {}, status[0].text
+                return {}, ''
             return {}
         else:
-            stats = temp_elm[0].find_element(value='./..', by=By.XPATH)
+            stats = stats_elem[0].find_element(value='./..', by=By.XPATH)
         stats_text = stats.text.split(' / ')
-        stats_dict = {}
         for s in stats_text:
             vals = s.split(' ')
             stats_dict[vals[0]] = float(vals[1])
+        if get_status:
+            if status:
+                return stats_dict, status[0].text
+            return stats_dict, ''
         return stats_dict
 
-    def update_stats(self, stats):
-        status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
-        stat_changes = self.Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
+    def update_stats(self, stats, hp_mod=100.0, stat_changes=None):
+        new_stats = []
+        new_stats.extend(stats)
+        new_stats[0] = (hp_mod / 100.0) * float(stats[0])
+        if stat_changes is None:
+            stat_changes = self.get_statuses(self.Driver.OPP_SIDE)
         for s in stat_changes:
             text = s.text
-            if '× ' in text:
+            if '× ' in text and text in util.STATS_LIST:
                 num, stat = text.split('× ')
                 stat_index = util.STATS_LIST.index(stat)
-                base = stats[stat_index]
-                stats[stat_index] = str(float(base) * float(num))
-            elif text == 'BRN':
-                stats[0] = str(float(stats[0]) * 0.5)
-            elif text == 'PAR':
-                stats[4] = str(float(stats[4]) * 0.5)
-        return stats
+                base = new_stats[stat_index]
+                new_stats[stat_index] = str(float(base) * float(num))
+            elif text == util.BRN:
+                new_stats[1] = str(float(stats[1]) * 0.5)
+            elif text == util.PAR:
+                new_stats[5] = str(float(stats[5]) * 0.5)
+            elif text == util.SLOW_START:
+                new_stats[1] = str(float(stats[1]) * 0.5)
+                new_stats[5] = str(float(stats[5]) * 0.5)
+        return new_stats
+
+    def get_statuses(self, side):
+        if side == self.Driver.SELF_SIDE:
+            status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
+        else:
+            status_xpath = "//div[@class='statbar rstatbar']/div[@class='hpbar']/div[@class='status']/*"
+        return self.Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
 
     def get_item(self, side):
         pass
@@ -368,6 +401,18 @@ class BattleBot:
         elem_txt = self.Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
                                                    by=By.XPATH).text
         return sub(r'(.*) L[0-9]+', r'\1', elem_txt.strip()).strip().replace('�', "'")
+
+    def get_opp_hp(self):
+        self.Driver.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
+        elem_txt = self.Driver.driver.find_element(
+            value="//div[contains(@class, 'statbar lstatbar')]/div[@class='hpbar']/div[@class='hptext']",
+            by=By.XPATH).text.replace('%', '')
+        return float(elem_txt)
+
+    def get_opp_party_status(self):
+        return self.Driver.driver.find_elements(
+            value="//div[@class='trainer trainer-far']/div[@class='teamicons']/span[@class='picon has-tooltip']",
+            by=By.XPATH)
 
     def get_self_name(self):
         self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
@@ -380,7 +425,7 @@ class BattleBot:
             c = w.get_attribute('class').replace('weather', '').strip()
             if c != '':
                 active.append(c)
-                if c not in util.WEATHER_LIST:
+                if c not in util.WEATHER_LIST and c not in util.TERRAIN_LIST and c != util.W_TRICK_ROOM:
                     print(c)
         return active
 

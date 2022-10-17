@@ -2,11 +2,13 @@ import random
 import string
 
 from selenium import webdriver
-from selenium.common.exceptions import NoSuchElementException
+from selenium.common.exceptions import NoSuchElementException, TimeoutException
 from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+
+from util import util
 
 
 class WebDriver:
@@ -81,6 +83,35 @@ class WebDriver:
         for t in poke_types:
             types.append(t.get_attribute('alt'))
         return types
+
+    def get_field_settings(self, side):
+        base_xpath = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'fx/{}')]"
+        base_xpath_2 = "//div[@class='innerbattle']/*[5]/*[{}]/div[@class='sidecondition-{}']"
+        base_xpath_3 = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'substitute')]"
+        caltrop, rock, poison, web = 'caltrop', 'rock', 'poisoncaltrop', 'web'
+        reflect, screen = 'reflect', 'lightscreen'
+        num = 3 if side == self.SELF_SIDE else 2
+        field = {
+            util.FIELD_SPIKES: len(self.driver.find_elements(value=base_xpath.format(num, caltrop), by=By.XPATH)),
+            util.FIELD_POISON: len(self.driver.find_elements(value=base_xpath.format(num, poison), by=By.XPATH)),
+            util.FIELD_WEB: len(self.driver.find_elements(value=base_xpath.format(num, web), by=By.XPATH)),
+            util.FIELD_STONES: 1 if self.driver.find_elements(value=base_xpath.format(num, rock), by=By.XPATH) else 0,
+            util.FIELD_REFLECT: len(self.driver.find_elements(value=base_xpath_2.format(num, reflect), by=By.XPATH)),
+            util.FIELD_SCREEN: len(self.driver.find_elements(value=base_xpath_2.format(num, screen), by=By.XPATH)),
+            util.FIELD_SUBSTITUTE: 1 if self.driver.find_elements(value=base_xpath_3.format(num), by=By.XPATH) else 0
+        }
+        return field
+
+    def wait_for_next_turn(self):
+        while self.in_battle():
+            try:
+                WebDriverWait(self.driver, 2).until(
+                    EC.presence_of_element_located((By.XPATH, self.ACTIVE_POKE_PATH))
+                )
+            except (TimeoutException, NoSuchElementException):
+                continue
+            return False
+        return True
 
     def run(self):
         self.setup_account()

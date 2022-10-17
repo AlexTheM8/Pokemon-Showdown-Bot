@@ -29,6 +29,18 @@ STATUS = 'Status'
 PHYSICAL = 'Physical'
 SPECIAL = 'Special'
 
+# Statuses
+BRN = 'BRN'
+PSN = 'PSN'
+TOX = 'TOX'
+SLP = 'SLP'
+PAR = 'PAR'
+FRZ = 'FRZ'
+CONFUSED = 'Confused'
+SLOW_START = 'Slow Start'
+
+STATUS_LIST = [BRN, PSN, TOX, SLP, PAR, FRZ]
+
 # Immune abilities
 # TODO Soundproof
 IMMUNE_ABILITIES = {
@@ -51,7 +63,7 @@ SPA = 'SpA'
 SPD = 'SpD'
 SPE = 'Spe'
 
-STATS_LIST = [ATK, DEF, SPA, SPD, SPE]  # TODO Update to HP
+STATS_LIST = [HP, ATK, DEF, SPA, SPD, SPE]
 
 # Weather
 W_RAIN = 'raindance'
@@ -66,19 +78,39 @@ W_ELECTRIC_TERRAIN = 'electricterrain'
 W_GRASSY_TERRRAIN = 'grassyterrain'
 W_TRICK_ROOM = 'trickroom'
 
-# TODO Split into weather & terrain lists
 WEATHER_LIST = [
     W_RAIN,
     W_HEAVY_RAIN,
     W_SUN,
     W_HARSH_SUN,
     W_HAIL,
-    W_SANDSTORM,
+    W_SANDSTORM
+]
+
+TERRAIN_LIST = [
     W_PSYCHIC_TERRAIN,
     W_MISTY_TERRAIN,
     W_ELECTRIC_TERRAIN,
-    W_TRICK_ROOM,
     W_GRASSY_TERRRAIN
+]
+
+# Field Settings
+FIELD_SPIKES = 'field_spikes'
+FIELD_STONES = 'field_stones'
+FIELD_POISON = 'field_poison'
+FIELD_WEB = 'field_web'
+FIELD_SCREEN = 'field_screen'
+FIELD_REFLECT = 'field_reflect'
+FIELD_SUBSTITUTE = 'field_substitute'
+
+FIELD_LIST = [
+    FIELD_SPIKES,
+    FIELD_STONES,
+    FIELD_POISON,
+    FIELD_WEB,
+    FIELD_SCREEN,
+    FIELD_REFLECT,
+    FIELD_SUBSTITUTE
 ]
 
 
@@ -210,8 +242,11 @@ def type_effectiveness(move_type, opponent_type):
 # Item messages
 ITEM_KNOCKED_OFF = r'^None \((.*) was knocked off\)$'
 ITEM_EATEN = r'^None \((.*) was eaten\)$'
+ITEM_HARVESTED = r'^(.*) \(harvested; .* was eaten\)$'
 ITEM_CONSUMED = r'^None \((.*) was consumed\)$'
 ITEM_FRISKED = r'^(.*) \(frisked\)$'
+ITEM_TRICKED = r'^(.*) \(tricked\)$'
+ITEM_POPPED = r'^None \((.*) was popped\)$'
 
 # Regex Log Messages
 OPPONENT_MOVE = r'^The opposing (.*) used (.*)!$'
@@ -632,7 +667,11 @@ IGNORE_100 = r'^.* can\'t use .*!$'
 ITEM_REGEX = [
     ITEM_EATEN,
     ITEM_KNOCKED_OFF,
-    ITEM_CONSUMED
+    ITEM_HARVESTED,
+    ITEM_CONSUMED,
+    ITEM_FRISKED,
+    ITEM_TRICKED,
+    ITEM_POPPED
 ]
 
 VARIED_RESULT_LIST = [
@@ -1072,6 +1111,7 @@ MSG_DICT = {
     PLAYER_STAT_RAISE: 'Player {} {} +1',
     OPPONENT_STAT_RAISE_SHARP: 'Opponent {} {} +2',
     PLAYER_STAT_RAISE_SHARP: 'Player {} {} +2',
+    OPPONENT_STAT_RAISE_WEAKNESS: 'Opponent {} {} +2',
     PLAYER_STAT_RAISE_WEAKNESS: 'Player {} {} +2',
     OPPONENT_Z_BOOST: 'Opponent {} {} +1',
     PLAYER_Z_BOOST: 'Player {} {} +1',
@@ -1165,7 +1205,7 @@ MSG_DICT = {
     OPPONENT_SEEDED: 'Opponent {} seeded',
     PLAYER_SEEDED: 'Player {} seeded',
     OPPONENT_SEEDED_DMG: 'Opponent {} -12.5% health',
-    PLAYER_SEEDED_DMG: 'Player {}-12.5% health',
+    PLAYER_SEEDED_DMG: 'Player {} -12.5% health',
     OPPONENT_HEAL: 'Opponent {} healed',
     PLAYER_HEAL: 'Player {} healed',
     OPPONENT_FULL_HP: 'Opponent {} full HP',

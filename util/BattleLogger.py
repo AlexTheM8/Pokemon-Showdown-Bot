@@ -1,7 +1,8 @@
 import os
 from os.path import exists
-from re import match, sub
+from re import match, search, sub
 
+from selenium.common import NoSuchElementException
 from selenium.webdriver.common.by import By
 
 import util.util as util
@@ -93,7 +94,7 @@ class BattleLogger:
     def update_item_list(self, item):
         for m in util.ITEM_REGEX:
             if match(m, item):
-                item = sub(m, '\1', item)
+                item = search(m, item).group(1)
                 break
         if item not in self.item_list and item != '' and item != '':
             self.item_list.append(item)
@@ -153,82 +154,85 @@ class BattleLogger:
                     elif float(p.stats[s]) < float(self.stats_map[p.name][i]):
                         stats.append(str(round((float(p.stats[s]) + float(self.stats_map[p.name][i])) / 1.9, 1)))
                     else:
-                        stats.append(str(p.stats[s]))
+                        stats.append(str(round(float(p.stats[s]), 1)))
             else:
                 for s in util.STATS_LIST:
-                    stats.append(str(p.stats[s]))
+                    stats.append(str(round(float(p.stats[s]), 1)))
             self.stats_map[p.name] = stats
 
     def translate_log(self, Driver, msg, regex):
         if not Driver.in_battle():
             log_msg(msg, regex)
-        temp_elem = Driver.driver.find_elements(
-            value="//div[@class='trainer trainer-far']/div[@class='teamicons']/span[@class='picon has-tooltip']",
-            by=By.XPATH)
-        player_fainted = \
-            Driver.driver.find_element(value="//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|0']",
-                                       by=By.XPATH).get_attribute('value').split(',')[1] == 'fainted'
-        opp_fainted = not any('active' in e.get_attribute('aria-label') for e in temp_elem)
-        if opp_fainted and player_fainted:
-            return log_msg(msg, regex)
-        if regex == util.OPPONENT_POISON and not opp_fainted:
-            status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
-            stat_changes = Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
-            for s in stat_changes:
-                text = s.text
-                if text == 'TOX':
-                    if self.opp_last_toxic_turn == self.turn - 1:
-                        self.opp_toxic_num += 1
-                    else:
-                        self.opp_toxic_num = 1
-                    dmg = min(93.75, 6.25 * self.opp_toxic_num)
-                    self.opp_last_toxic_turn = self.turn
-                    log_msg(msg, regex).replace('poison dmg', '-{}% health'.format(dmg))
-                elif text == 'PSN':
-                    return log_msg(msg, regex).replace('poison dmg', '-12.5% health')
-        if regex == util.PLAYER_POISON and not player_fainted:
-            status_xpath = "//div[@class='statbar rstatbar']/div[@class='hpbar']/div[@class='status']/*"
-            stat_changes = Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
-            for s in stat_changes:
-                text = s.text
-                if text == 'TOX':
-                    if self.player_last_toxic_turn == self.turn - 1:
-                        self.player_toxic_num += 1
-                    else:
-                        self.player_toxic_num = 1
-                    dmg = min(93.75, 6.25 * self.player_toxic_num)
-                    self.player_last_toxic_turn = self.turn
-                    log_msg(msg, regex).replace('poison dmg', '-{}% health'.format(dmg))
-                elif text == 'PSN':
-                    return log_msg(msg, regex).replace('poison dmg', '-12.5% health')
-        if regex == util.OPPONENT_STONE_DMG and not opp_fainted:
-            types = Driver.get_type(Driver.OPP_SIDE)
-            effectiveness = 12.5
-            for t in types:
-                effectiveness *= util.type_effectiveness(util.ROCK, t)
-            return log_msg(msg, regex).replace('stone dmg', '-{}% health'.format(effectiveness))
-        if regex == util.PLAYER_STONE_DMG and not player_fainted:
-            types = Driver.get_type(Driver.SELF_SIDE)
-            effectiveness = 12.5
-            for t in types:
-                effectiveness *= util.type_effectiveness(util.ROCK, t)
-            return log_msg(msg, regex).replace('stone dmg', '-{}% health'.format(effectiveness))
-        if regex == util.OPPONENT_SPIKE_DMG and not opp_fainted:
-            base = Driver.driver.find_elements(value="//img[contains(@src, 'caltrop')]/../../*[2]/*", by=By.XPATH)
-            num = (2.080 * (len(base) ^ 2)) - (2.07 * len(base)) + 12.49
-            return log_msg(msg, regex).replace('spike dmg', '-{}% health'.format(num))
-        if regex == util.PLAYER_SPIKE_DMG and not player_fainted:
-            base = Driver.driver.find_elements(value="//img[contains(@src, 'caltrop')]/../../*[3]/*", by=By.XPATH)
-            num = (2.080 * (len(base) ^ 2)) - (2.07 * len(base)) + 12.49
-            return log_msg(msg, regex).replace('spike dmg', '-{}% health'.format(num))
-        if regex == util.OPPONENT_WISH:
-            name = Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
-                                              by=By.XPATH).text
-            return log_msg(msg, regex).replace('active', name)
-        if regex == util.PLAYER_WISH:
-            name = Driver.driver.find_element(value="//div[contains(@class, 'statbar rstatbar')]/strong",
-                                              by=By.XPATH).text
-            return log_msg(msg, regex).replace('active', name)
+        try:
+            temp_elem = Driver.driver.find_elements(
+                value="//div[@class='trainer trainer-far']/div[@class='teamicons']/span[@class='picon has-tooltip']",
+                by=By.XPATH)
+            player_fainted = \
+                Driver.driver.find_element(value="//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|0']",
+                                           by=By.XPATH).get_attribute('value').split(',')[1] == 'fainted'
+            opp_fainted = not any('active' in e.get_attribute('aria-label') for e in temp_elem)
+            if opp_fainted and player_fainted:
+                return log_msg(msg, regex)
+            if regex == util.OPPONENT_POISON and not opp_fainted:
+                status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
+                stat_changes = Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
+                for s in stat_changes:
+                    text = s.text
+                    if text == util.TOX:
+                        if self.opp_last_toxic_turn == self.turn - 1:
+                            self.opp_toxic_num += 1
+                        else:
+                            self.opp_toxic_num = 1
+                        dmg = min(93.75, 6.25 * self.opp_toxic_num)
+                        self.opp_last_toxic_turn = self.turn
+                        log_msg(msg, regex).replace('poison dmg', '-{}% health'.format(dmg))
+                    elif text == util.PSN:
+                        return log_msg(msg, regex).replace('poison dmg', '-12.5% health')
+            if regex == util.PLAYER_POISON and not player_fainted:
+                status_xpath = "//div[@class='statbar rstatbar']/div[@class='hpbar']/div[@class='status']/*"
+                stat_changes = Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
+                for s in stat_changes:
+                    text = s.text
+                    if text == util.TOX:
+                        if self.player_last_toxic_turn == self.turn - 1:
+                            self.player_toxic_num += 1
+                        else:
+                            self.player_toxic_num = 1
+                        dmg = min(93.75, 6.25 * self.player_toxic_num)
+                        self.player_last_toxic_turn = self.turn
+                        log_msg(msg, regex).replace('poison dmg', '-{}% health'.format(dmg))
+                    elif text == util.PSN:
+                        return log_msg(msg, regex).replace('poison dmg', '-12.5% health')
+            if regex == util.OPPONENT_STONE_DMG and not opp_fainted:
+                types = Driver.get_type(Driver.OPP_SIDE)
+                effectiveness = 12.5
+                for t in types:
+                    effectiveness *= util.type_effectiveness(util.ROCK, t)
+                return log_msg(msg, regex).replace('stone dmg', '-{}% health'.format(effectiveness))
+            if regex == util.PLAYER_STONE_DMG and not player_fainted:
+                types = Driver.get_type(Driver.SELF_SIDE)
+                effectiveness = 12.5
+                for t in types:
+                    effectiveness *= util.type_effectiveness(util.ROCK, t)
+                return log_msg(msg, regex).replace('stone dmg', '-{}% health'.format(effectiveness))
+            if regex == util.OPPONENT_SPIKE_DMG and not opp_fainted:
+                field = Driver.get_field_settings(Driver.SELF_SIDE)
+                num = (2.080 * (field[util.FIELD_SPIKES] ^ 2)) - (2.07 * field[util.FIELD_SPIKES]) + 12.49
+                return log_msg(msg, regex).replace('spike dmg', '-{}% health'.format(num))
+            if regex == util.PLAYER_SPIKE_DMG and not player_fainted:
+                field = Driver.get_field_settings(Driver.OPP_SIDE)
+                num = (2.080 * (field[util.FIELD_SPIKES] ^ 2)) - (2.07 * field[util.FIELD_SPIKES]) + 12.49
+                return log_msg(msg, regex).replace('spike dmg', '-{}% health'.format(num))
+            if regex == util.OPPONENT_WISH:
+                name = Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
+                                                  by=By.XPATH).text
+                return log_msg(msg, regex).replace('active', name)
+            if regex == util.PLAYER_WISH:
+                name = Driver.driver.find_element(value="//div[contains(@class, 'statbar rstatbar')]/strong",
+                                                  by=By.XPATH).text
+                return log_msg(msg, regex).replace('active', name)
+        except NoSuchElementException:
+            pass
         return log_msg(msg, regex)
 
     def log_turn(self, Driver):
@@ -240,9 +244,9 @@ class BattleLogger:
         self.battle_info.append('Turn {}'.format(self.turn))
         turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
         for e in turn_elems:
-            msg = e.text.replace('\n', '')
+            msg = str(e.text.replace('\n', ''))
             if match(util.WIN_MSG, msg):
-                if sub(util.WIN_MSG, '\1', msg) == Driver.botName:
+                if search(util.WIN_MSG, msg).group(1) == Driver.botName:
                     self.battle_info.append('Win\n')
                 else:
                     self.battle_info.append('Lose\n')
