@@ -127,7 +127,7 @@ class BattleBot:
                 retry_count -= 1
             success = True
 
-    def move_options(self, num=0, modded=False, just_names=False, do_ac=True):
+    def move_options(self, num=0, modded=False, just_names=False, do_ac=True, do_mega=True):
         options = []
         if num == 0:
             has_z = False
@@ -146,7 +146,7 @@ class BattleBot:
                             move_data = self.get_move_data(m) if not modded else self.get_modded_move_data(m)
                             options.append(('z' + m.get_attribute('value'), move_data))
                         elem.click()
-                    else:
+                    elif do_mega:
                         # Do Mega Evo
                         elem.click()
             if has_z:
@@ -176,8 +176,10 @@ class BattleBot:
                     trimmed_moves.append(m.split(' (')[0])
             return trimmed_moves
         else:
-            poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
-            self.AC.move_to_element(poke_elem).perform()
+            if do_ac:
+                poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num),
+                                                            by=By.XPATH)
+                self.AC.move_to_element(poke_elem).perform()
             self.Driver.wait_for_element("div[class='tooltip tooltip-switchpokemon']", by=By.CSS_SELECTOR)
             # Get Pokemon moves
             team_move_names = self.Driver.driver.find_element(
@@ -320,15 +322,19 @@ class BattleBot:
                 item = ''
             return abilities, item
 
-    def get_stats(self, num=0, max_hp=True, get_status=False, do_ac=True):
+    def get_stats(self, num=0, max_hp=True, get_status=False, do_ac=True, fainted=False):
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
         self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
         if do_ac:
             if num == 0:
                 poke_elem = self.Driver.driver.find_element(value=self.Driver.ACTIVE_STAGE_PATH, by=By.XPATH)
             else:
-                poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num),
-                                                            by=By.XPATH)
+                if fainted:
+                    poke_elem = self.Driver.driver.find_element(value=self.Driver.FAINTED_SWITCH_PATH.format(num),
+                                                                by=By.XPATH)
+                else:
+                    poke_elem = self.Driver.driver.find_element(value=self.Driver.CHOOSE_SWITCH_PATH.format(num),
+                                                                by=By.XPATH)
             self.AC.move_to_element(poke_elem).perform()
         self.Driver.wait_for_element(tooltip_div, by=By.XPATH)
         stats_dict = {}
@@ -345,7 +351,7 @@ class BattleBot:
         if len(stats_elem) > 1:
             after_elem = self.Driver.driver.find_element(
                 value=tooltip_div + "/p/*[contains(text(), '(After stat modifiers:)')]", by=By.XPATH)
-            stats = after_elem.find_element(value='./../following-sibling::p', by=By.XPATH)
+            stats = after_elem.find_element(value='./../following-sibling::p[1]', by=By.XPATH)
         elif not stats_elem:
             if get_status:
                 if status:
@@ -364,16 +370,22 @@ class BattleBot:
             return stats_dict, ''
         return stats_dict
 
-    def update_stats(self, stats, hp_mod=100.0, stat_changes=None):
+    def update_stats(self, stats, hp_mod=100.0, stat_changes=None, provided=True):
         new_stats = []
         new_stats.extend(stats)
         new_stats[0] = (hp_mod / 100.0) * float(stats[0])
         if stat_changes is None:
             stat_changes = self.get_statuses(self.Driver.OPP_SIDE)
+            provided = False
         for s in stat_changes:
-            text = s.text
-            if '× ' in text and text in util.STATS_LIST:
+            if not provided:
+                text = s.text
+            else:
+                text = s
+            if '× ' in text:
                 num, stat = text.split('× ')
+                if stat not in util.STATS_LIST:
+                    continue
                 stat_index = util.STATS_LIST.index(stat)
                 base = new_stats[stat_index]
                 new_stats[stat_index] = str(float(base) * float(num))
@@ -388,9 +400,9 @@ class BattleBot:
 
     def get_statuses(self, side):
         if side == self.Driver.SELF_SIDE:
-            status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
-        else:
             status_xpath = "//div[@class='statbar rstatbar']/div[@class='hpbar']/div[@class='status']/*"
+        else:
+            status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
         return self.Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
 
     def get_item(self, side):
@@ -407,7 +419,7 @@ class BattleBot:
         elem_txt = self.Driver.driver.find_element(
             value="//div[contains(@class, 'statbar lstatbar')]/div[@class='hpbar']/div[@class='hptext']",
             by=By.XPATH).text.replace('%', '')
-        return float(elem_txt)
+        return float(elem_txt) if elem_txt != '' else 100.0
 
     def get_opp_party_status(self):
         return self.Driver.driver.find_elements(

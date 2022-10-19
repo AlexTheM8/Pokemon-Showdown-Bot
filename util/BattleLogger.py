@@ -34,6 +34,7 @@ class BattleLogger:
         self.battle_info = []
         self.player_toxic_num, self.opp_toxic_num = 0, 0
         self.player_last_toxic_turn, self.opp_last_toxic_turn = 0, 0
+        self.player_alive, self.opp_alive = 6, 6
 
     def reset(self):
         self.turn = 0
@@ -43,6 +44,7 @@ class BattleLogger:
         self.updated_abilities_list, self.updated_item_list = False, False
         self.player_toxic_num, self.opp_toxic_num = 0, 0
         self.player_last_toxic_turn, self.opp_last_toxic_turn = 0, 0
+        self.player_alive, self.opp_alive = 6, 6
 
     def update_opp_team(self, poke):
         if not any(poke.name == p.name for p in self.opp_team):
@@ -264,6 +266,21 @@ class BattleLogger:
             if any(match(r, msg) for r in util.IGNORE_LIST):
                 continue
             print('NEW MESSAGE:', msg)
+
+    def battle_win(self, Driver):
+        if self.turn == 0:
+            elem_path = "//div[@class='battle-history']"
+        else:
+            elem_path = "//h2[@class='battle-history'][text()='Turn {}']/following-sibling::div[" \
+                        "@class='battle-history'] "
+        turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
+        for e in turn_elems:
+            msg = str(e.text.replace('\n', ''))
+            if match(util.WIN_MSG, msg):
+                if search(util.WIN_MSG, msg).group(1) == Driver.botName:
+                    return True
+                else:
+                    return False
 
     def save_battle_info(self):
         num_files = len(os.listdir(util.LOG_ROOT))

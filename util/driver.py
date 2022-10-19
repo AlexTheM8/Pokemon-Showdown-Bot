@@ -16,6 +16,7 @@ class WebDriver:
     ACTIVE_POKE_PATH = "//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|0']"
     ACTIVE_STAGE_PATH = "//div[@class='has-tooltip'][@data-id='p1a']"
     CHOOSE_SWITCH_PATH = "//button[@name='chooseSwitch'][@value='{}']"
+    FAINTED_SWITCH_PATH = "//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|{}']"
     OPP_POKE_PATH = "//div[@class='has-tooltip'][@data-id='p2a']"
 
     def __init__(self):
@@ -87,7 +88,8 @@ class WebDriver:
     def get_field_settings(self, side):
         base_xpath = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'fx/{}')]"
         base_xpath_2 = "//div[@class='innerbattle']/*[5]/*[{}]/div[@class='sidecondition-{}']"
-        base_xpath_3 = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'substitute')]"
+        base_xpath_3 = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'substitute')]" \
+                       "[contains(@style, 'opacity: 1')]"
         caltrop, rock, poison, web = 'caltrop', 'rock', 'poisoncaltrop', 'web'
         reflect, screen = 'reflect', 'lightscreen'
         num = 3 if side == self.SELF_SIDE else 2
