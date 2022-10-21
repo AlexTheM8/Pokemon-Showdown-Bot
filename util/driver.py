@@ -7,6 +7,7 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.edge.options import Options
 
 from util import util
 
@@ -19,8 +20,10 @@ class WebDriver:
     FAINTED_SWITCH_PATH = "//button[@name='chooseDisabled'][@data-tooltip='switchpokemon|{}']"
     OPP_POKE_PATH = "//div[@class='has-tooltip'][@data-id='p2a']"
 
-    def __init__(self):
-        self.driver = webdriver.Edge()
+    def __init__(self, headless):
+        options = Options()
+        options.headless = headless
+        self.driver = webdriver.Edge(options=options)
         self.driver.get('https://play.pokemonshowdown.com')
         self.AC = ActionChains(self.driver)
         self.botName = ''.join(random.choice(string.ascii_letters + string.digits) for _ in range(18))
@@ -107,7 +110,10 @@ class WebDriver:
     def wait_for_next_turn(self):
         while self.in_battle():
             try:
-                WebDriverWait(self.driver, 2).until(
+                skip = self.driver.find_elements(value="//button[@name='goToEnd']", by=By.XPATH)
+                if skip:
+                    skip[0].click()
+                WebDriverWait(self.driver, 0.1).until(
                     EC.presence_of_element_located((By.XPATH, self.ACTIVE_POKE_PATH))
                 )
             except (TimeoutException, NoSuchElementException):

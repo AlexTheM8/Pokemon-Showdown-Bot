@@ -20,8 +20,9 @@ def log_msg(msg, regex):
 class BattleLogger:
     MOVE_INFO, ABILITY_INFO = 0, 1
 
-    def __init__(self, bot):
+    def __init__(self, bot, headless):
         self.bot = bot
+        self.headless = headless
         self.known_move_map, self.abilities_map, self.move_map, self.stats_map = {}, {}, {}, {}
         self.abilities_list, self.item_list = [], []
         self.updated_known_moves, self.updated_abilities, self.updated_move_info = False, False, False
@@ -94,10 +95,8 @@ class BattleLogger:
             self.abilities_map[poke] = known
 
     def update_item_list(self, item):
-        for m in util.ITEM_REGEX:
-            if match(m, item):
-                item = search(m, item).group(1)
-                break
+        if '(' in item:
+            item = item.split('(')[0].strip()
         if item not in self.item_list and item != '' and item != '':
             self.item_list.append(item)
             self.item_list.sort()
@@ -144,7 +143,8 @@ class BattleLogger:
             for poke in self.stats_map:
                 lines += '{},{}\n'.format(poke, ','.join(self.stats_map[poke]))
             f.write(lines)
-        self.save_battle_info()
+        if not self.headless:
+            self.save_battle_info()
 
     def update_stats(self):
         for p in self.self_team:
@@ -238,6 +238,8 @@ class BattleLogger:
         return log_msg(msg, regex)
 
     def log_turn(self, Driver):
+        if not self.headless:
+            return
         if self.turn == 0:
             elem_path = "//div[@class='battle-history']"
         else:
@@ -247,6 +249,7 @@ class BattleLogger:
         turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
         for e in turn_elems:
             msg = str(e.text.replace('\n', ''))
+            # TODO Record ELO
             if match(util.WIN_MSG, msg):
                 if search(util.WIN_MSG, msg).group(1) == Driver.botName:
                     self.battle_info.append('Win\n')
@@ -265,9 +268,11 @@ class BattleLogger:
                 continue
             if any(match(r, msg) for r in util.IGNORE_LIST):
                 continue
-            print('NEW MESSAGE:', msg)
+            if msg != '':
+                print('NEW MESSAGE:', msg)
 
     def battle_win(self, Driver):
+        # TODO Find alt mode for headless. Problem is that skip removes the win msg
         if self.turn == 0:
             elem_path = "//div[@class='battle-history']"
         else:

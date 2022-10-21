@@ -13,9 +13,9 @@ from util.driver import WebDriver
 
 class BattleBot:
 
-    def __init__(self):
-        self.battle_logger = BattleLogger(repr(self))
-        self.Driver = WebDriver()
+    def __init__(self, headless):
+        self.battle_logger = BattleLogger(repr(self), headless)
+        self.Driver = WebDriver(headless)
         self.Driver.run()
         self.AC = ActionChains(self.Driver.driver)
 
