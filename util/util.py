@@ -248,6 +248,8 @@ ITEM_FRISKED = r'^(.*) \(frisked\)$'
 ITEM_TRICKED = r'^(.*) \(tricked\)$'
 ITEM_POPPED = r'^None \((.*) was popped\)$'
 
+ITEM_GENERAL = r'^(?:None)?(.*) \(.*\)$'
+
 # Regex Log Messages
 OPPONENT_MOVE = r'^The opposing (.*) used (.*)!$'
 PLAYER_MOVE = r'^(.*) used (.*)!$'
@@ -663,6 +665,8 @@ IGNORE_97 = r'^.* is protected by the Electric Terrain!$'
 IGNORE_98 = r'^.*\'s item cannot be removed!$'
 IGNORE_99 = r'^\[.*\'s Water Compaction\]$'
 IGNORE_100 = r'^.* can\'t use .*!$'
+
+ILLUSION_MSG = '(More than 4 moves is usually a sign of Illusion Zoroark/Zorua.)'
 
 ITEM_REGEX = [
     ITEM_EATEN,

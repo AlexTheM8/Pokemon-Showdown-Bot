@@ -78,7 +78,7 @@ class BattleLogger:
         known = self.known_move_map.get(poke, []) if info_type == self.MOVE_INFO else self.abilities_map.get(poke, [])
         updated = False
         for d in data:
-            if d not in known and d != '':
+            if d not in known and d != '' and d != util.ILLUSION_MSG:
                 known.append(d)
                 if info_type == self.MOVE_INFO:
                     self.updated_known_moves = True
@@ -238,7 +238,7 @@ class BattleLogger:
         return log_msg(msg, regex)
 
     def log_turn(self, Driver):
-        if not self.headless:
+        if self.headless:
             return
         if self.turn == 0:
             elem_path = "//div[@class='battle-history']"

@@ -9,7 +9,6 @@ class RandomBot(BattleBot):
         if self.active_fainted():
             self.choose_switch()
         else:
-            # TODO Check if accounts for arena trap
             # Limit to moves only if cannot switch
             party = self.party_options()
             if randrange(1, 6) < 5 or not party:

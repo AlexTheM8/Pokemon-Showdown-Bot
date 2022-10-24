@@ -1,6 +1,6 @@
 import os
 import random
-from re import findall, search
+from re import findall, search, match
 
 import numpy as np
 import tensorflow as tf
@@ -348,8 +348,8 @@ class NeuralNetBot(BattleBot):
             ability = ability.split('(')[0].strip()
         observation[1] = index_default(self.battle_logger.abilities_list, ability)
         if item != '' and 'None' not in item:
-            if '(' in item:
-                item = item.split('(')[0].strip()
+            if match(util.ITEM_GENERAL, item):
+                item = search(util.ITEM_GENERAL, item).group(1)
             observation[2] = index_default(self.battle_logger.item_list, item)
         fainted = self.active_fainted()
         try:
@@ -401,8 +401,8 @@ class NeuralNetBot(BattleBot):
                     opp_ability = opp_ability.split('(')[0].strip()
                 observation[97] = index_default(self.battle_logger.abilities_list, opp_ability)
             if item != '' and 'None' not in item:
-                if '(' in item:
-                    item = item.split('(')[0].strip()
+                if match(util.ITEM_GENERAL, item):
+                    item = search(util.ITEM_GENERAL, item).group(1)
                 observation[98] = index_default(self.battle_logger.item_list, item)
             opp_stats = self.update_stats(self.battle_logger.stats_map.get(opp_active, ["1.0"] * 6),
                                           hp_mod=self.get_opp_hp())
@@ -451,8 +451,8 @@ class NeuralNetBot(BattleBot):
                         ability = ability.split('(')[0].strip()
                     observation[27 + (14 * (i - 1))] = index_default(self.battle_logger.abilities_list, ability)
                     if item != '' and 'None' not in item:
-                        if '(' in item:
-                            item = item.split('(')[0].strip()
+                        if match(util.ITEM_GENERAL, item):
+                            item = search(util.ITEM_GENERAL, item).group(1)
                         observation[28 + (14 * (i - 1))] = index_default(self.battle_logger.item_list, item)
 
             # Opp Team
@@ -477,8 +477,8 @@ class NeuralNetBot(BattleBot):
                             observation[119 + (14 * set_index)] = index_default(self.battle_logger.abilities_list,
                                                                                 opp_team_ability)
                         if opp_team_item != '' and 'None' not in opp_team_item:
-                            if '(' in item:
-                                item = item.split('(')[0].strip()
+                            if match(util.ITEM_GENERAL, opp_team_item):
+                                opp_team_item = search(util.ITEM_GENERAL, opp_team_item).group(1)
                             observation[120 + (14 * set_index)] = index_default(self.battle_logger.item_list,
                                                                                 opp_team_item)
                         hp = 100.0
@@ -498,6 +498,8 @@ class NeuralNetBot(BattleBot):
                         if any((pk := opp_p).name == n for opp_p in self.battle_logger.opp_team):
                             for j, m in enumerate(pk.moves):
                                 observation[127 + j + (14 * set_index)] = index_default(move_list, m)
+                                if j == 3:
+                                    break
                     set_index += 1
 
         # Field Settings

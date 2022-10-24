@@ -60,7 +60,7 @@ class BattleBot:
             self.battle_logger.update_item_list(item)
             if poke_name != 'Ditto':
                 self.battle_logger.update_data(BattleLogger.MOVE_INFO, poke_name, move_options)
-                if '(base: ' not in ability and 'TOX' not in ability:
+                if '(base: ' not in ability:
                     self.battle_logger.update_data(BattleLogger.ABILITY_INFO, poke_name, [ability])
             self.battle_logger.self_team.append(Pokemon(poke_name, ability, item, move_options,
                                                         self.get_stats(do_ac=False)))
@@ -73,7 +73,7 @@ class BattleBot:
                 ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
                 self.battle_logger.update_item_list(item)
                 if name != 'Ditto':
-                    if '(base: ' not in ability and 'TOX' not in ability:
+                    if '(base: ' not in ability:
                         self.battle_logger.update_data(BattleLogger.ABILITY_INFO, name, [ability])
                     self.battle_logger.update_data(BattleLogger.MOVE_INFO, name, team_move_names)
                 self.battle_logger.self_team.append(Pokemon(name, ability, item, team_move_names,
@@ -88,7 +88,7 @@ class BattleBot:
                         item = search(m, item).group(1)
                         break
             self.battle_logger.update_item_list(item)
-            if '(base: ' in abilities[0] or 'TOX' in abilities[0]:
+            if '(base: ' in abilities[0]:
                 abilities[0] = ''
             for m in util.ITEM_REGEX:
                 if match(m, item):
@@ -300,15 +300,17 @@ class BattleBot:
         else:
             if sidebar:
                 self.AC.move_to_element(elem).perform()
-                self.Driver.wait_for_element("div[class='tooltip tooltip-pokemon']", by=By.CSS_SELECTOR)
+                class_str = 'tooltip tooltip-pokemon'
             else:
                 if do_ac:
                     self.AC.move_to_element(
                         self.Driver.driver.find_element(value=self.Driver.OPP_POKE_PATH, by=By.XPATH)).perform()
-                self.Driver.wait_for_element("div[class='tooltip tooltip-activepokemon']", by=By.CSS_SELECTOR)
+                class_str = 'tooltip tooltip-activepokemon'
+            self.Driver.wait_for_element("div[class='{}']".format(class_str), by=By.CSS_SELECTOR)
+
             # Get abilities
             temp_elm = self.Driver.driver.find_element(
-                value="//small[contains(text(), 'bilit')][contains(text(), ':')]", by=By.XPATH)
+                value="//div[@class='{}']/p[2]/small".format(class_str), by=By.XPATH)
             if 'Ability' in temp_elm.text:
                 # Ability known
                 abilities = [temp_elm.find_element(value='./..', by=By.XPATH).text.replace('Ability: ', '').strip()]
