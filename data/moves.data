@@ -1,53 +1,53 @@
-Knock Off,Dark,Physical,65.0
-Superpower,Fighting,Physical,120.0
-Swords Dance,Normal,Status,0.0
-Ice Beam,Ice,Special,90.0
-Blaze Kick,Fire,Physical,85.0
-U-turn,Bug,Physical,70.0
-Iron Head,Steel,Physical,80.0
-Energy Ball,Grass,Special,90.0
-Psychic,Psychic,Special,90.0
-Tail Glow,Bug,Status,0.0
+Knock Off,Dark,Physical,65.0,Opp Item Remove
+Superpower,Fighting,Physical,120.0,User Atk -1,User Def -1
+Swords Dance,Normal,Status,0.0,User Atk +2
+Ice Beam,Ice,Special,90.0,Opp FRZ Chance
+Blaze Kick,Fire,Physical,85.0,Crit Chance,Opp BRN Chance
+U-turn,Bug,Physical,70.0,User Switch
+Iron Head,Steel,Physical,80.0,Flinch Chance
+Energy Ball,Grass,Special,90.0,Opp SpD -1 Chance
+Psychic,Psychic,Special,90.0,Opp Spd -1 Chance
+Tail Glow,Bug,Status,0.0,User SpA +3
 Surf,Water,Special,90.0
 Hydro Pump,Water,Special,110.0
-Giga Drain,Grass,Special,75.0
-Focus Blast,Fighting,Special,120.0
+Giga Drain,Grass,Special,75.0,User DmgHeal
+Focus Blast,Fighting,Special,120.0,Opp SpD -1 Chance
 Stone Edge,Rock,Physical,100.0
-Close Combat,Fighting,Physical,120.0
+Close Combat,Fighting,Physical,120.0,User Atk -1,User Def -1
 Earthquake,Ground,Physical,100.0
-Taunt,Dark,Status,0.0
-Toxic,Poison,Status,0.0
-Leech Life,Bug,Physical,80.0
-Moonblast,Fairy,Special,95.0
-Strength Sap,Grass,Status,0.0
-Sleep Powder,Grass,Status,0.0
+Taunt,Dark,Status,0.0,Opp Status Disable
+Toxic,Poison,Status,0.0,Opp Toxic
+Leech Life,Bug,Physical,80.0,User DmgHeal
+Moonblast,Fairy,Special,95.0,Opp SpA -1 Chance
+Strength Sap,Grass,Status,0.0,Opp Atk -1,User Heal
+Sleep Powder,Grass,Status,0.0,Opp SLP
 Hidden Power Ice,Ice,Special,60.0
-Calm Mind,Psychic,Status,0.0
-Poison Jab,Poison,Physical,80.0
-Sucker Punch,Dark,Physical,70.0
-Crunch,Dark,Physical,80.0
-Fire Blast,Fire,Special,110.0
-Draco Meteor,Dragon,Special,130.0
-Roost,Flying,Status,0.0
+Calm Mind,Psychic,Status,0.0,User SpA +1,User SpD +1
+Poison Jab,Poison,Physical,80.0,Opp PSN Chance
+Sucker Punch,Dark,Physical,70.0,Priority +1
+Crunch,Dark,Physical,80.0,Opp Def -1 Chance
+Fire Blast,Fire,Special,110.0,Opp BRN Chance
+Draco Meteor,Dragon,Special,130.0,User SpA -2
+Roost,Flying,Status,0.0,User Heal 50%
 Psyshock,Psychic,Special,80.0
-Stealth Rock,Rock,Status,0.0
-Wild Charge,Electric,Physical,90.0
-Air Slash,Flying,Special,75.0
-Heat Wave,Fire,Special,95.0
-Volt Switch,Electric,Special,70.0
-Signal Beam,Bug,Special,75.0
-Thunderbolt,Electric,Special,90.0
-Toxic Spikes,Poison,Status,0.0
-Destiny Bond,Ghost,Status,0.0
-Spikes,Ground,Status,0.0
-Liquidation,Water,Physical,85.0
-Meteor Mash,Steel,Physical,90.0
-Hammer Arm,Fighting,Physical,100.0
-Zen Headbutt,Psychic,Physical,80.0
-Nasty Plot,Dark,Status,0.0
-Dark Pulse,Dark,Special,80.0
-Recover,Normal,Status,0.0
-Sleep Talk,Normal,Status,0.0
+Stealth Rock,Rock,Status,0.0,StealthRock
+Wild Charge,Electric,Physical,90.0,Recoil 25%
+Air Slash,Flying,Special,75.0,Flinch Chance
+Heat Wave,Fire,Special,95.0,Opp BRN Chance
+Volt Switch,Electric,Special,70.0,User Switch
+Signal Beam,Bug,Special,75.0,Opp Confused Chance
+Thunderbolt,Electric,Special,90.0,Opp PRZ Chance
+Toxic Spikes,Poison,Status,0.0,ToxicSpikes
+Destiny Bond,Ghost,Status,0.0,Opp OHKO Chance
+Spikes,Ground,Status,0.0,Spikes
+Liquidation,Water,Physical,85.0,Opp Def -1 Chance
+Meteor Mash,Steel,Physical,90.0,User Atk +1 Chance
+Hammer Arm,Fighting,Physical,100.0,User Spd -1
+Zen Headbutt,Psychic,Physical,80.0,Flinch Chance
+Nasty Plot,Dark,Status,0.0,User SpA +2
+Dark Pulse,Dark,Special,80.0,Flinch Chance
+Recover,Normal,Status,0.0,User Heal 50%
+Sleep Talk,Normal,Status,0.0,User RdmMove
 Return,Normal,Physical,102.0
 Rest,Psychic,Status,0.0
 Will-O-Wisp,Fire,Status,0.0
