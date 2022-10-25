@@ -420,8 +420,8 @@ OPPONENT_TRANSFORM_2 = r'^The opposing (.*) transformed!$'
 PLAYER_TRANSFORM_2 = r'^(.*) transformed!$'
 OPPONENT_MAGIC_BOUNCE = r'^\[The opposing .*\'s Magic Bounce\]The opposing (.*) bounced the (.*) back!$'
 PLAYER_MAGIC_BOUNCE = r'^\[.*\'s Magic Bounce\](.*) bounced the (.*) back!$'
-OPPONENT_DITTO = r'^.*The opposing (.*) transformed into (.*)!$'
-PLAYER_DITTO = r'^.*(.*) transformed into (.*)!$'
+OPPONENT_DITTO = r'^.*\]The opposing (.*) transformed into (.*)!$'
+PLAYER_DITTO = r'^.*\](.*) transformed into (.*)!$'
 OPPONENT_STURDY = r'^(?:\[The opposing.*\])?The opposing (.*) endured the hit!$'
 PLAYER_STURDY = r'^(?:\[.*\])?(.*) endured the hit!$'
 OPPONENT_WISH = r'^The opposing .*\'s wish came true!$'
@@ -1264,7 +1264,7 @@ MSG_DICT = {
     PLAYER_FORM: 'Player {} changed to {}',
     OPPONENT_TRANSFORM: 'Opponent {} changed to Complete Forme',
     PLAYER_TRANSFORM: 'Player {} changed to Complete Forme',
-    OPPONENT_TRANSFORM_2: 'Opponent {} tranformed',
+    OPPONENT_TRANSFORM_2: 'Opponent {} transformed',
     PLAYER_TRANSFORM_2: 'Player {} transformed',
     OPPONENT_DITTO: 'Opponent {} transformed into {}',
     PLAYER_DITTO: 'Player {} transformed into {}',

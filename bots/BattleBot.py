@@ -428,6 +428,11 @@ class BattleBot:
             value="//div[@class='trainer trainer-far']/div[@class='teamicons']/span[@class='picon has-tooltip']",
             by=By.XPATH)
 
+    def get_self_party_status(self):
+        return self.Driver.driver.find_elements(
+            value="//div[@class='trainer trainer-near']/div[@class='teamicons']/span[@class='picon has-tooltip']",
+            by=By.XPATH)
+
     def get_self_name(self):
         self.Driver.wait_for_element(self.Driver.ACTIVE_POKE_PATH, by=By.XPATH)
         return self.Driver.driver.find_element(value=self.Driver.ACTIVE_POKE_PATH, by=By.XPATH).text.split(',')[0]

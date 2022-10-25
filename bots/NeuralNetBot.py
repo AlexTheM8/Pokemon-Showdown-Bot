@@ -19,10 +19,8 @@ EPSILON_FILE = 'epsilon.data'
 REPLAY_FILE = 'replay.data'
 
 
-# TODO Analyze for repeat code
-# TODO Refactor
 def train(replay_memory, model, target_model):
-    learning_rate = 0.7  # Learning rate
+    learning_rate = 0.7
     discount_factor = 0.618
 
     MIN_REPLAY_SIZE = 1000
@@ -36,20 +34,15 @@ def train(replay_memory, model, target_model):
     new_current_states = np.array([transition[3] for transition in mini_batch])
     future_qs_list = target_model.predict(new_current_states)
 
-    X = []
-    Y = []
+    X = Y = []
     for index, (observation, action, reward, new_observation, done) in enumerate(mini_batch):
         if not done:
             max_future_q = reward + discount_factor * np.max(future_qs_list[index])
         else:
             max_future_q = reward
-
         current_qs = current_qs_list[index]
         current_qs[action - 1] = (1 - learning_rate) * current_qs[action - 1] + learning_rate * max_future_q
-
-        X.append(observation)
-        Y.append(current_qs)
-
+        X.append(observation), Y.append(current_qs)
     model.fit(np.array(X), np.array(Y), batch_size=batch_size, verbose=0, shuffle=True)
 
 
@@ -124,11 +117,8 @@ def load_training_info():
         for line in f:
             observation, action, reward, new_observation, done = line.split('|')
             observation = np.array(eval(observation))
-            action = int(action)
-            reward = float(reward)
             new_observation = np.array(eval(new_observation))
-            done = bool(done)
-            replay_memory.append([observation, action, reward, new_observation, done])
+            replay_memory.append([observation, int(action), float(reward), new_observation, bool(done)])
     return float(epsilon), int(episode), replay_memory
 
 
@@ -136,8 +126,7 @@ class NeuralNetBot(BattleBot):
 
     def __init__(self, headless):
         super().__init__(headless)
-        self.epsilon = 1
-        self.max_epsilon = 1
+        self.epsilon = self.max_epsilon = 1
         self.min_epsilon = 0.01
         self.decay = 0.001
         self.episode = 0
@@ -196,8 +185,7 @@ class NeuralNetBot(BattleBot):
 
     def choose_action(self):
         self.steps_to_update_target_model += 1
-        random_number = np.random.rand()
-        if random_number <= self.epsilon:
+        if np.random.rand() <= self.epsilon:
             action_list, has_z, mega_elm = self.limit_actions()
             if action_list:
                 action = random.choice(action_list)
@@ -270,59 +258,13 @@ class NeuralNetBot(BattleBot):
 
     def get_observation(self):
         """
-        Order:
-         - Active Poke DONE 0-18
-            - Name
-            - Ability
-            - Item
-            - Stats (x6)
-            - Moves (x8)
-            - Status
-                - Base
-                - Confuse
-         - Field Settings DONE 19-25
-            - Spikes
-            - Stones
-            - Toxic Spikes
-            - Sticky Web
-            - Light Screen
-            - Reflect
-            - Substitute
-         - Player Team (x5) DONE 26-95
-            - Name
-            - Ability
-            - Item
-            - Stats (x6)
-            - Moves (x4)
-            - Status
-         - Opp Active Poke DONE 96-110
-            - Name
-            - Ability
-            - Item
-            - Stats (x6)
-            - Moves (x4)
-            - Status
-                - Base
-                - Confuse
-         - Field Settings DONE 111-117
-            - Spikes
-            - Stones
-            - Toxic Spikes
-            - Sticky Web
-            - Light Screen
-            - Reflect
-            - Substitute
-         - Opp Team (x5) 118-187
-            - Name DONE
-            - Ability
-            - Item
-            - Stats (x6)
-            - Moves (x4) DONE
-            - Status
-         - Weather DONE 188-190
-            - Weather
-            - Terrain
-            - Trick Room
+         - Active Poke: Name, Ability, Item, Stats (x6), Moves (x8), Status (x2) 0-18
+         - Field Settings 19-25
+         - Player Team (x5): Name, Ability, Item, Stats (x6), Moves (x4), Status 26-95
+         - Opp Active Poke: Name, Ability, Item, Stats (x6), Moves (x4), Status (x2) 96-110
+         - Field Settings 111-117
+         - Opp Team (x5): Name, Ability, Item, Stats (x6), Moves (x4), Status 118-187
+         - Weather 188-190
         """
         # Base observation
         observation = np.array([-1] * self.state_shape[0])
@@ -406,10 +348,11 @@ class NeuralNetBot(BattleBot):
                 observation[98] = index_default(self.battle_logger.item_list, item)
             opp_stats = self.update_stats(self.battle_logger.stats_map.get(opp_active, ["1.0"] * 6),
                                           hp_mod=self.get_opp_hp())
+            opp_moves = self.move_options(num=-1, do_ac=False)
             for i in range(len(util.STATS_LIST)):
                 observation[99 + i] = float(opp_stats[i])
-            for i, m in enumerate(self.move_options(num=-1, do_ac=False)):
-                observation[105 + i] = index_default(move_list, m)
+                if i < 4:
+                    observation[105 + i] = index_default(move_list, opp_moves[i])
             opp_statuses = self.get_statuses(self.Driver.OPP_SIDE)
             if any((text := s.text) in util.STATUS_LIST for s in opp_statuses):
                 observation[109] = index_default(util.STATUS_LIST, text)
@@ -419,6 +362,7 @@ class NeuralNetBot(BattleBot):
             if any('fainted' in (label := e.get_attribute('aria-label')) for e in opp_party):
                 opp_active = label.split("(")[0].strip()
 
+        player_party_side = self.get_self_party_status()
         set_index = 0
         for i in range(1, 7):
             if i < 6:
@@ -437,23 +381,48 @@ class NeuralNetBot(BattleBot):
                 if skip:
                     observation[29 + (14 * (i - 1))] = 0.0
                 else:
-                    # TODO See if can optimize stats/status (HP needed), could do side bar info
-                    stats, status = self.get_stats(num=i, max_hp=False, get_status=True, fainted=faint)
-                    for j, s in enumerate(util.STATS_LIST):
-                        observation[29 + j + (14 * (i - 1))] = float(stats[s])
-                    if status != '':
-                        observation[39 + (14 * (i - 1))] = index_default(util.STATUS_LIST, status)
-                    if any((pk := player_p).name == n for player_p in self.battle_logger.self_team):
-                        for j, m in enumerate(pk.moves):
-                            observation[35 + j + (14 * (i - 1))] = index_default(move_list, m)
-                    ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=False)
-                    if '(base:' in ability:
-                        ability = ability.split('(')[0].strip()
-                    observation[27 + (14 * (i - 1))] = index_default(self.battle_logger.abilities_list, ability)
-                    if item != '' and 'None' not in item:
-                        if match(util.ITEM_GENERAL, item):
-                            item = search(util.ITEM_GENERAL, item).group(1)
-                        observation[28 + (14 * (i - 1))] = index_default(self.battle_logger.item_list, item)
+                    exist_in_sidebar = any(n in (l := t.get_attribute('aria-label')) for t in player_party_side)
+                    # Check if correct poke name from earlier and sidebar contains poke
+                    if team_p[1] != 0 and team_p[0] == index_default(poke_list, n, -2) and exist_in_sidebar:
+                        # Get old info
+                        observation[27 + (14 * (i - 1))] = old_observation[team_p[1] + 1]
+                        observation[28 + (14 * (i - 1))] = old_observation[team_p[1] + 2]
+                        hp = 100.0
+                        if 'fainted' in l:
+                            hp = 0.0
+                        elif search(r'\d+.?\d+', l):
+                            hp = float(findall(r'\d+.?\d+', l)[0])
+                        if '|' in l:
+                            status = search(r'\|([a-z]+)\)', l).group(1).upper()
+                            observation[39 + (14 * (i - 1))] = index_default(util.STATUS_LIST, status)
+                        for j in range(len(util.STATS_LIST)):
+                            if j == 0:
+                                observation[29+(14*(i-1))] = (hp / 100.0) * float(self.battle_logger.stats_map[n][0])
+                            else:
+                                observation[29 + j + (14 * (i - 1))] = old_observation[team_p[1] + 3 + j]
+                        if any((pk := player_p).name == n for player_p in self.battle_logger.self_team):
+                            for j, m in enumerate(pk.moves):
+                                observation[35 + j + (14 * (i - 1))] = index_default(move_list, m)
+                    elif team_p[1] != 0 and team_p[0] == index_default(poke_list, n, -2) and not exist_in_sidebar:
+                        for j in range(13):
+                            observation[27 + j + (14 * (i - 1))] = old_observation[team_p[1] + 1 + j]
+                    else:
+                        ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=True)
+                        if '(base:' in ability:
+                            ability = ability.split('(')[0].strip()
+                        observation[27 + (14 * (i - 1))] = index_default(self.battle_logger.abilities_list, ability)
+                        if item != '' and 'None' not in item:
+                            if match(util.ITEM_GENERAL, item):
+                                item = search(util.ITEM_GENERAL, item).group(1)
+                            observation[28 + (14 * (i - 1))] = index_default(self.battle_logger.item_list, item)
+                        stats, status = self.get_stats(num=i, max_hp=False, get_status=True, fainted=faint, do_ac=False)
+                        for j, s in enumerate(util.STATS_LIST):
+                            observation[29 + j + (14 * (i - 1))] = float(stats[s])
+                        if status != '':
+                            observation[39 + (14 * (i - 1))] = index_default(util.STATUS_LIST, status)
+                        if any((pk := player_p).name == n for player_p in self.battle_logger.self_team):
+                            for j, m in enumerate(pk.moves):
+                                observation[35 + j + (14 * (i - 1))] = index_default(move_list, m)
 
             # Opp Team
             if i - 1 < len(opp_party):
@@ -536,17 +505,13 @@ class NeuralNetBot(BattleBot):
         ps, ost = 0.0, 0.0
         poa, ooa = self.battle_logger.player_alive, self.battle_logger.opp_alive
         pca, oca = 6, 6
-        # print(poa, ooa)
         pf, of = 0.0, 0.0
         for i in range(6):
             # Player
-            # print('player')
             player_p, idx = player_party[i]
             if player_p == new_observation[0]:
-                # print(poke_list[player_p])
                 for j in range(6):
                     stat = float(self.battle_logger.stats_map[poke_list[player_p]][j])
-                    # print('stat:', old_observation[idx + 3 + j], '->', new_observation[3 + j])
                     c = ((new_observation[3 + j] / stat) - (old_observation[idx + 3 + j] / stat)) * 10
                     if j == 0:
                         if new_observation[3] == 0.0:
@@ -554,27 +519,21 @@ class NeuralNetBot(BattleBot):
                         phc += c
                     else:
                         psc += c
-                # print('status1:', old_observation[17], '->', new_observation[17])
-                # print('status2:', old_observation[18], '->', new_observation[18])
-                # print('before:', ps)
                 if idx == 0:
                     ps += calc_status_change(old_observation[17], new_observation[17])
                     ps += calc_status_change(old_observation[18], new_observation[18])
                 else:
                     ps += calc_status_change(old_observation[idx + 13], new_observation[17])
                     ps += calc_status_change(-1, new_observation[18])
-                # print('after:', ps)
             else:
                 for j in range(5):
                     if player_p == new_observation[26 + (14 * j)]:
                         if old_observation[idx + 3] == 0.0:
                             pca -= 1
                         else:
-                            # print(poke_list[player_p])
                             for k in range(6):
                                 stat = float(self.battle_logger.stats_map[poke_list[player_p]][k])
                                 index = 29 + k + (14 * j)
-                                # print('stat:', old_observation[idx + 3 + k], '->', new_observation[index])
                                 c = ((new_observation[index] / stat) - (old_observation[idx + 3 + k] / stat)) * 10
                                 if k == 0:
                                     if new_observation[index] == 0.0:
@@ -582,18 +541,14 @@ class NeuralNetBot(BattleBot):
                                     phc += c * 2
                                 else:
                                     psc += c
-                            # print('status:', old_observation[39 + (14 * j)], '->', new_observation[39 + (14 * j)])
-                            # print('before:', ps)
                             if idx == 0:
                                 ps += calc_status_change(old_observation[17], new_observation[39 + (14 * j)])
                                 ps += calc_status_change(old_observation[18], -1)
                             else:
                                 ps += calc_status_change(old_observation[idx + 13], new_observation[39 + (14 * j)])
-                            # print('after:', ps)
                             break
 
             # Opp
-            # print('opp')
             opp_p, opp_i = opp_party[i]
             if opp_p == -1:
                 continue
@@ -605,7 +560,6 @@ class NeuralNetBot(BattleBot):
                     f = False
                     for j in range(6):
                         stat = float(self.battle_logger.stats_map[poke_list[opp_p]][j])
-                        # print('stat:', old_observation[opp_i + 3 + j], '->', new_observation[99 + j])
                         c = ((old_observation[opp_i + 3 + j] / stat) - (new_observation[99 + j] / stat)) * 10
                         if j == 0:
                             ohc += c * 2
@@ -615,8 +569,6 @@ class NeuralNetBot(BattleBot):
                                 break
                         else:
                             osc += c
-                    # print('status1:', old_observation[109], '->', new_observation[109])
-                    # print('status2:', old_observation[110], '->', new_observation[110])
                     if not f:
                         if opp_i == 96:
                             ost += calc_status_change(new_observation[109], old_observation[109])
@@ -635,7 +587,6 @@ class NeuralNetBot(BattleBot):
                         for k in range(6):
                             index = 121 + k + (14 * j)
                             stat = float(self.battle_logger.stats_map[poke_list[opp_p]][k])
-                            # print('stat:', old_observation[opp_i + 3 + k], '->', new_observation[index])
                             c = ((old_observation[opp_i + 3 + k] / stat) - (new_observation[index] / stat)) * 10
                             if k == 0:
                                 ohc += c * 2
@@ -645,7 +596,6 @@ class NeuralNetBot(BattleBot):
                                     break
                             else:
                                 osc += c
-                        # print('status:', old_observation[131 + (14 * j)], '->', new_observation[131 + (14 * j)])
                         if not f:
                             if opp_i == 96:
                                 ost += calc_status_change(new_observation[131 + (14 * j)], old_observation[109])
@@ -682,7 +632,6 @@ class NeuralNetBot(BattleBot):
         oa = ooa - oca
         self.battle_logger.player_alive = pca
         self.battle_logger.opp_alive = oca
-        # print(phc, '+', ohc, '+', psc, '+', osc, '+', ps, '+', ost, '+', pf, '+', of, '+', pa * 10, '+', oa * 10)
         return phc + ohc + psc + osc + ps + ost + pf + of + (pa * 10) + (oa * 10)
 
     def __repr__(self):
