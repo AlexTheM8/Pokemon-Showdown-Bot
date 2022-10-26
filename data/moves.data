@@ -37,9 +37,9 @@ Heat Wave,Fire,Special,95.0
 Volt Switch,Electric,Special,70.0
 Signal Beam,Bug,Special,75.0
 Thunderbolt,Electric,Special,90.0
-Toxic Spikes,Poison,Status,0.0
+Toxic field_spikes,Poison,Status,0.0
 Destiny Bond,Ghost,Status,0.0
-Spikes,Ground,Status,0.0
+field_spikes,Ground,Status,0.0
 Liquidation,Water,Physical,85.0
 Meteor Mash,Steel,Physical,90.0
 Hammer Arm,Fighting,Physical,100.0
@@ -363,5 +363,6 @@ Grass Pledge,Grass,Special,80.0
 Super Fang,Normal,Physical,0.0
 Lovely Kiss,Normal,Status,0.0
 Hidden Power,???,Special,60.0
-Transform,Normal,Status, 0.0
+Transform,Normal,Status,0.0
 Acid Downpour,Poison,Special,175.0
+Toxic Spikes,Poison,Status,0.0

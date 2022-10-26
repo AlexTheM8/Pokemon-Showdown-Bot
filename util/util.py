@@ -77,6 +77,8 @@ W_MISTY_TERRAIN = 'mistyterrain'
 W_ELECTRIC_TERRAIN = 'electricterrain'
 W_GRASSY_TERRRAIN = 'grassyterrain'
 W_TRICK_ROOM = 'trickroom'
+W_FOE_TAILWIND = 'foe_tailwind'
+W_TAILWIND = 'tailwind'
 
 WEATHER_LIST = [
     W_RAIN,
@@ -102,6 +104,7 @@ FIELD_WEB = 'field_web'
 FIELD_SCREEN = 'field_screen'
 FIELD_REFLECT = 'field_reflect'
 FIELD_SUBSTITUTE = 'field_substitute'
+FIELD_AURORA_VEIL = 'field_auroraveil'
 
 FIELD_LIST = [
     FIELD_SPIKES,
@@ -110,8 +113,46 @@ FIELD_LIST = [
     FIELD_WEB,
     FIELD_SCREEN,
     FIELD_REFLECT,
+    FIELD_AURORA_VEIL,
     FIELD_SUBSTITUTE
 ]
+
+# Move Effects
+PRIORITY = 'Priority'
+CHANCE = 'Chance'
+STAT_STEAL = 'StatSteal'
+DISABLE = 'Disable'
+ENCORE = 'Encore'
+INFESTATION = 'Infestation'
+FLINCH = 'Flinch'
+CRIT = 'Crit'
+SWITCH = 'Switch'
+COUNTER = 'Counter'
+DMG_HEAL = 'DmgHeal'
+HEAL = 'Heal'
+RECOIL = 'Recoil'
+CURE = 'Cure'
+PROTECT = 'Protect'
+CHARGE = 'Charge'
+RECHARGE = 'Recharge'
+LEECH_SEED = 'LeechSeed'
+TERRAIN_CLEAR = 'TerrainClear'
+STATS_CLEAR = 'StatsClr'
+FIELD_CLEAR = 'FieldClr'
+SCREEN_CLEAR = 'ScreenClr'
+ITEM_REMOVE = 'ItemRemove'
+RDM_MOVE = 'RdmMove'
+PAINSPLIT = 'PainSplit'
+CONTACT_DMG = 'ContactDmg'
+TRICK = 'Trick'
+MOVE_LOCK = 'MoveLck'
+LEVITATE = 'Levitate'
+LVL_DMG = 'LvlDmg'
+ENDEAVOR = 'Endeavor'
+COPYCAT = 'Copycat'
+TYPE_CHANGE = 'TypeChange'
+PERISHSONG = 'PerishSong'
+TRANSFORM = 'Transform'
 
 
 def type_effectiveness(move_type, opponent_type):
@@ -1303,7 +1344,7 @@ MSG_DICT = {
     OPPONENT_TAUNT_FAIL: 'Opponent {} move failed to taunt',
     PLAYER_TAUNT_FAIL: 'Player {} move failed to taunt',
     OPPONENT_HAIL_DMG: 'Opponent {} -6.25% health',
-    PLAYER_HAIL_DMG: 'PLAYER {} -6.25% health',
+    PLAYER_HAIL_DMG: 'Player {} -6.25% health',
     OPPONENT_ABSORB: 'Opponent {} absorb {}',
     PLAYER_ABSORB: 'Player {} absorb {}',
     OPPONENT_HEAT_BEAK: 'Opponent {} heat beak',

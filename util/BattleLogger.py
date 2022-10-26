@@ -70,7 +70,10 @@ class BattleLogger:
                     if file_type == util.KNOWN_ABILITIES_FILE:
                         self.abilities_map[data[0]] = data[1:]
                     if file_type == util.MOVES_FILE:
-                        self.move_map[data[0]] = Move(*data)
+                        if len(data) < 5:
+                            self.move_map[data[0]] = Move(*data)
+                        else:
+                            self.move_map[data[0]] = Move(data[0], data[1], data[2], float(data[3]), data[4:])
                     if file_type == util.STATS_FILE:
                         self.stats_map[data[0]] = data[1:]
 
@@ -97,7 +100,7 @@ class BattleLogger:
     def update_item_list(self, item):
         if '(' in item:
             item = item.split('(')[0].strip()
-        if item not in self.item_list and item != '' and item != '':
+        if item not in self.item_list and item != '' and item != '' and item != 'None':
             self.item_list.append(item)
             self.item_list.sort()
             self.updated_item_list = True
@@ -303,13 +306,131 @@ class BattleLogger:
 
 
 class Move:
+    class Effects:
 
-    def __init__(self, name="", t=util.UNKNOWN, move_type=util.STATUS, base_power=0.0):
+        def __init__(self, effects):
+            # TODO Cleanup
+            self.priority = 0
+            self.tailwind = False
+            self.stat_change = []  # Format: List of (Stat[str], Target[str], Amount[int], Chance[bool])
+            self.status = None  # Format: (Status[str], Target[str], Chance[bool])
+            self.flinch, self.crit = None, None  # Format: Chance[bool]
+            self.switch = None  # Format: Target[str]
+            self.field = None  # Format: Field[str]
+            self.weather = None
+            self.counter = None  # Format: Type[str]
+            self.dmgheal = None  # Format: Percent[int]
+            self.heal = None  # Format: (Target[str], Percent[int], Chance[bool])
+            self.recoil = None  # Format: Percent[int]
+            self.cure = None  # Format: Target[str]
+            self.protect = False
+            self.charge, self.recharge = False, False
+            self.terrain = None
+            self.item_remove = False
+            self.rdm_move = False
+            self.pain_split = False
+            self.contact_dmg = False
+            self.trick = False
+            self.move_lock = False
+            self.levitate = False
+            self.lvl_dmg = False
+            self.endeavor = False
+            self.copycat = False
+            self.type_change = None
+            self.perish_song = False
+            self.transform = False
+            if effects is not None:
+                for e in effects:
+                    if util.PRIORITY in e:
+                        self.priority = int(e.split(' ')[1])
+                    elif util.COUNTER in e:
+                        self.counter = e.split(' ')[1]
+                    elif any((stat := s) in e for s in util.STATS_LIST):
+                        info = e.split(' ')
+                        self.stat_change.append((stat, info[0], int(info[2]), util.CHANCE in e))
+                    elif util.STAT_STEAL in e:
+                        self.stat_change.append(util.STAT_STEAL)
+                    elif util.STATS_CLEAR in e:
+                        self.stat_change.append((util.STATS_CLEAR, e.split(' ')[1]))
+                    elif any((status := s) in e for s in util.STATUS_LIST):
+                        info = e.split(' ')
+                        self.status = (status, info[0], util.CHANCE in e)
+                    elif util.CONFUSED in e:
+                        info = e.split(' ')
+                        self.status = (util.CONFUSED, info[0], util.CHANCE in e)
+                    elif util.DISABLE in e:
+                        info = e.split(' ')
+                        if len(info) > 1:
+                            self.status = (util.DISABLE, 'Opp', info[1])
+                        else:
+                            self.status = (util.DISABLE, 'Opp')
+                    elif any((status := s) in e for s in [util.ENCORE, util.INFESTATION]):
+                        self.status = (status, 'Opp')
+                    elif util.FLINCH in e:
+                        self.flinch = util.CHANCE in e
+                    elif util.CRIT in e:
+                        self.crit = util.CHANCE in e
+                    elif util.SWITCH in e:
+                        self.switch = e.split(' ')[0]
+                    elif any((field := f) in e for f in util.FIELD_LIST + [util.FIELD_CLEAR, util.SCREEN_CLEAR,
+                                                                           util.LEECH_SEED, util.W_TRICK_ROOM,
+                                                                           util.W_TAILWIND]):
+                        self.field = field
+                    elif any((weather := w) in e for w in util.WEATHER_LIST):
+                        self.weather = weather
+                    elif util.DMG_HEAL in e:
+                        self.dmgheal = int(e.split(' ')[1])
+                    elif util.HEAL in e:
+                        info = e.split(' ')
+                        self.heal = (info[0], int(info[2]), util.CHANCE in e)
+                    elif util.RECOIL in e:
+                        self.recoil = int(e.split(' ')[1])
+                    elif util.CURE in e:
+                        self.cure = e.split(' ')[1]
+                    elif util.PROTECT in e:
+                        self.protect = True
+                    elif util.RECHARGE in e:
+                        self.recharge = True
+                    elif util.CHARGE in e:
+                        self.charge = True
+                    elif any((terrain := t) in e for t in util.TERRAIN_LIST + [util.TERRAIN_CLEAR]):
+                        self.terrain = terrain
+                    elif util.ITEM_REMOVE in e:
+                        self.item_remove = True
+                    elif util.RDM_MOVE in e:
+                        self.rdm_move = True
+                    elif util.PAINSPLIT in e:
+                        self.pain_split = True
+                    elif util.CONTACT_DMG in e:
+                        self.contact_dmg = True
+                    elif util.TRICK in e:
+                        self.trick = True
+                    elif util.MOVE_LOCK in e:
+                        self.move_lock = True
+                    elif util.LEVITATE in e:
+                        self.levitate = True
+                    elif util.LVL_DMG in e:
+                        self.lvl_dmg = True
+                    elif util.ENDEAVOR in e:
+                        self.endeavor = True
+                    elif util.COPYCAT in e:
+                        self.copycat = True
+                    elif util.TYPE_CHANGE in e:
+                        info = e.split(' ')
+                        self.type_change = (info[1], info[2])
+                    elif util.PERISHSONG in e:
+                        self.perish_song = True
+                    elif util.TRANSFORM in e:
+                        self.transform = True
+                    else:
+                        print(e)
+
+    def __init__(self, name="", t=util.UNKNOWN, move_type=util.STATUS, base_power=0.0, effects=None):
         self.name = name
         self.type = t
         self.move_type = move_type
-        self.base_power = base_power
-        # TODO Effects
+        self.base_power = float(base_power)
+        self.effects = self.Effects(effects)
 
     def __repr__(self):
         return ','.join([self.name, self.type, self.move_type, str(self.base_power)])

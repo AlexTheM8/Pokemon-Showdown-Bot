@@ -27,6 +27,11 @@ class BattleBot:
             pass
         while self.Driver.in_battle():
             try:
+                reconnect = self.Driver.driver.find_elements(value='//button[@type="submit"][@class="autofocus"]',
+                                                             by=By.XPATH)
+                if reconnect:
+                    print("Reconnecting")
+                    reconnect[0].click()
                 WebDriverWait(self.Driver.driver, 2).until(
                     EC.presence_of_element_located((By.XPATH, self.Driver.ACTIVE_POKE_PATH))
                 )
@@ -439,19 +444,27 @@ class BattleBot:
 
     def get_weather(self):
         weathers = self.Driver.driver.find_elements(value="//div[contains(@class, 'weather')]", by=By.XPATH)
+        foe_tailwind, tailwind = False, False
         active = []
         for w in weathers:
             c = w.get_attribute('class').replace('weather', '').strip()
+            if "Foe's Tailwind" in w.text:
+                foe_tailwind = True
+            elif "Tailwind" in w.text:
+                tailwind = True
             if c != '':
                 active.append(c)
-                if c not in util.WEATHER_LIST and c not in util.TERRAIN_LIST and c != util.W_TRICK_ROOM:
-                    print(c)
+        if foe_tailwind:
+            active.append(util.W_FOE_TAILWIND)
+        if tailwind:
+            active.append(util.W_TAILWIND)
         return active
 
     def damage_calc(self, player_types, move, opp_types, opp_ability, opp_item, player_stats, opp_stats):
         if move.base_power == 0.0:
             return 0.0
         # TODO Psychic Terrain
+        # TODO Magnet rise
         if move.type == util.IMMUNE_ABILITIES.get(opp_ability, None):
             return 0.0
         if opp_ability == 'Wonder Guard':

@@ -94,7 +94,7 @@ class WebDriver:
         base_xpath_3 = "//div[@class='innerbattle']/*[5]/*[{}]/img[contains(@src, 'substitute')]" \
                        "[contains(@style, 'opacity: 1')]"
         caltrop, rock, poison, web = 'caltrop', 'rock', 'poisoncaltrop', 'web'
-        reflect, screen = 'reflect', 'lightscreen'
+        reflect, screen, auroraveil = 'reflect', 'lightscreen', 'auroraveil'
         num = 3 if side == self.SELF_SIDE else 2
         field = {
             util.FIELD_SPIKES: len(self.driver.find_elements(value=base_xpath.format(num, caltrop), by=By.XPATH)),
@@ -103,6 +103,8 @@ class WebDriver:
             util.FIELD_STONES: 1 if self.driver.find_elements(value=base_xpath.format(num, rock), by=By.XPATH) else 0,
             util.FIELD_REFLECT: len(self.driver.find_elements(value=base_xpath_2.format(num, reflect), by=By.XPATH)),
             util.FIELD_SCREEN: len(self.driver.find_elements(value=base_xpath_2.format(num, screen), by=By.XPATH)),
+            util.FIELD_AURORA_VEIL: len(self.driver.find_elements(value=base_xpath_2.format(num, auroraveil),
+                                                                  by=By.XPATH)),
             util.FIELD_SUBSTITUTE: 1 if self.driver.find_elements(value=base_xpath_3.format(num), by=By.XPATH) else 0
         }
         return field
