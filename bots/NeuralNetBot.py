@@ -557,7 +557,7 @@ class NeuralNetBot(BattleBot):
             if opp_p == -1:
                 continue
             if opp_p == new_observation[97]:
-                opp_not_used.remove((opp_p, opp_i))
+                opp_not_used.remove((new_observation[97], 97))
                 if old_observation[opp_i + 3] == 0.0:
                     oca -= 1
                 else:
@@ -583,7 +583,7 @@ class NeuralNetBot(BattleBot):
                     continue
             for j in range(5):
                 if opp_p == new_observation[120 + (14 * j)]:
-                    opp_not_used.remove((opp_p, opp_i))
+                    opp_not_used.remove((new_observation[120 + (14 * j)], 120 + (14 * j)))
                     if old_observation[opp_i + 3] == 0.0:
                         oca -= 1
                     else:

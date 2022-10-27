@@ -309,6 +309,7 @@ class Move:
     class Effects:
 
         def __init__(self, effects):
+            self.effects_list = effects
             # TODO Cleanup
             self.priority = 0
             self.tailwind = False
@@ -425,14 +426,22 @@ class Move:
                     else:
                         print(e)
 
+        def __repr__(self):
+            return ','.join(self.effects_list)
+
     def __init__(self, name="", t=util.UNKNOWN, move_type=util.STATUS, base_power=0.0, effects=None):
         self.name = name
         self.type = t
         self.move_type = move_type
         self.base_power = float(base_power)
-        self.effects = self.Effects(effects)
+        if effects is not None:
+            self.effects = self.Effects(effects)
+        else:
+            self.effects = None
 
     def __repr__(self):
+        if self.effects is not None:
+            return ','.join([self.name, self.type, self.move_type, str(self.base_power), repr(self.effects)])
         return ','.join([self.name, self.type, self.move_type, str(self.base_power)])
 
 

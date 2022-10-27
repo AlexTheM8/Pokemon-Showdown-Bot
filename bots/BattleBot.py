@@ -463,7 +463,10 @@ class BattleBot:
     def damage_calc(self, player_types, move, opp_types, opp_ability, opp_item, player_stats, opp_stats):
         if move.base_power == 0.0:
             return 0.0
-        # TODO Psychic Terrain
+        move_ref = self.battle_logger.move_map.get(move.name, None)
+        if move_ref is not None and move_ref.effects is not None and move_ref.effects.priority > 0\
+                and util.W_PSYCHIC_TERRAIN in self.get_weather():
+            return 0.0
         # TODO Magnet rise
         if move.type == util.IMMUNE_ABILITIES.get(opp_ability, None):
             return 0.0
