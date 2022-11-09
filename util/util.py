@@ -153,6 +153,8 @@ COPYCAT = 'Copycat'
 TYPE_CHANGE = 'TypeChange'
 PERISHSONG = 'PerishSong'
 TRANSFORM = 'Transform'
+USER = 'User'
+OPP = 'Opp'
 
 
 def type_effectiveness(move_type, opponent_type):

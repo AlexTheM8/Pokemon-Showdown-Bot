@@ -270,11 +270,14 @@ class BattleBot:
             'value').split(',')[1]
         return status == 'fainted'
 
-    def party_options(self):
+    def party_options(self, get_names=False):
         party = []
         pokes = self.Driver.driver.find_elements(value="//button[@name='chooseSwitch']", by=By.XPATH)
         for p in pokes:
-            party.append(p.get_attribute('value'))
+            if get_names:
+                party.append((p.get_attribute('value'), p.text))
+            else:
+                party.append(p.get_attribute('value'))
         return party
 
     def choose_switch(self, num=None):
@@ -475,7 +478,17 @@ class BattleBot:
                 return 0.0
         if opp_item == 'Air Balloon' and move.type == util.GROUND:
             return 0.0
-        dmg = move.base_power
+        dmg = 34.8 * move.base_power
+        if move.move_type == util.PHYSICAL:
+            dmg *= (player_stats.get(util.ATK, 1.0) / float(opp_stats[1]))
+        elif move.move_type == util.SPECIAL:
+            dmg *= (player_stats.get(util.SPA, 1.0) / float(opp_stats[3]))
+        dmg = (dmg / 50) + 2
+        for t in opp_types:
+            effect = util.type_effectiveness(move.type, t)
+            if effect == 0.0:
+                return 0.0
+            dmg *= effect
         for w in self.get_weather():
             if w == util.W_HEAVY_RAIN:
                 if move.type == util.FIRE:
@@ -492,6 +505,11 @@ class BattleBot:
                     dmg *= 1.5
                 if move.type == util.FIRE:
                     dmg *= 0.5
+            if w == util.W_SUN:
+                if move.type == util.WATER:
+                    dmg *= 0.5
+                if move.type == util.FIRE:
+                    dmg *= 1.5
             if w == util.W_MISTY_TERRAIN and move.type == util.DRAGON:
                 dmg *= 0.5
             if w == util.W_ELECTRIC_TERRAIN and move.type == util.ELECTR:
@@ -500,16 +518,7 @@ class BattleBot:
                 dmg *= 1.5
         if move.type in player_types:
             dmg *= 1.5
-        for t in opp_types:
-            effect = util.type_effectiveness(move.type, t)
-            if effect == 0.0:
-                return 0.0
-            dmg *= effect
-        if move.move_type == util.PHYSICAL:
-            dmg *= (player_stats.get(util.ATK, 1.0) / float(opp_stats[1]))
-        elif move.move_type == util.SPECIAL:
-            dmg *= (player_stats.get(util.SPA, 1.0) / float(opp_stats[3]))
-        return dmg
+        return dmg * 0.925
 
     def choose_action(self):
         pass

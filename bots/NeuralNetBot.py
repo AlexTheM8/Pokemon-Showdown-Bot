@@ -200,9 +200,6 @@ class NeuralNetBot(BattleBot):
         new_observation, reward, done = self.do_action(action, has_z, mega_elm)
         self.replay_memory.append([self.observation, action, reward, new_observation, done])
 
-        if self.steps_to_update_target_model % 4 == 0:
-            train(self.replay_memory, self.model, self.tgt_model)
-
         self.observation = new_observation
         self.total_training_rewards += reward
 
@@ -294,13 +291,13 @@ class NeuralNetBot(BattleBot):
                 item = search(util.ITEM_GENERAL, item).group(1)
             observation[2] = index_default(self.battle_logger.item_list, item)
         fainted = self.active_fainted()
+        player_statuses = self.get_statuses(self.Driver.SELF_SIDE)
         try:
             stats = self.get_stats(max_hp=False, do_ac=not fainted)
             for i, s in enumerate(util.STATS_LIST):
                 observation[i + 3] = float(stats[s])
         except KeyError:
             # Ditto Case
-            print('Default stats for:', active_name)
             if not fainted:
                 self.Driver.wait_for_element("//div[contains(@class, 'statbar rstatbar')]/strong", by=By.XPATH)
                 elem_txt = self.Driver.driver.find_element(
@@ -310,7 +307,7 @@ class NeuralNetBot(BattleBot):
             else:
                 hp = 0.0
             stats = self.update_stats(self.battle_logger.stats_map[active_name], hp_mod=hp,
-                                      stat_changes=self.get_statuses(self.Driver.SELF_SIDE), provided=False)
+                                      stat_changes=player_statuses, provided=False)
             for i in range(len(util.STATS_LIST)):
                 observation[i + 3] = float(stats[i])
 
@@ -324,7 +321,6 @@ class NeuralNetBot(BattleBot):
                     index = int(v.replace('z', '')) + 12
                 observation[index] = index_default(move_list, m.name)
 
-        player_statuses = self.get_statuses(self.Driver.SELF_SIDE)
         if any((text := s.text) in util.STATUS_LIST for s in player_statuses):
             observation[17] = index_default(util.STATUS_LIST, text)
         if any(s.text == util.CONFUSED for s in player_statuses):
@@ -346,14 +342,14 @@ class NeuralNetBot(BattleBot):
                 if match(util.ITEM_GENERAL, item):
                     item = search(util.ITEM_GENERAL, item).group(1)
                 observation[99] = index_default(self.battle_logger.item_list, item)
+            opp_statuses = self.get_statuses(self.Driver.OPP_SIDE)
             opp_stats = self.update_stats(self.battle_logger.stats_map.get(opp_active, ["1.0"] * 6),
-                                          hp_mod=self.get_opp_hp())
+                                          hp_mod=self.get_opp_hp(), stat_changes=opp_statuses, provided=False)
             opp_moves = self.move_options(num=-1, do_ac=False)
             for i in range(len(util.STATS_LIST)):
                 observation[100 + i] = float(opp_stats[i])
                 if i < len(opp_moves):
                     observation[106 + i] = index_default(move_list, opp_moves[i])
-            opp_statuses = self.get_statuses(self.Driver.OPP_SIDE)
             if any((text := s.text) in util.STATUS_LIST for s in opp_statuses):
                 observation[110] = index_default(util.STATUS_LIST, text)
             if any(s.text == util.CONFUSED for s in opp_statuses):

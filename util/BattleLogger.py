@@ -310,36 +310,20 @@ class Move:
 
         def __init__(self, effects):
             self.effects_list = effects
-            # TODO Cleanup
             self.priority = 0
-            self.tailwind = False
+            self.tailwind, self.protect, self.charge, self.recharge = False, False, False, False
+            self.item_remove, self.rdm_move, self.pain_split, self.contact_dmg = False, False, False, False
+            self.trick, self.move_lock, self.levitate, self.lvl_dmg, self.endeavor = False, False, False, False, False
+            self.copycat, self.perish_song, self.transform = False, False, False
             self.stat_change = []  # Format: List of (Stat[str], Target[str], Amount[int], Chance[bool])
             self.status = None  # Format: (Status[str], Target[str], Chance[bool])
             self.flinch, self.crit = None, None  # Format: Chance[bool]
-            self.switch = None  # Format: Target[str]
-            self.field = None  # Format: Field[str]
-            self.weather = None
+            self.switch, self.cure = None, None  # Format: Target[str]
+            self.weather, self.terrain, self.field = None, None, None
             self.counter = None  # Format: Type[str]
-            self.dmgheal = None  # Format: Percent[int]
+            self.dmgheal, self.recoil = None, None  # Format: Percent[int]
             self.heal = None  # Format: (Target[str], Percent[int], Chance[bool])
-            self.recoil = None  # Format: Percent[int]
-            self.cure = None  # Format: Target[str]
-            self.protect = False
-            self.charge, self.recharge = False, False
-            self.terrain = None
-            self.item_remove = False
-            self.rdm_move = False
-            self.pain_split = False
-            self.contact_dmg = False
-            self.trick = False
-            self.move_lock = False
-            self.levitate = False
-            self.lvl_dmg = False
-            self.endeavor = False
-            self.copycat = False
             self.type_change = None
-            self.perish_song = False
-            self.transform = False
             if effects is not None:
                 for e in effects:
                     if util.PRIORITY in e:

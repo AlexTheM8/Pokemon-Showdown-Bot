@@ -26,7 +26,7 @@ Grumpig,Thick Fat,Own Tempo,Gluttony
 Glalie,Inner Focus,Ice Body,Moody,Refrigerate
 Groudon,Drought,Desolate Land
 Zangoose,Toxic Boost,Immunity
-Ninetales,Snow Warning,Drought
+Ninetales,Snow Warning,Drought,Flash Fire,Snow Cloak
 Bellossom,Chlorophyll,Healer
 Musharna,Synchronize,Forewarn,Telepathy
 Rotom,Levitate
@@ -125,7 +125,7 @@ Terrakion,Justified
 Talonflame,Gale Wings,Flame Body
 Dusknoir,Frisk,Pressure
 Sceptile,Overgrow,Unburden,Lightning Rod
-Incineroar,Intimidate
+Incineroar,Intimidate,Blaze
 Zapdos,Pressure,Static
 Torterra,Overgrow,Shell Armor
 Gyarados,Intimidate,Mold Breaker,Moxie
@@ -169,7 +169,7 @@ Swoobat,Simple,Unaware,Klutz
 Genesect,Download
 Weavile,Pickpocket,Pressure
 Virizion,Justified
-Pyroar,Unnerve
+Pyroar,Unnerve,Rivalry,Moxie
 Azelf,Levitate
 Sawsbuck,Sap Sipper,Chlorophyll,Serene Grace
 Lucario,Justified,Inner Focus,Steadfast,Adaptability
@@ -273,7 +273,7 @@ Ampharos,Static,Plus,Mold Breaker
 Durant,Hustle,Swarm,Truant,Mummy
 Steelix,Sturdy,Rock Head,Sheer Force,Sand Force
 Turtonator,Shell Armor
-Hippowdon,Sand Stream
+Hippowdon,Sand Stream,Sand Force
 Raticate,Guts,Gluttony,Hustle,Thick Fat,Run Away
 Xatu,Magic Bounce,Synchronize,Early Bird
 Houndoom,Flash Fire,Early Bird,Unnerve,Solar Power
@@ -288,7 +288,7 @@ Unown,Levitate
 Latias,Levitate
 Cryogonal,Levitate
 Wobbuffet,Shadow Tag,Telepathy
-Golduck,Cloud Nine
+Golduck,Cloud Nine,Swift Swim
 Rampardos,Mold Breaker,Sheer Force
 Zekrom,Teravolt
 Crabominable,Hyper Cutter,Iron Fist,Anger Point
@@ -329,7 +329,7 @@ Toucannon,Skill Link,Sheer Force,Keen Eye
 Naganadel,Beast Boost
 Gallade,Justified,Steadfast,Inner Focus
 Hariyama,Thick Fat,Guts,Sheer Force
-Abomasnow,Snow Warning
+Abomasnow,Snow Warning,Soundproof
 Illumise,Oblivious,Tinted Lens,Prankster
 Rhyperior,Lightning Rod,Solid Rock,Reckless
 Simisear,Blaze,Gluttony
