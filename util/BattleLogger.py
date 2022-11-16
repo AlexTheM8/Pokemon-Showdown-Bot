@@ -313,18 +313,18 @@ class Move:
             self.priority = 0
             self.tailwind, self.protect, self.charge, self.recharge = False, False, False, False
             self.item_remove, self.rdm_move, self.pain_split, self.contact_dmg = False, False, False, False
-            self.trick, self.move_lock, self.levitate, self.lvl_dmg, self.endeavor = False, False, False, False, False
+            self.trick, self.levitate, self.lvl_dmg, self.endeavor = False, False, False, False
             self.copycat, self.perish_song, self.transform = False, False, False
             self.stat_change = []  # Format: List of (Stat[str], Target[str], Amount[int], Chance[bool])
             self.status = None  # Format: (Status[str], Target[str], Chance[bool])
             self.flinch, self.crit = None, None  # Format: Chance[bool]
-            self.switch, self.cure = None, None  # Format: Target[str]
+            self.switch, self.cure, self.move_lock = None, None, None  # Format: Target[str]
             self.weather, self.terrain, self.field = None, None, None
             self.counter = None  # Format: Type[str]
-            self.dmgheal, self.recoil = None, None  # Format: Percent[int]
+            self.recoil = None  # Format: Percent[int]
             self.heal = None  # Format: (Target[str], Percent[int], Chance[bool])
-            self.type_change = None
-            if effects is not None:
+            self.type_change = None  # Format: (Target[str], Type[str])
+            if effects:
                 for e in effects:
                     if util.PRIORITY in e:
                         self.priority = int(e.split(' ')[1])
@@ -343,14 +343,6 @@ class Move:
                     elif util.CONFUSED in e:
                         info = e.split(' ')
                         self.status = (util.CONFUSED, info[0], util.CHANCE in e)
-                    elif util.DISABLE in e:
-                        info = e.split(' ')
-                        if len(info) > 1:
-                            self.status = (util.DISABLE, 'Opp', info[1])
-                        else:
-                            self.status = (util.DISABLE, 'Opp')
-                    elif any((status := s) in e for s in [util.ENCORE, util.INFESTATION]):
-                        self.status = (status, 'Opp')
                     elif util.FLINCH in e:
                         self.flinch = util.CHANCE in e
                     elif util.CRIT in e:
@@ -363,8 +355,6 @@ class Move:
                         self.field = field
                     elif any((weather := w) in e for w in util.WEATHER_LIST):
                         self.weather = weather
-                    elif util.DMG_HEAL in e:
-                        self.dmgheal = int(e.split(' ')[1])
                     elif util.HEAL in e:
                         info = e.split(' ')
                         self.heal = (info[0], int(info[2]), util.CHANCE in e)
@@ -391,21 +381,16 @@ class Move:
                     elif util.TRICK in e:
                         self.trick = True
                     elif util.MOVE_LOCK in e:
-                        self.move_lock = True
+                        self.move_lock = e.split(' ')[1]
                     elif util.LEVITATE in e:
                         self.levitate = True
                     elif util.LVL_DMG in e:
                         self.lvl_dmg = True
                     elif util.ENDEAVOR in e:
                         self.endeavor = True
-                    elif util.COPYCAT in e:
-                        self.copycat = True
                     elif util.TYPE_CHANGE in e:
                         info = e.split(' ')
                         self.type_change = (info[1], info[2])
-                    elif util.PERISHSONG in e:
-                        self.perish_song = True
-                    elif util.TRANSFORM in e:
                         self.transform = True
                     else:
                         print(e)
@@ -418,13 +403,13 @@ class Move:
         self.type = t
         self.move_type = move_type
         self.base_power = float(base_power)
-        if effects is not None:
+        if effects:
             self.effects = self.Effects(effects)
         else:
-            self.effects = None
+            self.effects = self.Effects([])
 
     def __repr__(self):
-        if self.effects is not None:
+        if self.effects:
             return ','.join([self.name, self.type, self.move_type, str(self.base_power), repr(self.effects)])
         return ','.join([self.name, self.type, self.move_type, str(self.base_power)])
 
@@ -440,7 +425,7 @@ class Pokemon:
 
     def __repr__(self):
         repr_list = [self.name, self.ability, self.item]
-        if self.moves is not None:
+        if self.moves:
             repr_list.extend(self.moves)
             if len(self.moves) < 4:
                 repr_list.extend([""] * (4 - len(self.moves)))

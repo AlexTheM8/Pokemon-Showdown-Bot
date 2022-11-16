@@ -121,9 +121,6 @@ FIELD_LIST = [
 PRIORITY = 'Priority'
 CHANCE = 'Chance'
 STAT_STEAL = 'StatSteal'
-DISABLE = 'Disable'
-ENCORE = 'Encore'
-INFESTATION = 'Infestation'
 FLINCH = 'Flinch'
 CRIT = 'Crit'
 SWITCH = 'Switch'
@@ -149,12 +146,14 @@ MOVE_LOCK = 'MoveLck'
 LEVITATE = 'Levitate'
 LVL_DMG = 'LvlDmg'
 ENDEAVOR = 'Endeavor'
-COPYCAT = 'Copycat'
 TYPE_CHANGE = 'TypeChange'
-PERISHSONG = 'PerishSong'
-TRANSFORM = 'Transform'
-USER = 'User'
-OPP = 'Opp'
+
+# Targets
+T_USER = 'User'
+T_OPP = 'Opp'
+T_SWITCH = 'Switch'
+T_TEAM = 'Team'
+T_ALL = 'All'
 
 
 def type_effectiveness(move_type, opponent_type):
@@ -280,6 +279,30 @@ def type_effectiveness(move_type, opponent_type):
         (FAIRY, DRAGON): 2.0,
         (FAIRY, DARK): 2.0
     }.get((move_type, opponent_type), 1.0)
+
+
+def calc_status_change(old, new, val=-1):
+    if old == val and new != val:
+        return -5.0
+    if old != val and new == val:
+        return 5.0
+    return 0.0
+
+
+def calc_field_change(old, new, i, val=0):
+    if i < 2:
+        return (old - new) * 5.0
+    elif i < 4:
+        if old == val and new != val:
+            return -5.0
+        if old != val and new == val:
+            return 5.0
+    else:
+        if new == val and old != val:
+            return -5.0
+        if new != val and old == val:
+            return 5.0
+    return 0.0
 
 
 # Item messages

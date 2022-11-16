@@ -10,14 +10,14 @@ Psychic,Psychic,Special,90.0,Opp Spe -1 Chance
 Tail Glow,Bug,Status,0.0,User SpA 3
 Surf,Water,Special,90.0
 Hydro Pump,Water,Special,110.0
-Giga Drain,Grass,Special,75.0,DmgHeal 50
+Giga Drain,Grass,Special,75.0,Recoil -50
 Focus Blast,Fighting,Special,120.0,Opp SpD -1 Chance
 Stone Edge,Rock,Physical,100.0
 Close Combat,Fighting,Physical,120.0,User Atk -1,User Def -1
 Earthquake,Ground,Physical,100.0
-Taunt,Dark,Status,0.0,Opp Disable Status
+Taunt,Dark,Status,0.0
 Toxic,Poison,Status,0.0,Opp TOX
-Leech Life,Bug,Physical,80.0,DmgHeal 50
+Leech Life,Bug,Physical,80.0,Recoil -50
 Moonblast,Fairy,Special,95.0,Opp SpA -1 Chance
 Strength Sap,Grass,Status,0.0,Opp Atk -1,User Heal 0
 Sleep Powder,Grass,Status,0.0,Opp SLP
@@ -82,7 +82,7 @@ Morning Sun,Normal,Status,0.0,User Heal 50
 Facade,Normal,Physical,70.0
 Quick Attack,Normal,Physical,40.0,Priority 1
 Brave Bird,Flying,Physical,120.0,Recoil 33
-Drain Punch,Fighting,Physical,75.0,DmgHeal 50
+Drain Punch,Fighting,Physical,75.0,Recoil -50
 Spiky Shield,Grass,Status,0.0,Protect,ContactDmg
 Synthesis,Grass,Status,0.0,User Heal 50
 Wood Hammer,Grass,Physical,120.0,Recoil 33
@@ -106,7 +106,7 @@ Rock Blast,Rock,Physical,25.0
 Leaf Storm,Grass,Special,130.0,User SpA -2
 Sticky Web,Bug,Status,0.0,field_web
 Thousand Arrows,Ground,Physical,90.0
-Outrage,Dragon,Physical,120.0,User Confused,MoveLck
+Outrage,Dragon,Physical,120.0,User Confused,MoveLck User
 Rain Dance,Water,Status,0.0,raindance
 Waterfall,Water,Physical,80.0,Flinch Chance
 Defog,Flying,Status,0.0
@@ -180,8 +180,8 @@ Milk Drink,Normal,Status,0.0,User Heal 50
 Thunder,Electric,Special,110.0,Opp PAR Chance
 Ice Fang,Ice,Physical,65.0,Opp FRZ Chance,Flinch Chance
 Heal Bell,Normal,Status,0.0,Cure Team
-Infestation,Bug,Special,20.0,Infestation
-Encore,Normal,Status,0.0,Encore
+Infestation,Bug,Special,20.0
+Encore,Normal,Status,0.0,MoveLck Opp
 Eruption,Fire,Special,150.0
 Nuzzle,Electric,Physical,20.0,Opp PAR
 Dragon Claw,Dragon,Physical,80.0
@@ -216,15 +216,15 @@ Fire Fang,Fire,Physical,65.0,Opp BRN Chance,Flinch Chance
 Gigavolt Havoc,Electric,Special,175.0
 Nature's Madness,Fairy,Special,0.0
 Overheat,Fire,Special,130.0,User SpA -2
-Petal Dance,Grass,Special,120.0,User Confused,MoveLck
+Petal Dance,Grass,Special,120.0,User Confused,MoveLck User
 Breakneck Blitz,Normal,Physical,160.0
 Z-Encore,Normal,Status,0.0,User Spe 1
 Blue Flare,Fire,Special,130.0,Opp BRN Chance
 Icy Wind,Ice,Special,55.0,Opp Spe -1
 Endeavor,Normal,Physical,0.0,Endeavor
-Copycat,Normal,Status,0.0,Copycat
+Copycat,Normal,Status,0.0
 Let's Snuggle Forever,Fairy,Physical,190.0
-Horn Leech,Grass,Physical,75.0,DmgHeal 50
+Horn Leech,Grass,Physical,75.0,Recoil -50
 Shattered Psyche,Psychic,Special,180.0
 Z-Calm Mind,Psychic,Status,0.0,User SpA 1,User SpD 1,StatsClr User
 Photon Geyser,Psychic,Special,100.0
@@ -241,7 +241,7 @@ Z-Tailwind,Flying,Status,0.0,tailwind
 Supersonic Skystrike,Flying,Special,185.0
 Z-Defog,Flying,Status,0.0
 Dragon Pulse,Dragon,Special,85.0
-Draining Kiss,Fairy,Special,50.0,DmgHeal 75
+Draining Kiss,Fairy,Special,50.0,Recoil -75
 Dragon Tail,Dragon,Physical,60.0,Opp Switch
 Anchor Shot,Steel,Physical,80.0
 Judgment,Dark,Special,100.0
@@ -257,8 +257,8 @@ Light That Burns the Sky,Psychic,Special,200.0
 Hex,Ghost,Special,65.0
 Memento,Dark,Status,0.0,User Heal -100,Opp Atk -2,Opp SpA -2
 Psystrike,Psychic,Special,100.0
-Mirror Coat,Psychic,Special,0.0,Counter Special
-Counter,Fighting,Physical,0.0,Counter Physical
+Mirror Coat,Psychic,Special,0.0,Counter Special,Priority -5
+Counter,Fighting,Physical,0.0,Counter Physical,Priority -5
 Throat Chop,Dark,Physical,80.0
 Water Shuriken,Water,Special,15.0,Priority 1
 Multi-Attack,Electric,Physical,90.0
@@ -331,13 +331,13 @@ Cotton Guard,Grass,Status,0.0,User Def 3
 Light of Ruin,Fairy,Special,140.0,Recoil 50
 Headbutt,Normal,Physical,70.0,Flinch Chance
 Fusion Flare,Fire,Special,100.0
-Oblivion Wing,Flying,Special,80.0,DmgHeal 75
+Oblivion Wing,Flying,Special,80.0,Recoil -75
 Ice Hammer,Ice,Physical,100.0,User Spe -1
 Precipice Blades,Ground,Physical,120.0
 Volt Tackle,Electric,Physical,120.0,Recoil 33,Opp PAR Chance
 Weather Ball,Normal,Special,50.0
 All-Out Pummeling,Fighting,Special,190.0
-Disable,Normal,Status,0.0,Disable
+Disable,Normal,Status,0.0
 Healing Wish,Psychic,Status,0.0,User Heal -100,Switch Heal 100,Cure Switch
 Avalanche,Ice,Physical,60.0,Priority -1
 Head Charge,Normal,Physical,120.0,Recoil 25
@@ -357,12 +357,12 @@ Soul-Stealing 7-Star Strike,Ghost,Physical,195.0
 Corkscrew Crash,Steel,Physical,160.0
 Pluck,Flying,Physical,60.0
 Bounce,Flying,Physical,85.0,Charge
-Perish Song,Normal,Status,0.0,PerishSong
+Perish Song,Normal,Status,0.0
 Z-Belly Drum,Normal,Status,0.0,User Atk 6,User Heal 100,User Heal -50
 Grass Pledge,Grass,Special,80.0
 Super Fang,Normal,Physical,0.0,Opp Heal -50
 Lovely Kiss,Normal,Status,0.0,Opp Confused
 Hidden Power,???,Special,60.0
-Transform,Normal,Status,0.0,Transform
+Transform,Normal,Status,0.0
 Acid Downpour,Poison,Special,175.0
 Z-Strength Sap,Grass,Status,0.0

@@ -23,7 +23,7 @@ Seaking,Megahorn,Ice Beam,Drill Run,Waterfall,Knock Off,Scald
 Aromatisse,Calm Mind,Rest,Sleep Talk,Moonblast,Toxic,Nasty Plot,Dark Pulse
 Sableye,Recover,Toxic,Taunt,Foul Play,Will-O-Wisp,Dark Pulse,Calm Mind,Shadow Ball
 Golduck,Substitute,Calm Mind,Psyshock,Scald,Ice Beam,Encore,Hydro Pump
-Deoxys,Knock Off,Psycho Boost,Extreme Speed,Superpower,Seismic Toss,Recover,Toxic,Ice Beam,Fire Punch,Spikes,Magic Coat,Stealth Rock,Taunt
+Deoxys,Knock Off,Psycho Boost,Extreme Speed,Superpower,Seismic Toss,Recover,Toxic,Ice Beam,Fire Punch,Spikes,Magic Coat,Stealth Rock,Taunt,Focus Blast,Dark Pulse,Nasty Plot
 Dragonite,Outrage,Earthquake,Extreme Speed,Fire Punch,Dragon Dance,Devastating Drake,Fly,Supersonic Skystrike,Sludge Bomb
 Rotom,Thunderbolt,Pain Split,Hydro Pump,Defog,Blizzard,Volt Switch,Will-O-Wisp,Overheat,Hidden Power Ice,Air Slash,Subzero Slammer,Shadow Ball,Hidden Power,Trick,Leaf Storm,Substitute,Hidden Power Fire,Sludge Bomb,Flamethrower,Focus Blast
 Beedrill,U-turn,X-Scissor,Knock Off,Poison Jab,Drill Run,Swords Dance,Toxic Spikes,Endeavor,Sludge Bomb,Tailwind
@@ -41,7 +41,7 @@ Vaporeon,Wish,Toxic,Protect,Scald,Roar,Ice Beam
 Zebstrika,Volt Switch,Overheat,Wild Charge,Hidden Power Grass,Hidden Power
 Pangoro,Bullet Punch,Swords Dance,Drain Punch,Knock Off,Superpower,Ice Punch
 Ninetales,Nasty Plot,Substitute,Solar Beam,Fire Blast,Moonblast,Freeze-Dry,Hidden Power Fire,Blizzard,Will-O-Wisp,Psyshock,Aurora Veil,Hidden Power
-Diggersby,Knock Off,Wild Charge,Swords Dance,Earthquake,Agility,Return,Quick Attack,U-turn
+Diggersby,Knock Off,Wild Charge,Swords Dance,Earthquake,Agility,Return,Quick Attack,U-turn,Sludge Bomb
 Kecleon,Fake Out,Drain Punch,Knock Off,Recover,Sucker Punch,Shadow Sneak,Stealth Rock
 Yveltal,Toxic,U-turn,Dark Pulse,Roost,Oblivion Wing,Sucker Punch,Focus Blast,Foul Play,Taunt
 Kyogre,Ice Beam,Scald,Calm Mind,Thunder,Sleep Talk,Rest,Origin Pulse,Water Spout,Toxic
@@ -75,9 +75,9 @@ Arceus,Fire Blast,Calm Mind,Judgment,Recover,Stone Edge,Swords Dance,Will-O-Wisp
 Manectric,Volt Switch,Overheat,Flamethrower,Thunderbolt,Hidden Power Grass,Hidden Power Ice,Hidden Power
 Solgaleo,Sunsteel Strike,Morning Sun,Earthquake,Zen Headbutt,Stone Edge,Flare Blitz
 Mothim,Energy Ball,U-turn,Air Slash,Bug Buzz,Quiver Dance
-Magmortar,Focus Blast,Fire Blast,Thunderbolt,Earthquake,Hidden Power Grass,Substitute,Hidden Power Ice,Hidden Power,Flamethrower
+Magmortar,Focus Blast,Fire Blast,Thunderbolt,Earthquake,Hidden Power Grass,Substitute,Hidden Power Ice,Hidden Power,Flamethrower,Nasty Plot
 Victini,Focus Blast,V-create,U-turn,Blue Flare,Bolt Strike,Zen Headbutt,Grass Knot
-Vileplume,Aromatherapy,Sleep Powder,Giga Drain,Hidden Power Fire,Hidden Power,Sludge Bomb,Strength Sap
+Vileplume,Aromatherapy,Sleep Powder,Giga Drain,Hidden Power Fire,Hidden Power,Sludge Bomb,Strength Sap,Nasty Plot,Dark Pulse,Focus Blast,Flamethrower
 Purugly,Quick Attack,U-turn,Return,Sucker Punch,Fake Out,Knock Off,Flamethrower
 Feraligatr,Swords Dance,Ice Punch,Aqua Jet,Liquidation,Earthquake,Dragon Dance,Crunch
 Plusle,Encore,Nasty Plot,Hidden Power Ice,Thunderbolt,Substitute,Hidden Power,Flamethrower,Focus Blast
@@ -152,17 +152,17 @@ Braviary,Brave Bird,Roost,Bulk Up,Return,Superpower,Substitute,U-turn,Supersonic
 Primarina,Psychic,Hidden Power Fire,Hydro Pump,Moonblast,Scald,Hidden Power
 Marshadow,Spectral Thief,Bulk Up,Shadow Sneak,Close Combat,Rock Tomb,Ice Punch
 Hitmontop,Sucker Punch,Toxic,Rapid Spin,Close Combat,Stone Edge
-Muk,Curse,Shadow Sneak,Ice Punch,Fire Punch,Gunk Shot,Knock Off,Poison Jab,Pursuit,Memento,Dark Pulse
+Muk,Curse,Shadow Sneak,Ice Punch,Fire Punch,Gunk Shot,Knock Off,Poison Jab,Pursuit,Memento,Dark Pulse,Focus Blast
 Galvantula,Bug Buzz,Sticky Web,Volt Switch,Thunder,Giga Drain,Hidden Power Ice,Hidden Power
 Hawlucha,High Jump Kick,Acrobatics,Swords Dance,Sky Attack,Substitute
 Milotic,Sleep Talk,Scald,Rest,Toxic,Dragon Tail,Ice Beam,Recover
 Spinda,Breakneck Blitz,Rock Slide,Superpower,Return,Encore
 Mawile,Swords Dance,Iron Head,Play Rough,Substitute,Knock Off,Sucker Punch,Fire Fang,Stealth Rock,Focus Punch
 Dugtrio,Sucker Punch,Substitute,Stone Edge,Earthquake,Iron Head,Toxic,Reversal,Stealth Rock,All-Out Pummeling
-Pinsir,Close Combat,Quick Attack,Swords Dance,Earthquake,Return,X-Scissor,Knock Off,Stone Edge,Stealth Rock
+Pinsir,Close Combat,Quick Attack,Swords Dance,Earthquake,Return,X-Scissor,Knock Off,Stone Edge,Stealth Rock,Nasty Plot,Sludge Bomb,Dark Pulse
 Throh,Storm Throw,Ice Punch,Circle Throw,Knock Off,Bulk Up,Sleep Talk,Rest,Flamethrower,Nasty Plot,Focus Blast,Dark Pulse,Sludge Bomb
 Celesteela,Autotomize,Earthquake,Fire Blast,Flash Cannon,Heavy Slam,Leech Seed,Air Slash,Protect
-Maractus,Spiky Shield,Hidden Power Fire,Spikes,Giga Drain,Toxic,Sucker Punch,Leech Seed
+Maractus,Spiky Shield,Hidden Power Fire,Spikes,Giga Drain,Toxic,Sucker Punch,Leech Seed,Hidden Power
 Samurott,Aqua Jet,Swords Dance,Liquidation,Sacred Sword,Megahorn,Grass Knot,Ice Beam,Hydro Pump
 Mudsdale,Stealth Rock,Rock Slide,Close Combat,Earthquake,Heavy Slam
 Dedenne,Thunderbolt,Toxic,Hidden Power Ice,Grass Knot,Hidden Power,Nuzzle
@@ -170,15 +170,15 @@ Primeape,Stone Edge,Gunk Shot,U-turn,Ice Punch,Close Combat,Earthquake
 Slowbro,Scald,Thunder Wave,Psyshock,Slack Off,Fire Blast,Calm Mind,Toxic,Ice Beam
 Porygon-Z,Tri Attack,Thunderbolt,Shadow Ball,Trick,Ice Beam,Nasty Plot
 Lunatone,Psychic,Earth Power,Ice Beam,Moonlight,Stealth Rock,Toxic,Rock Polish,Power Gem
-Escavalier,Megahorn,Pursuit,Drill Run,Iron Head,Swords Dance,Knock Off
-Comfey,Aromatherapy,Synthesis,Draining Kiss,Toxic,U-turn
+Escavalier,Megahorn,Pursuit,Drill Run,Iron Head,Swords Dance,Knock Off,Dark Pulse,Focus Blast
+Comfey,Aromatherapy,Synthesis,Draining Kiss,Toxic,U-turn,Dark Pulse
 Hitmonchan,Rapid Spin,Ice Punch,Mach Punch,Drain Punch,Bulk Up,Stone Edge
 Moltres,Fire Blast,Roost,Will-O-Wisp,Hurricane,Substitute,Toxic,Supersonic Skystrike
 Meganium,Leech Seed,Giga Drain,Light Screen,Toxic,Aromatherapy,Reflect,Dragon Tail,Synthesis
 Gastrodon,Toxic,Recover,Scald,Earthquake,Ice Beam
 Salamence,Double-Edge,Dragon Dance,Roost,Earthquake,Fly,Outrage,Fire Blast,Draco Meteor,Return,Supersonic Skystrike,Devastating Drake
 Swoobat,Air Slash,Heat Wave,Calm Mind,Roost,Stored Power
-Genesect,U-turn,Shift Gear,Techno Blast,Iron Head,Flamethrower,Thunderbolt,Blaze Kick,Ice Beam,Extreme Speed
+Genesect,U-turn,Shift Gear,Techno Blast,Iron Head,Flamethrower,Thunderbolt,Blaze Kick,Ice Beam,Extreme Speed,Dark Pulse,Nasty Plot
 Weavile,Low Kick,Knock Off,Swords Dance,Icicle Crash,Ice Shard,Pursuit
 Virizion,Giga Drain,Hidden Power,Calm Mind,Hidden Power Ice,Focus Blast,All-Out Pummeling,Hidden Power Rock
 Pyroar,Fire Blast,Hyper Voice,Dark Pulse,Will-O-Wisp,Solar Beam,Sunny Day
@@ -268,7 +268,7 @@ Emolga,Thunderbolt,Acrobatics,U-turn,Roost,Toxic,Encore,Knock Off
 Bronzong,Iron Head,Reflect,Toxic,Light Screen,Explosion,Earthquake,Stealth Rock
 Tapu Lele,Psyshock,Moonblast,Calm Mind,Focus Blast,Hidden Power Fire,Psychic,Hidden Power
 Exploud,Ice Beam,Fire Blast,Focus Blast,Boomburst,Surf
-Granbull,Thunder Wave,Play Rough,Earthquake,Heal Bell,Crunch
+Granbull,Thunder Wave,Play Rough,Earthquake,Heal Bell,Crunch,Dark Pulse,Sludge Bomb
 Magnezone,Thunderbolt,Volt Switch,Hidden Power Fire,Flash Cannon,Substitute,Hidden Power
 Kyurem,Ice Beam,Roost,Earth Power,Draco Meteor,Toxic,Dragon Claw,Fusion Bolt,Outrage,Dragon Pulse,Substitute,Focus Blast,Fusion Flare,Dark Pulse,Nasty Plot,Flamethrower
 Ampharos,Toxic,Dragon Pulse,Focus Blast,Thunderbolt,Agility,Light Screen,Heal Bell,Volt Switch,Hidden Power Ice,Reflect
@@ -336,7 +336,7 @@ Lopunny,Substitute,Ice Punch,High Jump Kick,Return,Fake Out,Switcheroo
 Quagsire,Recover,Earthquake,Toxic,Scald,Encore,Ice Beam
 Wishiwashi,Scald,Ice Beam,Hydro Pump,Hidden Power Grass,Hidden Power,Earthquake,Flamethrower
 Meowstic,Shadow Ball,Thunderbolt,Calm Mind,Psyshock,Light Screen,Psychic,Yawn,Energy Ball,Reflect,Heal Bell,Thunder Wave,Toxic
-Cobalion,Stone Edge,Close Combat,Swords Dance,Iron Head,Volt Switch,Hidden Power Ice,Stealth Rock,Hidden Power
+Cobalion,Stone Edge,Close Combat,Swords Dance,Iron Head,Volt Switch,Hidden Power Ice,Stealth Rock,Hidden Power,Nasty Plot
 Qwilfish,Pain Split,Taunt,Liquidation,Thunder Wave,Toxic Spikes,Spikes,Destiny Bond
 Tapu,Psyshock,Moonblast
 Gorebyss,Shell Smash,Hydro Pump,Ice Beam,Hidden Power,Hidden Power Grass
@@ -349,7 +349,7 @@ Girafarig,Nasty Plot,Psyshock,Substitute,Hyper Voice,Thunderbolt,Psychic
 Electivire,Flamethrower,Volt Switch,Ice Punch,Wild Charge,Cross Chop,Earthquake
 Dhelmise,Rapid Spin,Synthesis,Knock Off,Power Whip,Anchor Shot,Earthquake,Sludge Bomb
 Toxicroak,Gunk Shot,Drain Punch,Substitute,Ice Punch,Swords Dance,Sucker Punch
-Seviper,Sludge Wave,Earthquake,Poison Jab,Sucker Punch,Swords Dance,Giga Drain,Flamethrower,Dark Pulse,Switcheroo
+Seviper,Sludge Wave,Earthquake,Poison Jab,Sucker Punch,Swords Dance,Giga Drain,Flamethrower,Dark Pulse,Switcheroo,Nasty Plot
 Malamar,Superpower,Knock Off,Rest,Happy Hour,Psycho Cut,Sleep Talk,Nasty Plot,Dark Pulse,Flamethrower
 Dunsparce,Rock Slide,Roost,Glare,Headbutt,Bite,Body Slam,Coil
 Kingler,Knock Off,Liquidation,Agility,X-Scissor,Superpower,Swords Dance,Rock Slide
@@ -404,7 +404,7 @@ Stunfisk,Toxic,Rest,Sleep Talk,Discharge,Earth Power,Stealth Rock,Scald
 Electrode,Volt Switch,Hidden Power Grass,Foul Play,Signal Beam,Thunderbolt,Taunt,Hidden Power
 Relicanth,Earthquake,Waterfall,Head Smash,Toxic,Stealth Rock,Double-Edge,Nasty Plot,Flamethrower,Dark Pulse,Sludge Bomb
 Araquanid,Lunge,Toxic,Mirror Coat,Liquidation,Sticky Web
-Ferrothorn,Leech Seed,Stealth Rock,Power Whip,Gyro Ball,Spikes,Protect
+Ferrothorn,Leech Seed,Stealth Rock,Power Whip,Gyro Ball,Spikes,Protect,Focus Blast
 Mew,Stealth Rock,Roost,Taunt,Psyshock,Ice Beam,Nasty Plot,Earth Power,Will-O-Wisp,Knock Off,Defog,Aura Sphere,Flare Blitz,Dark Pulse
 Unfezant,U-turn,Pluck,Roost,Tailwind,Night Slash,Return,Hypnosis
 Ursaring,Crunch,Close Combat,Facade,Protect,Swords Dance

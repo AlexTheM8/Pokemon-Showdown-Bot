@@ -52,30 +52,6 @@ def by_num(name):
     return int(num)
 
 
-def calc_status_change(old, new):
-    if old == -1 and new != -1:
-        return -5.0
-    if old != -1 and new == -1:
-        return 5.0
-    return 0.0
-
-
-def calc_field_change(old, new, i):
-    if i < 2:
-        return (old - new) * 5.0
-    elif i < 4:
-        if old == 0 and new != 0:
-            return -5.0
-        if old != 0 and new == 0:
-            return 5.0
-    else:
-        if new == 0 and old != 0:
-            return -5.0
-        if new != 0 and old == 0:
-            return 5.0
-    return 0.0
-
-
 def index_default(li, v, default=-1):
     try:
         return li.index(v)
@@ -291,7 +267,9 @@ class NeuralNetBot(BattleBot):
                 item = search(util.ITEM_GENERAL, item).group(1)
             observation[2] = index_default(self.battle_logger.item_list, item)
         fainted = self.active_fainted()
-        player_statuses = self.get_statuses(self.Driver.SELF_SIDE)
+        player_statuses = []
+        if not fainted:
+            player_statuses = self.get_statuses(self.Driver.SELF_SIDE)
         try:
             stats = self.get_stats(max_hp=False, do_ac=not fainted)
             for i, s in enumerate(util.STATS_LIST):
@@ -520,11 +498,11 @@ class NeuralNetBot(BattleBot):
                     else:
                         psc += c
                 if idx == 0:
-                    ps += calc_status_change(old_observation[17], new_observation[17])
-                    ps += calc_status_change(old_observation[18], new_observation[18])
+                    ps += util.calc_status_change(old_observation[17], new_observation[17])
+                    ps += util.calc_status_change(old_observation[18], new_observation[18])
                 else:
-                    ps += calc_status_change(old_observation[idx + 13], new_observation[17])
-                    ps += calc_status_change(-1, new_observation[18])
+                    ps += util.calc_status_change(old_observation[idx + 13], new_observation[17])
+                    ps += util.calc_status_change(-1, new_observation[18])
             else:
                 for j in range(5):
                     if player_p == new_observation[27 + (14 * j)]:
@@ -542,10 +520,10 @@ class NeuralNetBot(BattleBot):
                                 else:
                                     psc += c
                             if idx == 0:
-                                ps += calc_status_change(old_observation[17], new_observation[40 + (14 * j)])
-                                ps += calc_status_change(old_observation[18], -1)
+                                ps += util.calc_status_change(old_observation[17], new_observation[40 + (14 * j)])
+                                ps += util.calc_status_change(old_observation[18], -1)
                             else:
-                                ps += calc_status_change(old_observation[idx + 13], new_observation[40 + (14 * j)])
+                                ps += util.calc_status_change(old_observation[idx + 13], new_observation[40 + (14 * j)])
                             break
 
             # Opp
@@ -571,11 +549,11 @@ class NeuralNetBot(BattleBot):
                             osc += c
                     if not f:
                         if opp_i == 97:
-                            ost += calc_status_change(new_observation[110], old_observation[110])
-                            ost += calc_status_change(new_observation[111], old_observation[111])
+                            ost += util.calc_status_change(new_observation[110], old_observation[110])
+                            ost += util.calc_status_change(new_observation[111], old_observation[111])
                         else:
-                            ost += calc_status_change(new_observation[110], old_observation[opp_i + 13])
-                            ost += calc_status_change(new_observation[111], -1)
+                            ost += util.calc_status_change(new_observation[110], old_observation[opp_i + 13])
+                            ost += util.calc_status_change(new_observation[111], -1)
                     continue
             for j in range(5):
                 if opp_p == new_observation[120 + (14 * j)]:
@@ -598,10 +576,11 @@ class NeuralNetBot(BattleBot):
                                 osc += c
                         if not f:
                             if opp_i == 97:
-                                ost += calc_status_change(new_observation[133 + (14 * j)], old_observation[110])
-                                ost += calc_status_change(-1, old_observation[111])
+                                ost += util.calc_status_change(new_observation[133 + (14 * j)], old_observation[110])
+                                ost += util.calc_status_change(-1, old_observation[111])
                             else:
-                                ost += calc_status_change(new_observation[133 + (14 * j)], old_observation[opp_i + 13])
+                                ost += util.calc_status_change(new_observation[133 + (14 * j)],
+                                                               old_observation[opp_i + 13])
                         break
         for p, i in opp_not_used:
             if p == -1:
@@ -619,17 +598,17 @@ class NeuralNetBot(BattleBot):
                 else:
                     osc += c
             if not f:
-                ost += calc_status_change(new_observation[i + 13], -1)
+                ost += util.calc_status_change(new_observation[i + 13], -1)
                 if i + 14 == 111:
-                    ost += calc_status_change(new_observation[111], -1)
+                    ost += util.calc_status_change(new_observation[111], -1)
 
         # Field changes
         for i in range(len(util.FIELD_LIST)):
-            pf += calc_field_change(old_observation[19 + i], new_observation[19 + i], i)
-            of += calc_field_change(new_observation[112 + i], old_observation[112 + i], i)
+            pf += util.calc_field_change(old_observation[19 + i], new_observation[19 + i], i)
+            of += util.calc_field_change(new_observation[112 + i], old_observation[112 + i], i)
 
-        pf += calc_field_change(old_observation[193], new_observation[193], 5)
-        of += calc_field_change(new_observation[194], old_observation[194], 5)
+        pf += util.calc_field_change(old_observation[193], new_observation[193], 5)
+        of += util.calc_field_change(new_observation[194], old_observation[194], 5)
 
         pa = pca - poa
         oa = ooa - oca

@@ -20,11 +20,6 @@ class BattleBot:
         self.AC = ActionChains(self.Driver.driver)
 
     def battle(self):
-        try:
-            self.read_team(self.Driver.SELF_SIDE)
-            self.battle_timer()
-        except (NoSuchElementException, TimeoutException, StaleElementReferenceException):
-            pass
         while self.Driver.in_battle():
             try:
                 reconnect = self.Driver.driver.find_elements(value='//button[@type="submit"][@class="autofocus"]',
@@ -35,6 +30,9 @@ class BattleBot:
                 WebDriverWait(self.Driver.driver, 2).until(
                     EC.presence_of_element_located((By.XPATH, self.Driver.ACTIVE_POKE_PATH))
                 )
+                if self.battle_logger.turn == 0:
+                    self.read_team(self.Driver.SELF_SIDE)
+                    self.battle_timer()
             except (TimeoutException, NoSuchElementException):
                 continue
             self.battle_actions()
@@ -408,6 +406,23 @@ class BattleBot:
                 new_stats[5] = str(float(stats[5]) * 0.5)
         return new_stats
 
+    def get_stat_diff(self, side, base, info):
+        for b in self.get_statuses(side):
+            text = b.text
+            if '× ' in text:
+                num, stat = text.split('× ')
+                num = float(num)
+                if stat not in util.STATS_LIST:
+                    continue
+                stat_index = util.STATS_LIST.index(stat)
+                base_stat = base.stats[stat]
+                curr_stat = float(info[4 + stat_index])
+                if num > 1:
+                    info[4 + stat_index] = curr_stat - (base_stat * (num - 1))
+                else:
+                    info[4 + stat_index] = curr_stat + (base_stat * (1 - num))
+        return info
+
     def get_statuses(self, side):
         if side == self.Driver.SELF_SIDE:
             status_xpath = "//div[@class='statbar rstatbar']/div[@class='hpbar']/div[@class='status']/*"
@@ -467,7 +482,7 @@ class BattleBot:
         if move.base_power == 0.0:
             return 0.0
         move_ref = self.battle_logger.move_map.get(move.name, None)
-        if move_ref is not None and move_ref.effects is not None and move_ref.effects.priority > 0\
+        if move_ref and move_ref.effects and move_ref.effects.priority > 0\
                 and util.W_PSYCHIC_TERRAIN in self.get_weather():
             return 0.0
         # TODO Magnet rise
