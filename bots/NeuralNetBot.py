@@ -76,12 +76,9 @@ def save_training_info(epsilon, episode, replay_memory):
     with open(MODEL_CKPT_PATH + EPSILON_FILE, 'w', encoding='cp1252') as f:
         f.write(','.join([str(epsilon), str(episode)]))
     with open(MODEL_CKPT_PATH + REPLAY_FILE, 'w', encoding='cp1252') as f:
-        lines = ''
-        for mem in replay_memory:
-            temp = []
-            for var in mem:
-                temp.append(repr(var).replace('\n', '').replace(' ', '').replace('array(', '').replace(')', ''))
-            lines += '{}\n'.format('|'.join(temp))
+        lines = '\n'.join([
+            '|'.join([repr(var).replace('\n', '').replace(' ', '').replace('array(', '').replace(')', '') for var in mem
+                      ]) for mem in replay_memory])
         f.write(lines)
 
 
@@ -378,8 +375,8 @@ class NeuralNetBot(BattleBot):
                             for j, m in enumerate(pk.moves):
                                 observation[36 + j + (14 * (i - 1))] = index_default(move_list, m)
                     elif team_p[1] != 0 and team_p[0] == index_default(poke_list, n, -2) and not exist_in_sidebar:
-                        for j in range(13):
-                            observation[28 + j + (14 * (i - 1))] = old_observation[team_p[1] + 1 + j]
+                        observation[28 + (14 * (i - 1)):41 + (14 * (i - 1))] =\
+                            old_observation[team_p[1] + 1:team_p[1] + 14]
                     else:
                         ability, item = self.get_ability_item(self.Driver.SELF_SIDE, num=i, do_ac=True)
                         if '(base:' in ability:

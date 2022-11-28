@@ -11,6 +11,32 @@ from util.BattleLogger import BattleLogger, Move, Pokemon
 from util.driver import WebDriver
 
 
+def set_stat_stages(statuses):
+    stage_dict = {
+        1.5: 1,
+        2: 2,
+        2.5: 3,
+        3: 4,
+        3.5: 5,
+        4: 6,
+        round(2 / 3, 3): -1,
+        0.5: -2,
+        0.4: -3,
+        0.333: -4,
+        round(2 / 7, 3): -5,
+        0.25: -6
+    }
+    stats = [0.0] * 5
+    for s in statuses:
+        text = s.text
+        if '× ' in text:
+            num, stat = text.split('× ')
+            if stat in util.STATS_LIST:
+                idx = util.STATS_LIST.index(stat) - 1
+                stats[idx] = float(num)
+    return [stage_dict.get(s, 0) for s in stats]
+
+
 class BattleBot:
 
     def __init__(self, headless):
@@ -33,7 +59,7 @@ class BattleBot:
                 if self.battle_logger.turn == 0:
                     self.read_team(self.Driver.SELF_SIDE)
                     self.battle_timer()
-            except (TimeoutException, NoSuchElementException):
+            except (TimeoutException, NoSuchElementException, StaleElementReferenceException):
                 continue
             self.battle_actions()
         self.battle_logger.log_turn(self.Driver)
@@ -430,9 +456,6 @@ class BattleBot:
             status_xpath = "//div[@class='statbar lstatbar']/div[@class='hpbar']/div[@class='status']/*"
         return self.Driver.driver.find_elements(value=status_xpath, by=By.XPATH)
 
-    def get_item(self, side):
-        pass
-
     def get_opp_name(self):
         self.Driver.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
         elem_txt = self.Driver.driver.find_element(value="//div[contains(@class, 'statbar lstatbar')]/strong",
@@ -478,12 +501,12 @@ class BattleBot:
             active.append(util.W_TAILWIND)
         return active
 
-    def damage_calc(self, player_types, move, opp_types, opp_ability, opp_item, player_stats, opp_stats):
+    def damage_calc(self, p_types, move, opp_types, opp_ability, opp_item, p_stats, opp_stats, weather, screens):
         if move.base_power == 0.0:
             return 0.0
         move_ref = self.battle_logger.move_map.get(move.name, None)
         if move_ref and move_ref.effects and move_ref.effects.priority > 0\
-                and util.W_PSYCHIC_TERRAIN in self.get_weather():
+                and util.W_PSYCHIC_TERRAIN in weather:
             return 0.0
         # TODO Magnet rise
         if move.type == util.IMMUNE_ABILITIES.get(opp_ability, None):
@@ -495,16 +518,18 @@ class BattleBot:
             return 0.0
         dmg = 34.8 * move.base_power
         if move.move_type == util.PHYSICAL:
-            dmg *= (player_stats.get(util.ATK, 1.0) / float(opp_stats[1]))
+            dmg *= (p_stats.get(util.ATK, 1.0) / float(opp_stats[2]))
         elif move.move_type == util.SPECIAL:
-            dmg *= (player_stats.get(util.SPA, 1.0) / float(opp_stats[3]))
+            dmg *= (p_stats.get(util.SPA, 1.0) / float(opp_stats[4]))
         dmg = (dmg / 50) + 2
         for t in opp_types:
             effect = util.type_effectiveness(move.type, t)
             if effect == 0.0:
                 return 0.0
             dmg *= effect
-        for w in self.get_weather():
+        if move.name == 'Freeze-Dry' and util.WATER in opp_types:
+            dmg *= 2
+        for w in weather:
             if w == util.W_HEAVY_RAIN:
                 if move.type == util.FIRE:
                     return 0.0
@@ -531,7 +556,13 @@ class BattleBot:
                 dmg *= 1.5
             if w == util.W_GRASSY_TERRRAIN and move.type == util.GRASS:
                 dmg *= 1.5
-        if move.type in player_types:
+        if move.move_type == util.PHYSICAL and screens[1]:
+            dmg *= 0.5
+        if move.move_type == util.SPECIAL and screens[0]:
+            dmg *= 0.5
+        if screens[2]:
+            dmg *= 0.5
+        if move.type in p_types:
             dmg *= 1.5
         return dmg * 0.925
 

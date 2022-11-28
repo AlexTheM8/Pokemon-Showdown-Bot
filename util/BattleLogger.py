@@ -247,17 +247,19 @@ class BattleLogger:
             elem_path = "//div[@class='battle-history']"
         else:
             elem_path = "//h2[@class='battle-history'][text()='Turn {}']/following-sibling::div[" \
-                        "@class='battle-history'] "
+                        "@class='battle-history']"
         self.battle_info.append('Turn {}'.format(self.turn))
         turn_elems = Driver.driver.find_elements(value=elem_path.format(self.turn), by=By.XPATH)
         for e in turn_elems:
             msg = str(e.text.replace('\n', ''))
-            # TODO Record ELO
             if match(util.WIN_MSG, msg):
+                elo_elem = "./following-sibling::div[@class='chat'][contains(text(), '{}')]/strong" \
+                    .format(Driver.botName)
                 if search(util.WIN_MSG, msg).group(1) == Driver.botName:
                     self.battle_info.append('Win\n')
                 else:
                     self.battle_info.append('Lose\n')
+                self.battle_info.append('ELO: {}\n'.format(e.find_element(value=elo_elem, by=By.XPATH).text))
                 continue
             if any(match((reg := r), msg) for r in util.VARIED_RESULT_LIST):
                 log = self.translate_log(Driver, msg, reg)
@@ -293,15 +295,9 @@ class BattleLogger:
     def save_battle_info(self):
         num_files = len(os.listdir(util.LOG_ROOT))
         with open(util.BASE_LOG_FILE.format(num_files), 'w', encoding='cp1252') as f:
-            lines = '{}\n'.format(self.bot)
-            for poke in self.self_team:
-                lines += repr(poke) + '\n'
-            lines += '\n'
-            for poke in self.opp_team:
-                lines += repr(poke) + '\n'
-            lines += '\n'
-            for line in self.battle_info:
-                lines += line + '\n'
+            lines = '{}\n{}\n\n{}\n\n{}'.format(self.bot, '\n'.join([repr(poke) for poke in self.self_team]),
+                                                '\n'.join([repr(poke) for poke in self.opp_team]),
+                                                '\n'.join([line for line in self.battle_info]))
             f.write(lines)
 
 

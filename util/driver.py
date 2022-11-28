@@ -67,21 +67,22 @@ class WebDriver:
     def next_battle(self):
         self.wait_and_click("closeAndMainMenu")
 
-    def get_type(self, side, num=0, poke_elem=None):
+    def get_type(self, side, num=0, poke_elem=None, do_ac=True):
         tooltip_div = "//div[contains(@class, 'tooltip tooltip-')]"
         img_ext = "/h2/img[@class='pixelated'][@height='14']"
         types = []
-        if poke_elem is None:
-            if side == self.SELF_SIDE:
-                self.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
-                if num == 0:
-                    poke_elem = self.driver.find_element(value=self.ACTIVE_STAGE_PATH, by=By.XPATH)
+        if do_ac:
+            if poke_elem is None:
+                if side == self.SELF_SIDE:
+                    self.wait_for_element(self.ACTIVE_POKE_PATH, by=By.XPATH)
+                    if num == 0:
+                        poke_elem = self.driver.find_element(value=self.ACTIVE_STAGE_PATH, by=By.XPATH)
+                    else:
+                        poke_elem = self.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
                 else:
-                    poke_elem = self.driver.find_element(value=self.CHOOSE_SWITCH_PATH.format(num), by=By.XPATH)
-            else:
-                self.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
-                poke_elem = self.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)
-        self.AC.move_to_element(poke_elem).perform()
+                    self.wait_for_element("//div[contains(@class, 'statbar lstatbar')]/strong", by=By.XPATH)
+                    poke_elem = self.driver.find_element(value=self.OPP_POKE_PATH, by=By.XPATH)
+            self.AC.move_to_element(poke_elem).perform()
         self.wait_for_element(tooltip_div, by=By.XPATH)
         self.wait_for_element(tooltip_div + img_ext, by=By.XPATH)
         poke_types = self.driver.find_elements(value=tooltip_div + img_ext, by=By.XPATH)

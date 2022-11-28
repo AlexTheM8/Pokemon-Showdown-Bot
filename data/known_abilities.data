@@ -5,7 +5,7 @@ Pangoro,Iron Fist,Mold Breaker,Scrappy
 Kyogre,Primordial Sea,Drizzle
 Salazzle,Corrosion,Oblivious
 Gogoat,Sap Sipper,Grass Pelt
-Haxorus,Mold Breaker
+Haxorus,Mold Breaker,Rivalry,Unnerve
 Golurk,No Guard,Iron Fist,Klutz
 Ho-Oh,Regenerator,Pressure
 Aromatisse,Aroma Veil,Healer
@@ -36,7 +36,7 @@ Zygarde,Aura Break,Power Construct
 Politoed,Drizzle
 Cinccino,Skill Link,Cute Charm,Technician
 Arceus,Multitype,Triage
-Manectric,Lightning Rod,Static,Minus,Intimidate
+Manectric,Lightning Rod,Static,Minus,Intimidate,Prankster,Defiant
 Solgaleo,Full Metal Body
 Mothim,Tinted Lens,Swarm
 Magmortar,Vital Spirit,Flame Body
@@ -144,7 +144,7 @@ Hawlucha,Unburden,Limber,Mold Breaker
 Reuniclus,Magic Guard,Overcoat,Regenerator
 Heliolisk,Dry Skin,Sand Veil,Solar Power
 Milotic,Marvel Scale,Competitive,Cute Charm
-Spinda,Own Tempo,Tangled Feet,Contrary
+Spinda,Own Tempo,Tangled Feet,Contrary,Chlorophyll,Leaf Guard,Regenerator
 Mawile,Intimidate,Huge Power,Sheer Force,Hyper Cutter
 Dugtrio,Sand Veil,Arena Trap,Sand Force,Tangling Hair
 Pinsir,Moxie,Hyper Cutter,Mold Breaker,Aerilate
@@ -180,7 +180,7 @@ Archeops,Defeatist
 Swampert,Torrent,Damp,Swift Swim
 Golisopod,Emergency Exit
 Slurpuff,Unburden,Sweet Veil
-Articuno,Pressure
+Articuno,Pressure,Snow Cloak
 Alakazam,Magic Guard,Synchronize,Inner Focus,Trace
 Dustox,Shield Dust,Compound Eyes
 Necrozma,Prism Armor,Neuroforce
@@ -230,7 +230,7 @@ Shaymin,Serene Grace,Natural Cure
 Octillery,Suction Cups,Sniper,Moody
 Porygon2,Trace,Download,Analytic
 Metagross,Clear Body,Light Metal,Tough Claws
-Stoutland,Intimidate
+Stoutland,Intimidate,Sand Rush,Scrappy
 Zebstrika,Sap Sipper,Lightning Rod,Motor Drive
 Castform,Forecast
 Stakataka,Beast Boost
@@ -288,7 +288,7 @@ Unown,Levitate
 Latias,Levitate
 Cryogonal,Levitate
 Wobbuffet,Shadow Tag,Telepathy
-Golduck,Cloud Nine,Swift Swim
+Golduck,Cloud Nine,Swift Swim,Damp
 Rampardos,Mold Breaker,Sheer Force
 Zekrom,Teravolt
 Crabominable,Hyper Cutter,Iron Fist,Anger Point
@@ -346,7 +346,7 @@ Seaking,Lightning Rod,Swift Swim,Water Veil
 Sandslash,Slush Rush,Sand Veil,Sand Rush,Snow Cloak
 Leafeon,Chlorophyll,Leaf Guard
 Oranguru,Inner Focus,Telepathy,Symbiosis
-Eelektross,Levitate
+Eelektross,Levitate,Natural Cure
 Yveltal,Dark Aura
 Girafarig,Inner Focus,Early Bird,Sap Sipper
 Electivire,Motor Drive,Vital Spirit
@@ -431,7 +431,7 @@ Kommo-o,Bulletproof,Soundproof,Overcoat
 Goodra,Sap Sipper,Hydration,Gooey
 Starmie,Illuminate,Natural Cure,Analytic
 Heatmor,Gluttony,Flash Fire,White Smoke
-Stantler,Intimidate
+Stantler,Intimidate,Frisk,Sap Sipper
 Poliwrath,Swift Swim,Water Absorb,Damp
 Typhlosion,Blaze,Flash Fire
 Shiinotic,Illuminate,Effect Spore,Rain Dish
